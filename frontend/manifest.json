@@ -1,0 +1,24 @@
+{
+  "name": "NCC Unit – Govt. Polytechnic Hamirpur",
+  "short_name": "NCC GPH",
+  "description": "Official NCC Unit website - Government Polytechnic Hamirpur (HP)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d2b5e",
+  "theme_color": "#0d2b5e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "images/ncc_badge.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/ncc_badge.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "government"],
+  "lang": "en-IN"
+}

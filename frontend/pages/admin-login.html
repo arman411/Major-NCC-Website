@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Admin login portal for NCC unit management at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { min-height:100vh;background:linear-gradient(160deg,#f0f4ff 0%,#e8edf8 50%,#f5f7fd 100%);display:flex;align-items:center;justify-content:center;padding:24px; }
+    .admin-login-card {
+      width:100%;max-width:440px;
+      background:white;
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-xl);
+      border:1px solid var(--mid-gray);
+      overflow:hidden;
+    }
+    .admin-login-header {
+      background:linear-gradient(135deg,var(--navy),var(--navy-light));
+      padding:40px 40px 32px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .admin-login-header::before {
+      content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,0.05);border-radius:50%;
+    }
+    .admin-shield { width:80px;height:80px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.5rem;border:2px solid rgba(255,255,255,0.2); }
+    .admin-login-header h2 { font-size:1.4rem;font-weight:800;color:white;line-height:1.2; }
+    .admin-login-header p { font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:6px; }
+    .admin-login-body { padding:40px; }
+    .admin-divider { display:flex;align-items:center;gap:10px;margin-bottom:24px; }
+    .admin-divider-line { flex:1;height:1px;background:var(--mid-gray); }
+    .admin-divider span { font-size:0.72rem;font-weight:700;color:var(--red);letter-spacing:2px;text-transform:uppercase; }
+    .pwd-toggle { position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--text-light);cursor:pointer; }
+    .admin-footer { padding:16px 40px;background:var(--off-white);border-top:1px solid var(--mid-gray);display:flex;align-items:center;justify-content:space-between; }
+    .admin-footer a { font-size:0.8rem;color:var(--sky); }
+    .admin-footer a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Admin</p></div>
+<div class="admin-login-card">
+  <div class="admin-login-header">
+    <div class="admin-shield">🛡️</div>
+    <h2>Administrator Login</h2>
+    <p>NCC Unit – Govt. Polytechnic Hamirpur (HP)</p>
+  </div>
+  <div class="admin-login-body">
+    <div class="admin-divider"><div class="admin-divider-line"></div><span>🔒 Secure Access</span><div class="admin-divider-line"></div></div>
+    <form id="adminLoginForm" novalidate>
+      <div class="form-group">
+        <input type="text" class="form-control" id="adminUser" placeholder="Admin Username" required />
+        <label class="form-label" for="adminUser">Admin Username</label>
+        <p class="form-error">Enter your admin username.</p>
+      </div>
+      <div class="form-group" style="position:relative;">
+        <input type="password" class="form-control" id="adminPwd" placeholder="Password" required />
+        <label class="form-label" for="adminPwd">Password</label>
+        <i class="fas fa-eye pwd-toggle" id="adminPwdTog"></i>
+        <p class="form-error">Enter your password.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+        <input type="checkbox" id="adminRemember" />
+        <label for="adminRemember" style="font-size:0.85rem;color:var(--text-mid);cursor:pointer;">Remember this device</label>
+      </div>
+      <button type="submit" class="btn btn-danger" style="width:100%;">
+        <i class="fas fa-shield-alt"></i> Access Admin Panel
+      </button>
+    </form>
+    <div style="margin-top:20px;padding:14px;background:rgba(192,57,43,0.06);border-radius:var(--radius-md);border:1px solid rgba(192,57,43,0.15);">
+      <p style="font-size:0.78rem;color:var(--red);text-align:center;"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>Unauthorized access is strictly prohibited and logged.</p>
+    </div>
+  </div>
+  <div class="admin-footer">
+    <a href="login.html"><i class="fas fa-arrow-left" style="margin-right:6px;"></i> Cadet Login</a>
+    <a href="../index.html">Main Website →</a>
+  </div>
+</div>
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script>
+document.getElementById('adminLoginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const u = document.getElementById('adminUser'), p = document.getElementById('adminPwd'), rem = document.getElementById('adminRemember');
+  let ok = true;
+  [u,p].forEach(el => { const g=el.closest('.form-group'); if(!el.value.trim()){g.classList.add('invalid');ok=false;}else g.classList.remove('invalid'); });
+  if (!ok) return;
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetchJson('/auth/login', {
+      method: 'POST',
+      body: { email: u.value.trim(), password: p.value.trim(), remember: rem.checked }
+    });
+
+    if (res.success) {
+      if (res.user && res.user.is_admin) {
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        // Log them back out since they are not an admin
+        await fetchJson('/auth/logout', { method: 'POST' });
+        alert('Access Denied: You do not have administrator privileges.');
+      }
+    }
+  } catch(err) {
+    alert((err.data && err.data.message) ? err.data.message : 'Login failed. Please check your credentials.');
+  } finally {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  }
+});
+document.getElementById('adminPwdTog').addEventListener('click', function() {
+  const f=document.getElementById('adminPwd'), show=f.type==='password';
+  f.type=show?'text':'password'; this.className=`fas fa-${show?'eye-slash':'eye'} pwd-toggle`;
+});
+</script>
+<script src="../js/pro-effects.js"></script>
+</body>
+</html>
+

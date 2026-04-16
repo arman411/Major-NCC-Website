@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About NCC – Unity, Discipline, Service</title>
+    <meta name="description"
+        content="Learn about the National Cadet Corps – its history, aims, objectives, and pledge." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--navy), var(--sky));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(50% + 40px);
+            margin-bottom: 48px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: calc(50% + 40px);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 4px solid white;
+            box-shadow: 0 0 0 3px var(--red);
+            z-index: 1;
+        }
+
+        .timeline-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--mid-gray);
+            max-width: 420px;
+            transition: all var(--trans-mid);
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .timeline-year {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .timeline-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .timeline-card p {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+
+        .pledge-section {
+            background: linear-gradient(135deg, var(--navy), var(--navy-light));
+            border-radius: var(--radius-xl);
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .pledge-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 200px;
+            color: rgba(255, 255, 255, 0.05);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .pledge-text {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .obj-card {
+            padding: 32px 24px;
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--mid-gray);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: all var(--trans-mid);
+        }
+
+        .obj-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--sky);
+        }
+
+        .obj-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .obj-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .obj-card p {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+
+        @media(max-width:768px) {
+            .timeline::before {
+                left: 24px;
+            }
+
+            .timeline-item {
+                padding-right: 0;
+                padding-left: 60px;
+            }
+
+            .timeline-item:nth-child(even) {
+                padding-left: 60px;
+            }
+
+            .timeline-dot {
+                left: 24px;
+            }
+
+            .objectives-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pledge-section {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+    <div id="page-loader">
+        <div class="loader-badge"><svg viewBox="0 0 24 24">
+                <path
+                    d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z" />
+            </svg></div>
+        <div class="loader-bar"></div>
+        <p class="loader-text">About NCC</p>
+    </div>
+
+    <nav id="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand">
+                <div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC Logo" /></div>
+                <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
+            </a>
+            <div class="navbar-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link active">About NCC</a>
+                <a href="unit.html" class="nav-link">Our Unit</a>
+                <a href="activities.html" class="nav-link">Activities</a>
+                <a href="gallery.html" class="nav-link">Gallery</a>
+                <a href="achievements.html" class="nav-link">Achievements</a>
+                <a href="notices.html" class="nav-link">Notices</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+            <div class="navbar-actions">
+                <a href="login.html" class="btn-nav-login">Login</a>
+                <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link active">About NCC</a>
+        <a href="unit.html" class="nav-link">Our Unit</a>
+        <a href="activities.html" class="nav-link">Activities</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="achievements.html" class="nav-link">Achievements</a>
+        <a href="notices.html" class="nav-link">Notices</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <div class="mobile-nav-actions">
+            <a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a>
+            <a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a>
+        </div>
+    </div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container page-hero-content">
+            <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>About
+                    NCC</span></div>
+            <h1 data-aos="fade-up">About the <span>National Cadet Corps</span></h1>
+            <p style="max-width:560px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up"
+                data-aos-delay="100">
+                Established in 1948, the NCC is one of India's largest uniformed youth organisations, shaping the
+                nation's future through discipline, service, and leadership.
+            </p>
+        </div>
+    </section>
+
+    <!-- History -->
+    <section class="section bg-white">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <p class="section-label">Our Legacy</p>
+                <h2 class="section-title">History of <span>NCC India</span></h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">1948 – Foundation</p>
+                        <h3>NCC Founded by Parliament</h3>
+                        <p>The National Cadet Corps was established via the NCC Act of 1948 after India's independence,
+                            to develop disciplined citizens among the youth.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">1950 – National Integration</p>
+                        <h3>Tri-Services Integration</h3>
+                        <p>The NCC expanded to include Army, Navy, and Air Force wings, promoting national integration
+                            among youth from all regions of India.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">1965 – Republic Day Camp</p>
+                        <h3>Republic Day Celebrations Begin</h3>
+                        <p>NCC cadets began marching in Republic Day parades in New Delhi, becoming a permanent fixture
+                            of the national celebration.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">1988 – A/B/C Certificates</p>
+                        <h3>Certificate Programme Revamp</h3>
+                        <p>The three-tier certificate system (A, B, C) was strengthened, with C Certificate holders
+                            gaining defence service recruitment benefits.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">2004 – GP Hisar Unit</p>
+                        <h3>Our Unit Established</h3>
+                        <p>The NCC unit at Government Polytechnic Hamirpur (HP) was formally established, beginning its
+                            journey of producing disciplined cadets in Haryana.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-dot hover-lift"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-year">Today – Excellence Continues</p>
+                        <h3>250+ Active Cadets</h3>
+                        <p>Our unit today proudly trains over 250 cadets, winning state and national level honours year
+                            after year.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Aims & Objectives -->
+    <section class="section" style="background:var(--off-white);">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <p class="section-label">Our Purpose</p>
+                <h2 class="section-title">Aims &amp; <span>Objectives</span></h2>
+                <p class="section-subtitle">The NCC works towards creating youth who are disciplined, capable, and
+                    committed to the nation's progress.</p>
+            </div>
+            <div class="objectives-grid">
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">???</div>
+                        <h3>Develop Character</h3>
+                        <p>Foster qualities of leadership, integrity, and national consciousness that will serve the
+                            youth throughout their lives.</p>
+                    </div>
+                </div>
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">??</div>
+                        <h3>National Unity</h3>
+                        <p>Promote fraternity and remove regional, religious, and linguistic barriers by bringing cadets
+                            from across India together.</p>
+                    </div>
+                </div>
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">??</div>
+                        <h3>Military Readiness</h3>
+                        <p>Motivate youth to join the Armed Forces and provide basic military training that eases their
+                            transition into service.</p>
+                    </div>
+                </div>
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">??</div>
+                        <h3>Community Service</h3>
+                        <p>Encourage cadets to serve society through environmental drives, disaster relief, and health &
+                            hygiene campaigns.</p>
+                    </div>
+                </div>
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">???</div>
+                        <h3>Physical Fitness</h3>
+                        <p>Ensure cadets maintain high levels of physical fitness through regular drills, sports, and
+                            adventure activities.</p>
+                    </div>
+                </div>
+                <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="tilt-inner">
+                        <div class="obj-icon">??</div>
+                        <h3>Secular Values</h3>
+                        <p>Instil values of secularism, social service and democratic citizenship aligned with the
+                            Indian constitution.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Animated Motto Banner -->
+    <div style="background:linear-gradient(135deg,#0d2b5e,#1a3d7c);padding:60px 0;overflow:hidden;position:relative;">
+      <div style="position:absolute;inset:0;background:url(&quot;data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+      <div class="container" style="position:relative;z-index:1;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center;">
+          <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="0">
+            <span class="stat-icon">??</span>
+            <span class="stat-number" data-count="250" data-suffix="+">0</span>
+            <p class="stat-label">Cadets Trained</p>
+          </div>
+          <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="80">
+            <span class="stat-icon">???</span>
+            <span class="stat-number" data-count="48" data-suffix="+">0</span>
+            <p class="stat-label">Camps Completed</p>
+          </div>
+          <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="160">
+            <span class="stat-icon">??</span>
+            <span class="stat-number" data-count="32" data-suffix="+">0</span>
+            <p class="stat-label">Awards Earned</p>
+          </div>
+          <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="240">
+            <span class="stat-icon">??</span>
+            <span class="stat-number" data-count="20" data-suffix="+">0</span>
+            <p class="stat-label">Years of Service</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- NCC Pledge -->
+    <section class="section bg-white">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <p class="section-label">Our Commitment</p>
+                <h2 class="section-title">The NCC <span>Pledge</span></h2>
+            </div>
+            <div class="pledge-section hover-shine" data-aos="fade-up">
+                <p class="pledge-text" style="text-align:center;font-style:italic;">
+                    "We, the cadets of the National Cadet Corps, do solemnly pledge that we shall always uphold the
+                    unity of India. We resolve to be worthy citizens of our great country and to live by the motto of
+                    the National Cadet Corps — Unity and Discipline. We shall serve our country and our people always,
+                    and in so doing give meaning to the Nation."
+                </p>
+                <p
+                    style="text-align:center;margin-top:32px;font-size:1.5rem;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,0.9);">
+                    ???? ?? ???????
+                </p>
+                <p style="text-align:center;color:rgba(255,255,255,0.6);font-size:0.9rem;">Unity and Discipline</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="navbar-brand">
+                        <div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC Logo" /></div>
+                        <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span>
+                        </div>
+                    </div>
+                    <p class="footer-desc">Building disciplined, patriotic and self-reliant citizens since decades.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a
+                            href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a
+                            href="gallery.html">Gallery</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <div class="footer-links"><a href="notices.html">Notice Board</a><a
+                            href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a
+                            href="login.html">Cadet Login</a><a href="admin-login.html">Admin</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon">??</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon">??</div><span>+91 1662 123456</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon">??</div><span>ncc@gph.edu.in</span>
+                    </div>
+                </div>
+            </div>
+            </div></div><p class="footer-made">Made with <span>??</span> for NCC Hamirpur — Serving with Pride</p><div class="hide" style="display:none"><div class="footer-bottom">
+                <p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
+                <div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a
+                        href="#" class="social-btn"><i class="fab fa-instagram"></i></a><a href="#"
+                        class="social-btn"><i class="fab fa-youtube"></i></a></div>
+            </div>
+        </div>
+    
+<style>
+/* Pro Footer Extras */
+#footer {
+  background: linear-gradient(160deg, #0a1f4a 0%, #0d2b5e 60%, #0f3270 100%);
+  position: relative; overflow: hidden;
+}
+#footer::before {
+  content:''; position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+}
+.social-btn:nth-child(1):hover { background:#1877f2; }
+.social-btn:nth-child(2):hover { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.social-btn:nth-child(3):hover { background:#ff0000; }
+.footer-made { text-align:center; font-size:0.75rem; color:rgba(255,255,255,0.25); padding:12px 0 0; }
+.footer-made span { color:#f0b429; }
+</style>
+</footer>
+    <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="../js/main.js"></script>
+<script src="../js/pro-effects.js"></script>
+</body>
+
+</html>

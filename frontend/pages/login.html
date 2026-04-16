@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadet Login – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Login to the NCC cadet portal at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { min-height:100vh; display:flex; flex-direction:column; }
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .auth-visual {
+      background: linear-gradient(160deg, var(--navy) 0%, #1e4b9e 50%, var(--sky) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-visual::before {
+      content: '';
+      position: absolute;
+      top: -30%; left: -20%;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .auth-visual::after {
+      content: '';
+      position: absolute;
+      bottom: -20%; right: -10%;
+      width: 350px; height: 350px;
+      background: rgba(192,57,43,0.12);
+      border-radius: 50%;
+    }
+    .auth-visual-content { text-align:center;color:white;position:relative;z-index:1; }
+    .auth-visual-badge { width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;font-size:3.5rem;border:3px solid rgba(255,255,255,0.2);animation:badgeFloat 4s ease-in-out infinite; }
+    @keyframes badgeFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+    .auth-visual h2 { font-size:2rem;font-weight:800;margin-bottom:12px;line-height:1.2; }
+    .auth-visual p { font-size:0.95rem;color:rgba(255,255,255,0.75);max-width:320px;line-height:1.8;margin:0 auto 32px; }
+    .auth-features { display:flex;flex-direction:column;gap:12px;text-align:left; }
+    .af-row { display:flex;align-items:center;gap:12px;font-size:0.88rem;color:rgba(255,255,255,0.8); }
+    .af-row .af-check { width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.65rem;flex-shrink:0; }
+
+    .auth-form-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+      background: white;
+    }
+    .auth-form-wrap { width:100%;max-width:420px; }
+    .auth-form-logo { display:flex;align-items:center;gap:12px;margin-bottom:40px; }
+    .auth-form-logo img { width:48px;height:48px;border-radius:50%;border:2px solid var(--navy); }
+    .auth-form-logo-text strong { display:block;font-size:1rem;font-weight:700;color:var(--navy); }
+    .auth-form-logo-text span { font-size:0.72rem;color:var(--text-light); }
+    .auth-title { font-size:1.8rem;font-weight:800;color:var(--navy);margin-bottom:8px; }
+    .auth-subtitle { font-size:0.9rem;color:var(--text-light);margin-bottom:36px; }
+    .divider-or { display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-light);font-size:0.82rem; }
+    .divider-or::before, .divider-or::after { content:'';flex:1;height:1px;background:var(--mid-gray); }
+    .pwd-toggle { position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--text-light);cursor:pointer;transition:color var(--trans-fast); }
+    .pwd-toggle:hover { color:var(--navy); }
+    .form-group.has-icon { position:relative; }
+    .form-group.has-icon .form-icon { position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-light);pointer-events:none; }
+    .form-group.has-icon .form-control { padding-left:44px; }
+    .forgot-link { font-size:0.82rem;color:var(--sky);text-align:right;display:block;margin-bottom:24px;margin-top:-10px; }
+    .forgot-link:hover { text-decoration:underline; }
+    .auth-switch { text-align:center;margin-top:24px;font-size:0.88rem;color:var(--text-light); }
+    .auth-switch a { color:var(--navy);font-weight:700; }
+    .auth-switch a:hover { text-decoration:underline; }
+    .google-btn {
+      width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+      padding:14px;border:2px solid var(--mid-gray);border-radius:var(--radius-md);
+      font-size:0.92rem;font-weight:600;color:var(--text-dark);
+      background:white;cursor:pointer;transition:all var(--trans-fast);
+      margin-bottom:16px;
+    }
+    .google-btn:hover { border-color:var(--sky);background:rgba(52,152,219,0.04); }
+
+    /* 3D Flip Card Styles */
+    .flip-card {
+      background-color: transparent;
+      width: 100%;
+      max-width: 420px;
+      height: 550px;
+      perspective: 1000px; /* 3D effect depth */
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      background: white;
+      text-align: left;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* OTP Input Grid */
+    .otp-grid { display: flex; gap: 8px; margin: 24px 0; justify-content: center; }
+    .otp-input { 
+      width: 45px; height: 55px; 
+      font-size: 1.5rem; text-align: center; font-weight: 700;
+      border: 2px solid var(--mid-gray); border-radius: var(--radius-md);
+      transition: all var(--trans-fast);
+      background: var(--light-gray);
+    }
+    .otp-input:focus { border-color: var(--navy); background: white; outline: none; box-shadow: 0 0 0 3px rgba(13,43,94,0.1); }
+    .btn-back { background: none; border: none; font-size: 0.9rem; color: var(--text-light); cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 24px; transition: color var(--trans-fast); }
+    .btn-back:hover { color: var(--navy); }
+
+    @media(max-width:900px){ .auth-page{grid-template-columns:1fr;} .auth-visual{min-height:320px;} .auth-form-panel{padding:40px 24px;} }
+  </style>
+</head>
+<body>
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Login</p></div>
+<div class="auth-page">
+  <div class="auth-visual">
+    <div class="auth-visual-content">
+      <div class="auth-visual-badge">🪖</div>
+      <h2>Welcome Back,<br/>Cadet!</h2>
+      <p>Login to access your NCC profile, certificates, parade schedules, and the cadet portal.</p>
+      <div class="auth-features">
+        <div class="af-row"><div class="af-check">✓</div> View your training schedule</div>
+        <div class="af-row"><div class="af-check">✓</div> Download attendance & certificates</div>
+        <div class="af-row"><div class="af-check">✓</div> Register for upcoming camps</div>
+        <div class="af-row"><div class="af-check">✓</div> Track your NCC progress</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="flip-card" id="authCard">
+      <div class="flip-card-inner">
+        
+        <!-- FRONT: PASSWORD LOGIN -->
+        <div class="flip-card-front auth-form-wrap">
+          <div class="auth-form-logo">
+            <img src="../images/ncc_badge.png" alt="NCC Logo" />
+            <div class="auth-form-logo-text">
+              <strong>NCC Unit</strong>
+              <span>Govt. Polytechnic Hamirpur (HP)</span>
+            </div>
+          </div>
+          <p class="auth-title">Sign In</p>
+          <p class="auth-subtitle">Enter your credentials to access the cadet portal.</p>
+
+          <button class="google-btn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="G" /> Continue with Google</button>
+          <div class="divider-or">or continue with email</div>
+
+          <form id="loginForm" novalidate>
+            <div class="form-group has-icon">
+              <i class="fas fa-envelope form-icon"></i>
+              <input type="email" class="form-control" id="loginEmail" placeholder="Email / Username" required />
+              <label class="form-label" for="loginEmail" style="left:44px;">Email / Username</label>
+              <p class="form-error">Enter your email or roll number.</p>
+            </div>
+            <div class="form-group has-icon" style="position:relative;">
+              <i class="fas fa-lock form-icon"></i>
+              <input type="password" class="form-control" id="loginPwd" placeholder="Password" required />
+              <label class="form-label" for="loginPwd" style="left:44px;">Password</label>
+              <i class="fas fa-eye pwd-toggle" id="pwdToggle"></i>
+              <p class="form-error">Enter your password.</p>
+            </div>
+            <a href="#" class="forgot-link">Forgot password?</a>
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-bottom:16px;">
+              <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+            <div class="auth-switch">Don't have an account? <a href="signup.html">Sign up here</a></div>
+            <div class="auth-switch" style="margin-top:8px;"><a href="admin-login.html">Admin Login →</a></div>
+          </form>
+        </div>
+
+        <!-- BACK: OTP VERIFICATION -->
+        <div class="flip-card-back auth-form-wrap">
+          <button type="button" class="btn-back" id="btnBackToLogin">
+            <i class="fas fa-arrow-left"></i> Back to Login
+          </button>
+          
+          <div class="auth-form-logo" style="margin-bottom:24px;">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;color:var(--sky);font-size:1.5rem;">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="auth-form-logo-text">
+              <strong>Two-Step Verification</strong>
+              <span>Security enhanced by OTP</span>
+            </div>
+          </div>
+          
+          <p class="auth-title">Verify OTP</p>
+          <p class="auth-subtitle">We've sent a 6-digit code to <strong id="verifyEmailText" style="color:var(--navy);">your email</strong>. It expires in 5 minutes.</p>
+          
+          <form id="otpForm" novalidate>
+            <div class="otp-grid" id="otpGrid">
+              <input type="text" class="otp-input" maxlength="1" required />
+              <input type="text" class="otp-input" maxlength="1" required />
+              <input type="text" class="otp-input" maxlength="1" required />
+              <input type="text" class="otp-input" maxlength="1" required />
+              <input type="text" class="otp-input" maxlength="1" required />
+              <input type="text" class="otp-input" maxlength="1" required />
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:16px;">
+              Verify & Proceed <i class="fas fa-arrow-right"></i>
+            </button>
+          </form>
+          
+          <div class="auth-switch" style="margin-top:24px;">
+            Didn't receive code? <a href="#" id="resendOtp">Resend OTP</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script>
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail');
+  const pwd = document.getElementById('loginPwd');
+  let ok = true;
+  ['loginEmail','loginPwd'].forEach(id => {
+    const el = document.getElementById(id);
+    const g = el.closest('.form-group');
+    if (!el.value.trim()) { g.classList.add('invalid'); ok = false; }
+    else g.classList.remove('invalid');
+  });
+  if (ok) {
+    const btn = e.target.querySelector('button[type="submit"]');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+    btn.disabled = true;
+
+    fetchJson('/auth/login', {
+      method: 'POST',
+      body: { email: email.value.trim(), password: pwd.value }
+    }).then(res => {
+      if(res.success && res.otp_required) {
+        // Init OTP Step
+        document.getElementById('verifyEmailText').textContent = res.email;
+        document.getElementById('authCard').classList.add('flipped');
+        setTimeout(() => document.querySelector('.otp-input').focus(), 400);
+      } else if (res.success && !res.otp_required) {
+        // Fallback if OTP is bypassed for some reason
+        redirectUser(res.user);
+      }
+    }).catch(err => {
+      alert((err.data && err.data.message) ? err.data.message : 'Invalid email or password');
+    }).finally(() => {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+    });
+  }
+});
+
+function redirectUser(user) {
+  if (user && user.is_admin || user.role === 'admin' || user.role === 'suo') {
+    window.location.href = 'admin-dashboard.html';
+  } else {
+    window.location.href = 'cadet-dashboard.html';
+  }
+}
+
+// ──────────────────────────────────────────────
+// OTP Input Grid Logic
+// ──────────────────────────────────────────────
+const otpInputs = document.querySelectorAll('.otp-input');
+otpInputs.forEach((input, index) => {
+  input.addEventListener('input', (e) => {
+    if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+      otpInputs[index + 1].focus();
+    }
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+      otpInputs[index - 1].focus();
+    }
+  });
+});
+
+// Submit OTP
+document.getElementById('otpForm').addEventListener('submit', e => {
+  e.preventDefault();
+  let code = '';
+  let ok = true;
+  otpInputs.forEach(input => {
+    if(!input.value) ok = false;
+    code += input.value;
+  });
+  
+  if (!ok || code.length < 6) {
+    alert('Please enter the 6-digit OTP.');
+    return;
+  }
+  
+  const btn = e.target.querySelector('button[type="submit"]');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+  btn.disabled = true;
+
+  const email = document.getElementById('loginEmail').value.trim();
+
+  fetchJson('/auth/verify-otp', {
+    method: 'POST',
+    body: { email: email, otp: code }
+  }).then(res => {
+    if(res.success) {
+      redirectUser(res.user);
+    }
+  }).catch(err => {
+    alert((err.data && err.data.message) ? err.data.message : 'Invalid OTP');
+    otpInputs.forEach(i => i.value = '');
+    otpInputs[0].focus();
+  }).finally(() => {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  });
+});
+
+document.getElementById('btnBackToLogin').addEventListener('click', () => {
+    document.getElementById('authCard').classList.remove('flipped');
+});
+document.getElementById('resendOtp').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+    alert('OTP Resent to your email.');
+});
+
+const pwdT = document.getElementById('pwdToggle');
+const pwdF = document.getElementById('loginPwd');
+pwdT.addEventListener('click', () => {
+  const show = pwdF.type === 'password';
+  pwdF.type = show ? 'text' : 'password';
+  pwdT.className = `fas fa-${show ? 'eye-slash' : 'eye'} pwd-toggle`;
+});
+</script>
+<script src="../js/pro-effects.js"></script>
+</body>
+</html>
+

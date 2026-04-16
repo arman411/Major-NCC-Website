@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Unit – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description"
+    content="Our NCC unit details, ANO profile, and rank structure at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .unit-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .unit-detail-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--mid-gray);
+    }
+
+    .unit-detail-row {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .unit-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .ud-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      min-width: 140px;
+    }
+
+    .ud-value {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .ud-value .tag {
+      margin-left: 4px;
+    }
+
+    .ano-profile {
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ano-profile::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 250px;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+    }
+
+    .ano-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .ano-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .ano-rank {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      padding: 4px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .ano-info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      justify-content: center;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .rank-section {
+      padding: 100px 0;
+      background: var(--off-white);
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .rank-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px solid var(--mid-gray);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--trans-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rank-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy), var(--sky));
+    }
+
+    .rank-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .rank-stars {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      letter-spacing: 4px;
+      color: #ffd700;
+    }
+
+    .rank-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .rank-card p {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .rank-badge-img {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .wing-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .wing-card {
+      padding: 36px 28px;
+      border-radius: var(--radius-xl);
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--trans-mid);
+    }
+
+    .wing-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .wing-card.army {
+      background: linear-gradient(135deg, #2d5a27, #4a8c40);
+    }
+
+    .wing-card.navy-w {
+      background: linear-gradient(135deg, #0d2b5e, #1a3d7c);
+    }
+
+    .wing-card.air {
+      background: linear-gradient(135deg, #1a5fa8, #3498db);
+    }
+
+    .wing-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .wing-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .wing-card p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .wing-count {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-top: 16px;
+    }
+
+    @media(max-width:1024px) {
+      .rank-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:768px) {
+      .unit-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wing-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-loader">
+    <div class="loader-badge"><svg viewBox="0 0 24 24">
+        <path
+          d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z" />
+      </svg></div>
+    <div class="loader-bar"></div>
+    <p class="loader-text">Our Unit</p>
+  </div>
+  <nav id="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand">
+        <div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div>
+        <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
+      </a>
+      <div class="navbar-links">
+        <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a
+          href="unit.html" class="nav-link active">Our Unit</a><a href="activities.html"
+          class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html"
+          class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html"
+          class="nav-link">Contact</a>
+      </div>
+      <div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html"
+          class="btn-nav-enroll">Enroll Now</a></div>
+      <button class="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav">
+    <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a
+      href="unit.html" class="nav-link active">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a
+      href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a
+      href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a>
+    <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline"
+        style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger"
+        style="padding:10px 20px;font-size:.85rem;">Enroll</a></div>
+  </div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content parallax" data-speed="0.15">
+      <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Our Unit</span>
+      </div>
+      <h1 data-aos="fade-up">Our <span>NCC Unit</span></h1>
+      <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up"
+        data-aos-delay="100">Meet our dedicated ANO, discover our unit's heritage, and understand the rank structure
+        that guides our cadets.</p>
+    </div>
+  </section>
+
+  <!-- Unit Info -->
+  <section class="section bg-white">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Unit Details</p>
+        <h2 class="section-title">About <span>Our Unit</span></h2>
+      </div>
+      <div class="unit-info-grid">
+        <div class="unit-detail-card" data-aos="fade-right">
+          <h3 style="margin-bottom:24px;color:var(--navy);font-size:1.2rem;font-weight:700;">Unit Information</h3>
+          <div class="unit-detail-row"><span class="ud-label">Unit Name</span><span class="ud-value">1 HR BN NCC</span>
+          </div>
+          <div class="unit-detail-row"><span class="ud-label">Group HQ</span><span class="ud-value">Hamirpur
+              Group</span></div>
+          <div class="unit-detail-row"><span class="ud-label">State</span><span class="ud-value">Himachal Pradesh,
+              India</span></div>
+          <div class="unit-detail-row"><span class="ud-label">Wing</span><span class="ud-value">Army Wing <span
+                class="tag sky">Active</span></span></div>
+          <div class="unit-detail-row"><span class="ud-label">Strength</span><span class="ud-value">250+ Cadets</span>
+          </div>
+          <div class="unit-detail-row"><span class="ud-label">Established</span><span class="ud-value">2004</span></div>
+          <div class="unit-detail-row"><span class="ud-label">College Code</span><span
+              class="ud-value">GPH-2004-NCC</span></div>
+          <div class="unit-detail-row"><span class="ud-label">Status</span><span class="ud-value"><span
+                class="tag green">Active & Operational</span></span></div>
+          <div style="margin-top:28px;padding:20px;background:var(--off-white);border-radius:var(--radius-md);">
+            <p style="font-size:0.85rem;color:var(--text-mid);line-height:1.8;">Our unit operates under the Himachal
+              Pradesh NCC Directorate and reports to the Hamirpur Group HQ. Cadets undergo rigorous training following
+              NCC curriculum and DGNCC directives.</p>
+          </div>
+        </div>
+        <div class="ano-profile" data-aos="fade-left">
+          <div class="ano-avatar">👨‍✈️</div>
+          <div class="ano-name">Mr. Madhusudan</div>
+          <span class="ano-rank">Lect. I.T. | Associate NCC Officer (ANO)</span>
+          <div class="ano-info-row"><i class="fas fa-graduation-cap"></i> M. Tech.</div>
+          <div class="ano-info-row"><i class="fas fa-calendar"></i> Serving since: 18-05-2020 (5 years)</div>
+          <div class="ano-info-row"><i class="fas fa-medal"></i> 'A' Grade Certificate Holder</div>
+          <div class="ano-info-row"><i class="fas fa-map-marker-alt"></i> Govt. Polytechnic Hamirpur (HP)</div>
+          <div
+            style="margin-top:24px;padding:20px;background:rgba(255,255,255,0.1);border-radius:var(--radius-md);text-align:left;">
+            <p style="font-size:0.85rem;color:rgba(255,255,255,0.85);line-height:1.8;">"The NCC has given me the most
+              rewarding experience of my life — watching our cadets transform into disciplined, confident leaders is
+              truly inspiring."</p>
+          </div>
+          <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;">
+            <a href="contact.html" class="btn btn-cta-white"
+              style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);padding:10px 20px;font-size:0.85rem;border-radius:var(--radius-full);">Contact
+              ANO</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wings -->
+  <section class="section" style="background:linear-gradient(160deg,#f0f4ff 0%,#e8edf8 100%);">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Divisions</p>
+        <h2 class="section-title">Our <span>Wings</span></h2>
+        <p class="section-subtitle">Our unit operates across three wings, developing multi-dimensional capabilities in
+          our cadets.</p>
+      </div>
+      <div class="wing-cards">
+        <div class="wing-card army" data-aos="fade-up" data-aos-delay="0">
+          <div class="wing-icon">🪖</div>
+          <h3>Army Wing</h3>
+          <p>The backbone of our unit, training cadets in drill, map reading, weapon training simulation, and field
+            craft.</p>
+          <div class="wing-count">180+</div>
+          <p style="font-size:0.78rem;color:rgba(255,255,255,0.7);">Active Cadets</p>
+        </div>
+        <div class="wing-card navy-w" data-aos="fade-up" data-aos-delay="100">
+          <div class="wing-icon">⚓</div>
+          <h3>Naval Wing</h3>
+          <p>Cadets learn seamanship, navigation basics, and maritime discipline in line with Indian Naval training
+            standards.</p>
+          <div class="wing-count">40+</div>
+          <p style="font-size:0.78rem;color:rgba(255,255,255,0.7);">Active Cadets</p>
+        </div>
+        <div class="wing-card air" data-aos="fade-up" data-aos-delay="200">
+          <div class="wing-icon">✈️</div>
+          <h3>Air Wing</h3>
+          <p>Introducing cadets to aerospace fundamentals, meteorology, and aviation history with thrilling air
+            experience flights.</p>
+          <div class="wing-count">30+</div>
+          <p style="font-size:0.78rem;color:rgba(255,255,255,0.7);">Active Cadets</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rank Structure -->
+  <section class="rank-section">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Hierarchy</p>
+        <h2 class="section-title">Rank <span>Structure</span></h2>
+        <p class="section-subtitle">The NCC follows a well-defined rank hierarchy that encourages leadership development
+          at every level.</p>
+      </div>
+      <div class="rank-grid">
+        <div class="rank-card float-anim" data-aos="zoom-in" data-aos-delay="0">
+          <div class="rank-badge-img pulse-anim">⭐⭐⭐</div>
+          <div class="rank-stars">★★★</div>
+          <h4>Senior Under Officer (SUO)</h4>
+          <p>Highest cadet rank. Leads the entire cadet body.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="80">
+          <div class="rank-badge-img">⭐⭐</div>
+          <div class="rank-stars" style="color:#c0c0c0;">★★</div>
+          <h4>Under Officer (UO)</h4>
+          <p>Second in command, assists in training management.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="160">
+          <div class="rank-badge-img">⭐</div>
+          <div class="rank-stars" style="color:#cd7f32;">★</div>
+          <h4>Cadet Company Sergeant Major (CSM)</h4>
+          <p>Senior NCO responsible for company discipline.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="240">
+          <div class="rank-badge-img">🎖️</div>
+          <div class="rank-stars" style="font-size:0.8rem;">NCO</div>
+          <h4>Sergeant (Sgt)</h4>
+          <p>Non-commissioned rank leading a platoon section.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="320">
+          <div class="rank-badge-img">🏅</div>
+          <div class="rank-stars" style="font-size:0.8rem;">L/CPL</div>
+          <h4>Lance Corporal (L/Cpl)</h4>
+          <p>Junior leadership role, mentoring new cadets.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="400">
+          <div class="rank-badge-img">🟡</div>
+          <div class="rank-stars" style="font-size:0.8rem;">CDT</div>
+          <h4>Cadet</h4>
+          <p>The foundational rank for all newly enrolled members.</p>
+        </div>
+        <div class="rank-card" data-aos="zoom-in" data-aos-delay="480" style="grid-column:span 2;">
+          <div class="rank-badge-img">👨‍✈️</div>
+          <div class="rank-stars" style="font-size:0.8rem;">ANO</div>
+          <h4>Associate NCC Officer (ANO)</h4>
+          <p>Commissioned officer from teaching faculty responsible for training, administration, and overall unit
+            management.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="navbar-brand">
+            <div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div>
+            <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
+          </div>
+          <p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a
+              href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a href="gallery.html">Gallery</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <div class="footer-links"><a href="notices.html">Notice Board</a><a
+              href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a
+              href="login.html">Cadet Login</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <div class="footer-contact-item">
+            <div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span>
+          </div>
+          <div class="footer-contact-item">
+            <div class="fc-icon">📞</div><span>+91 1662 123456</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
+        <div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#"
+            class="social-btn"><i class="fab fa-instagram"></i></a></div>
+      </div>
+    </div>
+  </footer>
+  <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>

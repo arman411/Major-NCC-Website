@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Photo gallery of NCC activities, camps, and events at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .gallery-filter { display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px; }
+    .gf-btn { padding:8px 24px;border-radius:var(--radius-full);font-size:0.85rem;font-weight:600;border:2px solid var(--mid-gray);color:var(--text-mid);background:white;cursor:pointer;transition:all var(--trans-fast); }
+    .gf-btn:hover, .gf-btn.active { background:var(--navy);color:white;border-color:var(--navy); }
+
+    .masonry-grid {
+      columns: 3;
+      column-gap: 20px;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      display: block;
+    }
+    .gallery-item img { width:100%;display:block;transition:transform 0.5s ease; }
+    .gallery-item:hover img { transform:scale(1.06); }
+    .gallery-overlay {
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(13,43,94,0.8),transparent 50%);
+      opacity:0;
+      transition:opacity var(--trans-mid);
+      display:flex;align-items:flex-end;padding:20px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity:1; }
+    .gallery-overlay-text { color:white; }
+    .gallery-overlay-text h4 { font-size:0.9rem;font-weight:700;margin-bottom:4px; }
+    .gallery-overlay-text span { font-size:0.75rem;color:rgba(255,255,255,0.7); }
+    .gallery-zoom {
+      position:absolute;top:16px;right:16px;
+      width:36px;height:36px;
+      background:rgba(255,255,255,0.9);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      color:var(--navy);
+      opacity:0;
+      transition:opacity var(--trans-fast);
+    }
+    .gallery-item:hover .gallery-zoom { opacity:1; }
+
+    /* Modal */
+    .gallery-modal {
+      position:fixed;inset:0;
+      background:rgba(0,0,0,0.92);
+      z-index:2000;
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;
+      transition:all var(--trans-mid);
+    }
+    .gallery-modal.open { opacity:1;visibility:visible; }
+    .modal-img-wrap {
+      position:relative;
+      max-width:90vw;
+      max-height:90vh;
+    }
+    .modal-img-wrap img { max-width:90vw;max-height:85vh;border-radius:var(--radius-lg);object-fit:contain; }
+    .modal-close {
+      position:absolute;top:-48px;right:0;
+      width:40px;height:40px;
+      background:rgba(255,255,255,0.15);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-size:1.2rem;cursor:pointer;
+      transition:background var(--trans-fast);
+    }
+    .modal-close:hover { background:var(--red); }
+    .modal-nav {
+      position:absolute;top:50%;transform:translateY(-50%);
+      width:44px;height:44px;
+      background:rgba(255,255,255,0.15);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-size:1.2rem;cursor:pointer;
+      transition:background var(--trans-fast);
+    }
+    .modal-nav:hover { background:var(--sky); }
+    .modal-prev { left:-60px; }
+    .modal-next { right:-60px; }
+    .modal-caption { color:white;text-align:center;margin-top:16px;font-size:0.9rem; }
+
+    @media(max-width:768px){ .masonry-grid{columns:2;} .modal-prev{left:-20px;} .modal-next{right:-20px;} }
+    @media(max-width:480px){ .masonry-grid{columns:1;} }
+  
+    /* ── Pro Gallery ── */
+    .gallery-masonry {
+      columns: 3; column-gap: 16px;
+    }
+    .gallery-masonry .gallery-item {
+      break-inside: avoid; margin-bottom: 16px;
+      border-radius: var(--radius-md); overflow:hidden;
+      position:relative; cursor:pointer;
+    }
+    .gallery-masonry .gallery-item img {
+      width:100%; display:block;
+      transition: transform 0.5s ease;
+    }
+    .gallery-masonry .gallery-item:hover img { transform:scale(1.06); }
+    .gallery-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(13,43,94,0.85) 0%, transparent 60%);
+      opacity:0; transition:opacity 0.3s;
+      display:flex; align-items:flex-end; padding:16px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity:1; }
+    .gallery-overlay-text { color:white; font-size:0.85rem; font-weight:600; }
+    /* Lightbox */
+    #lightbox {
+      position:fixed; inset:0; background:rgba(0,0,0,0.92);
+      z-index:9999; display:none; align-items:center; justify-content:center;
+      backdrop-filter:blur(8px);
+    }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:90vw; max-height:88vh; border-radius:var(--radius-lg); box-shadow:0 40px 100px rgba(0,0,0,0.6); }
+    #lightbox-close { position:absolute; top:24px; right:32px; color:white; font-size:2rem; cursor:pointer; background:rgba(255,255,255,0.15); border-radius:50%; width:48px;height:48px;display:flex;align-items:center;justify-content:center; transition:background 0.2s; }
+    #lightbox-close:hover { background:var(--red); }
+    @media(max-width:768px){ .gallery-masonry { columns:2; } }
+    @media(max-width:480px){ .gallery-masonry { columns:1; } }
+    </style>
+</head>
+<body>
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Gallery</p></div>
+<nav id="navbar"><div class="navbar-inner"><a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a><div class="navbar-links"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link active">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a></div><div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a></div><button class="hamburger"><span></span><span></span><span></span></button></div></nav>
+<div class="mobile-nav"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link active">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a><div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div></div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Gallery</span></div>
+    <h1 data-aos="fade-up">Photo <span>Gallery</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">Reliving the most memorable moments of our NCC journey through photographs.</p>
+  </div>
+</section>
+
+<section class="section bg-white">
+  <div class="container">
+    <div class="gallery-filter" data-aos="fade-up">
+      <button class="gf-btn active" data-gfilter="all">All Photos</button>
+      <button class="gf-btn" data-gfilter="camps">Camps</button>
+      <button class="gf-btn" data-gfilter="parade">Parade</button>
+      <button class="gf-btn" data-gfilter="campus">Campus</button>
+      <button class="gf-btn" data-gfilter="social">Social Service</button>
+    </div>
+    <div class="masonry-grid" id="galleryGrid">
+      <div class="skeleton skeleton-shimmer" style="height:300px; border-radius:var(--radius-lg); margin-bottom:20px;"></div>
+      <div class="skeleton skeleton-shimmer" style="height:400px; border-radius:var(--radius-lg); margin-bottom:20px;"></div>
+      <div class="skeleton skeleton-shimmer" style="height:250px; border-radius:var(--radius-lg); margin-bottom:20px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="gallery-modal" id="galleryModal">
+  <div class="modal-img-wrap">
+    <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    <button class="modal-nav modal-prev" id="modalPrev"><i class="fas fa-chevron-left"></i></button>
+    <img id="modalImg" src="" alt="" />
+    <button class="modal-nav modal-next" id="modalNext"><i class="fas fa-chevron-right"></i></button>
+    <p class="modal-caption" id="modalCaption"></p>
+  </div>
+</div>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a href="gallery.html">Gallery</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="notices.html">Notice Board</a><a href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a href="login.html">Cadet Login</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 123456</span></div></div></div></div></div><p class="footer-made">Made with <span>❤️</span> for NCC Hamirpur — Serving with Pride</p><div class="hide" style="display:none"><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p><div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-btn"><i class="fab fa-instagram"></i></a></div></div></div>
+<style>
+/* Pro Footer Extras */
+#footer {
+  background: linear-gradient(160deg, #0a1f4a 0%, #0d2b5e 60%, #0f3270 100%);
+  position: relative; overflow: hidden;
+}
+#footer::before {
+  content:''; position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+}
+.social-btn:nth-child(1):hover { background:#1877f2; }
+.social-btn:nth-child(2):hover { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.social-btn:nth-child(3):hover { background:#ff0000; }
+.footer-made { text-align:center; font-size:0.75rem; color:rgba(255,255,255,0.25); padding:12px 0 0; }
+.footer-made span { color:#f0b429; }
+</style>
+</footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script>
+// Gallery Data
+let gItems = [];
+
+// Gallery Filter
+const gfBtns = document.querySelectorAll('.gf-btn');
+gfBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    gfBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.gfilter;
+    gItems.forEach(item => {
+      item.style.display = (f === 'all' || item.dataset.gcategory === f) ? '' : 'none';
+    });
+  });
+});
+
+// Modal
+const modal = document.getElementById('galleryModal');
+const modalImg = document.getElementById('modalImg');
+const modalCaption = document.getElementById('modalCaption');
+let currentIdx = 0;
+let visibleItems = [];
+
+function openModal(idx) {
+  visibleItems = [...gItems].filter(i => i.style.display !== 'none');
+  currentIdx = idx;
+  showModalItem(currentIdx);
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function showModalItem(idx) {
+  const item = visibleItems[idx];
+  if (!item) return;
+  modalImg.src = item.querySelector('img').src;
+  modalCaption.textContent = item.dataset.caption || '';
+}
+document.getElementById('modalClose').addEventListener('click', () => {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+});
+document.getElementById('modalPrev').addEventListener('click', () => {
+  currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length;
+  showModalItem(currentIdx);
+});
+document.getElementById('modalNext').addEventListener('click', () => {
+  currentIdx = (currentIdx + 1) % visibleItems.length;
+  showModalItem(currentIdx);
+});
+modal.addEventListener('click', e => { if(e.target === modal) { modal.classList.remove('open'); document.body.style.overflow=''; } });
+document.addEventListener('keydown', e => {
+  if (!modal.classList.contains('open')) return;
+  if (e.key === 'ArrowLeft') { currentIdx = (currentIdx-1+visibleItems.length)%visibleItems.length; showModalItem(currentIdx); }
+  if (e.key === 'ArrowRight') { currentIdx = (currentIdx+1)%visibleItems.length; showModalItem(currentIdx); }
+  if (e.key === 'Escape') { modal.classList.remove('open'); document.body.style.overflow=''; }
+});
+
+async function loadGallery() {
+  const grid = document.getElementById('galleryGrid');
+  try {
+    const res = await fetchJson('/gallery');
+    if (res.success && res.gallery.length > 0) {
+      grid.innerHTML = res.gallery.map(item => {
+        const imgPath = (item.image_path.startsWith('http') || item.image_path.startsWith('images/') || item.image_path.startsWith('../')) 
+                        ? item.image_path 
+                        : '/uploads/' + item.image_path;
+        return `
+      <div class="gallery-item" data-gcategory="${item.category.toLowerCase()}" data-caption="${item.title}">
+        <img src="${imgPath}" alt="${item.title}" style="object-fit:cover;" />
+        <div class="gallery-overlay"><div class="gallery-overlay-text"><h4>${item.title}</h4><span>${item.description || item.category}</span></div></div>
+        <div class="gallery-zoom"><i class="fas fa-expand"></i></div>
+      </div>`;
+      }).join('');
+      
+      // Update global items logic
+      gItems = document.querySelectorAll('.gallery-item');
+      gItems.forEach(item => {
+        item.addEventListener('click', () => {
+          visibleItems = [...gItems].filter(it => it.style.display !== 'none');
+          const visIdx = visibleItems.indexOf(item);
+          openModal(visIdx);
+        });
+      });
+      
+    } else {
+      grid.innerHTML = '<p style="text-align:center;padding:40px;width:100%;">No gallery images posted yet.</p>';
+    }
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = '<p style="text-align:center;padding:40px;width:100%;">Error loading gallery.</p>';
+  }
+}
+
+// Initial Fetch
+loadGallery();
+</script>
+<script src="../js/pro-effects.js"></script>
+
+</body>
+</html>
+

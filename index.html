@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NCC Unit – Government Polytechnic Hamirpur (HP) | Unity &amp; Discipline</title>
+  <meta name="description" content="Official NCC unit website of Government Polytechnic Hamirpur (HP). Inspiring cadets since decades through unity, discipline, and service." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d2b5e" />
+  <script src="js/dark-mode.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #f0f4ff 0%, #e8edf8 40%, #eef5ff 100%);
+      padding-top: var(--navbar-h);
+    }
+    .hero-bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-shape-1 {
+      width: 700px; height: 700px;
+      top: -200px; right: -100px;
+      background: radial-gradient(circle, rgba(52,152,219,0.12) 0%, transparent 70%);
+      animation: floatBg 8s ease-in-out infinite;
+    }
+    .hero-shape-2 {
+      width: 500px; height: 500px;
+      bottom: -150px; left: -80px;
+      background: radial-gradient(circle, rgba(192,57,43,0.08) 0%, transparent 70%);
+      animation: floatBg 10s ease-in-out infinite reverse;
+    }
+    .hero-shape-3 {
+      width: 300px; height: 300px;
+      top: 30%; left: 35%;
+      background: radial-gradient(circle, rgba(13,43,94,0.06) 0%, transparent 70%);
+      animation: floatBg 12s ease-in-out infinite 2s;
+    }
+    @keyframes floatBg {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -30px) scale(1.05); }
+      66% { transform: translate(-15px, 20px) scale(0.98); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding: 60px 0;
+    }
+    .hero-text {}
+    .hero-badge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: rgba(13,43,94,0.06);
+      border: 1px solid rgba(13,43,94,0.14);
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-badge-chip .dot-pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.6); }
+      50% { box-shadow: 0 0 0 6px rgba(192,57,43,0); }
+    }
+    .hero-title {
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 24px;
+    }
+    .hero-title span.accent { color: var(--red); }
+    .hero-title span.sky { color: var(--sky); }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      max-width: 480px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .hero-stats-row {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-mini-stat { text-align: center; }
+    .hero-mini-stat strong {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .hero-mini-stat span {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .hero-mini-divider {
+      width: 1px;
+      background: var(--mid-gray);
+      align-self: stretch;
+    }
+
+    /* Hero 3D Visual */
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .badge-wrapper {
+      position: relative;
+      width: 420px;
+      height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #badge-canvas {
+      width: 320px;
+      height: 320px;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 20px 60px rgba(13,43,94,0.25));
+    }
+    .badge-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(52,152,219,0.2) 0%, rgba(13,43,94,0.1) 40%, transparent 70%);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%,100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .badge-ring-anim {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      animation: ringRotate 8s linear infinite;
+    }
+    .badge-ring-anim:nth-child(2) {
+      inset: 30px;
+      border-color: rgba(192,57,43,0.3);
+      animation-duration: 12s;
+      animation-direction: reverse;
+    }
+    .badge-ring-anim:nth-child(3) {
+      inset: 60px;
+      border-color: rgba(52,152,219,0.25);
+      animation-duration: 20s;
+    }
+    @keyframes ringRotate {
+      to { transform: rotate(360deg); }
+    }
+    .floating-chip {
+      position: absolute;
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      box-shadow: var(--shadow-md);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 3;
+      animation: chipFloat 4s ease-in-out infinite;
+    }
+    .floating-chip .chip-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .floating-chip:nth-of-type(1) { top: 10%; left: -20px; animation-delay: 0s; }
+    .floating-chip:nth-of-type(2) { bottom: 15%; right: -20px; animation-delay: 1.5s; }
+    .floating-chip:nth-of-type(3) { top: 55%; left: -40px; animation-delay: 0.8s; }
+    @keyframes chipFloat {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ── Stats Section ────────────────────────────────── */
+    .stats-section {
+      background: white;
+      padding: 80px 0;
+      border-top: 1px solid var(--mid-gray);
+    }
+
+    /* ── About Teaser ─────────────────────────────────── */
+    .about-teaser {
+      background: var(--off-white);
+      padding: 100px 0;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .about-image-stack {
+      position: relative;
+      height: 480px;
+    }
+    .about-img-main {
+      width: 80%;
+      height: 360px;
+      object-fit: cover;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .about-img-secondary {
+      width: 55%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      position: absolute;
+      bottom: 0; right: 0;
+      border: 4px solid white;
+    }
+    .about-badge-chip {
+      position: absolute;
+      top: 50%; left: 60%;
+      transform: translate(-50%, -50%);
+      background: var(--navy);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      min-width: 120px;
+      z-index: 3;
+    }
+    .about-badge-chip strong { font-size: 1.6rem; font-weight: 800; display: block; }
+    .about-text .section-header { text-align: left; margin-bottom: 32px; }
+    .about-text .section-header .section-label { }
+    .about-features { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; }
+    .about-feature { display: flex; align-items: flex-start; gap: 16px; }
+    .af-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .af-icon.navy { background: rgba(13,43,94,0.08); }
+    .af-icon.red { background: rgba(192,57,43,0.08); }
+    .af-icon.sky { background: rgba(52,152,219,0.08); }
+    .af-text h4 { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .af-text p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+
+    /* ── Activities Preview ───────────────────────────── */
+    .activities-section { padding: 100px 0; background: linear-gradient(160deg, #f8f9fc 0%, #eef3ff 100%); }
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .activity-card {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      background: white;
+      transition: all var(--trans-mid);
+      border: 1px solid var(--mid-gray);
+    }
+    .activity-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+    }
+    .activity-img {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+    .activity-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .activity-card:hover .activity-img img { transform: scale(1.08); }
+    .activity-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(13,43,94,0.6), transparent);
+    }
+    .activity-tag {
+      position: absolute;
+      top: 16px; left: 16px;
+      background: var(--red);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      letter-spacing: 1px;
+    }
+    .activity-body { padding: 24px; }
+    .activity-body h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .activity-body p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.7; }
+    .activity-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--sky);
+      transition: gap var(--trans-fast);
+    }
+    .activity-link:hover { gap: 10px; }
+
+    /* ── Notice Preview ───────────────────────────────── */
+    .notice-preview { padding: 100px 0; background: white; }
+    .notice-list { display: flex; flex-direction: column; gap: 16px; }
+    .notice-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      background: var(--off-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--mid-gray);
+      transition: all var(--trans-mid);
+    }
+    .notice-item:hover { border-color: var(--sky); background: white; box-shadow: var(--shadow-sm); }
+    .notice-date-badge {
+      min-width: 60px;
+      text-align: center;
+      background: var(--navy);
+      color: white;
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      flex-shrink: 0;
+    }
+    .notice-date-badge .nd-day { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+    .notice-date-badge .nd-month { font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; margin-top: 4px; }
+    .notice-date-badge.red { background: var(--red); }
+    .notice-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .notice-content p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+    .notice-new {
+      flex-shrink: 0;
+      background: var(--red);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 1px;
+      align-self: flex-start;
+    }
+
+    /* ── CTA Section ──────────────────────────────────── */
+    .cta-section {
+      padding: 100px 0;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, #1e4b9e 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -40%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    }
+    .cta-section::after {
+      content: '';
+      position: absolute;
+      bottom: -40%; left: -5%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(192,57,43,0.15) 0%, transparent 70%);
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-title {
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+    .cta-subtitle { font-size: 1rem; color: rgba(255,255,255,0.7); max-width: 500px; margin: 0 auto 40px; }
+    .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-cta-white {
+      background: white;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .btn-cta-white:hover { background: rgba(255,255,255,0.9); transform: translateY(-3px); }
+    .btn-cta-outline {
+      border: 2px solid rgba(255,255,255,0.4);
+      color: white;
+      background: transparent;
+    }
+    .btn-cta-outline:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-3px); }
+
+    /* ── Leaderboard Section ──────────────────────────── */
+    .leaderboard-section { padding: 100px 0; background: linear-gradient(160deg, #f0f4ff 0%, #ffffff 100%); }
+    .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 16px; min-height: 400px; margin-top: 48px; padding-bottom: 40px; }
+    .podium-step {
+      width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      position: relative; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .podium-step:hover { transform: translateY(-12px); z-index: 10; cursor: pointer; }
+    .podium-avatar { width: 80px; height: 80px; border-radius: 50%; box-shadow: var(--shadow-md); margin-bottom: -40px; z-index: 2; position: relative; border: 4px solid white; object-fit: cover; background: var(--off-white); }
+    
+    /* 3D Box Styling for Podium Steps */
+    .podium-box {
+      width: 100%; border-radius: 12px 12px 0 0; position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: 'Poppins', sans-serif;
+    }
+    .podium-box strong { font-size: 3rem; font-weight: 900; line-height: 1; opacity: 0.9; text-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .podium-box span { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-top: 4px; }
+    .podium-name { font-weight: 700; color: var(--navy); margin-top: 16px; font-size: 0.9rem; text-align: center; }
+    .podium-points { font-size: 0.75rem; color: var(--text-light); font-weight: 600; text-align: center; }
+    
+    /* Colors and Heights for Ranks */
+    .rank-1 .podium-box { height: 260px; background: linear-gradient(135deg, #f1c40f, #f39c12); border-bottom: 8px solid #d68910; }
+    .rank-2 .podium-box { height: 190px; background: linear-gradient(135deg, #bdc3c7, #95a5a6); border-bottom: 8px solid #7f8c8d; }
+    .rank-3 .podium-box { height: 160px; background: linear-gradient(135deg, #e67e22, #d35400); border-bottom: 8px solid #ba4a00; }
+    
+    .leaderboard-list {
+      max-width: 600px; margin: 40px auto 0; background: white; border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--mid-gray); overflow: hidden;
+    }
+    .lb-row { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--light-gray); transition: background var(--trans-fast); }
+    .lb-row:hover { background: var(--off-white); }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank { font-weight: 800; color: var(--navy); width: 40px; font-size: 1.1rem; }
+    .lb-details { flex: 1; }
+    .lb-name { font-weight: 700; color: var(--navy); font-size: 0.95rem; display: block; }
+    .lb-branch { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; }
+    .lb-points { font-weight: 800; color: var(--red); background: rgba(192,57,43,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
+
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-image-stack { height: 320px; margin-bottom: 24px; }
+      .activities-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .hero-content { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-visual { order: -1; }
+      .badge-wrapper { width: 280px; height: 280px; }
+      #badge-canvas { width: 240px; height: 240px; }
+      .hero-actions { justify-content: center; }
+      .hero-stats-row { justify-content: center; }
+      .floating-chip { display: none; }
+      .activities-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress"></div>
+<!-- Custom Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Page Loader -->
+<div id="page-loader">
+  <div class="loader-badge">
+    <svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg>
+  </div>
+  <div class="loader-bar"></div>
+  <p class="loader-text">NCC Hamirpur</p>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-brand">
+      <div class="brand-logo"><img src="images/ncc_badge.png" alt="NCC Logo" /></div>
+      <div class="brand-text">
+        <strong>NCC Unit</strong>
+        <span>Govt. Polytechnic Hamirpur (HP)</span>
+      </div>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html" class="nav-link active">Home</a>
+      <a href="pages/about.html" class="nav-link">About NCC</a>
+      <a href="pages/unit.html" class="nav-link">Our Unit</a>
+      <a href="pages/activities.html" class="nav-link">Activities</a>
+      <a href="pages/gallery.html" class="nav-link">Gallery</a>
+      <a href="pages/achievements.html" class="nav-link">Achievements</a>
+      <a href="pages/notices.html" class="nav-link">Notices</a>
+      <a href="pages/contact.html" class="nav-link">Contact</a>
+    </div>
+    <div class="navbar-actions">
+      <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+      <a href="pages/login.html" class="btn-nav-login" id="nav-login-btn">Login</a>
+      <a href="pages/enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+    </div>
+    <button class="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav">
+  <a href="index.html" class="nav-link">Home</a>
+  <a href="pages/about.html" class="nav-link">About NCC</a>
+  <a href="pages/unit.html" class="nav-link">Our Unit</a>
+  <a href="pages/activities.html" class="nav-link">Activities</a>
+  <a href="pages/gallery.html" class="nav-link">Gallery</a>
+  <a href="pages/achievements.html" class="nav-link">Achievements</a>
+  <a href="pages/notices.html" class="nav-link">Notices</a>
+  <a href="pages/contact.html" class="nav-link">Contact</a>
+  <div class="mobile-nav-actions">
+    <a href="pages/login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a>
+    <a href="pages/enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a>
+  </div>
+</div>
+
+<!-- ── HERO SECTION ─────────────────────────────────── -->
+<section class="hero">
+  <canvas id="particle-canvas"></canvas>
+<div class="hero-bg-shape hero-shape-1"></div>
+  <div class="hero-bg-shape hero-shape-2"></div>
+  <div class="hero-bg-shape hero-shape-3"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge-chip">
+          <span class="dot-pulse"></span>
+          Government Polytechnic Hamirpur (HP) NCC Unit
+        </div>
+        <h1 class="hero-title" id="heroTitle">
+          <span class="sky">Unity</span> and<br/>
+          <span class="accent">Discipline</span><br/>
+          <span id="typewriter-text"></span><span class="typewriter-cursor"></span>
+        </h1>
+        <p class="hero-subtitle">
+          Shaping the leaders of tomorrow through courage, discipline, and service.
+          Join the NCC unit and be part of India's finest youth organisation.
+        </p>
+        <div class="hero-actions">
+          <a href="pages/enrollment.html" class="btn btn-danger btn-glow">
+            <i class="fas fa-user-plus"></i> Enroll as Cadet
+          </a>
+          <a href="pages/about.html" class="btn btn-outline">
+            <i class="fas fa-play-circle"></i> Learn More
+          </a>
+        </div>
+        <div class="hero-stats-row">
+          <div class="hero-mini-stat">
+            <strong><span data-count="250" data-suffix="+">0</span></strong>
+            <span>Active Cadets</span>
+          </div>
+          <div class="hero-mini-divider"></div>
+          <div class="hero-mini-stat">
+            <strong><span data-count="48" data-suffix="+">0</span></strong>
+            <span>Camps Attended</span>
+          </div>
+          <div class="hero-mini-divider"></div>
+          <div class="hero-mini-stat">
+            <strong><span data-count="32" data-suffix="+">0</span></strong>
+            <span>Awards Won</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="badge-wrapper">
+          <div class="badge-glow"></div>
+          <div class="badge-ring-anim"></div>
+          <div class="badge-ring-anim"></div>
+          <div class="badge-ring-anim"></div>
+          <canvas id="badge-canvas"></canvas>
+          <div class="floating-chip" style="background:white;">
+            <div class="chip-icon" style="background:rgba(192,57,43,0.1);color:var(--red);">🏆</div>
+            <div><div style="font-size:0.65rem;color:var(--text-light)">Best Cadet</div>Award 2024</div>
+          </div>
+          <div class="floating-chip" style="background:white;">
+            <div class="chip-icon" style="background:rgba(13,43,94,0.1);color:var(--navy);">🎖️</div>
+            <div><div style="font-size:0.65rem;color:var(--text-light)">RDC</div>Republic Day Camp</div>
+          </div>
+          <div class="floating-chip" style="background:white;">
+            <div class="chip-icon" style="background:rgba(52,152,219,0.1);color:var(--sky);">⭐</div>
+            <div><div style="font-size:0.65rem;color:var(--text-light)">Grade</div>A Certificate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ── STATS SECTION ──────────────────────────────────── -->
+<section class="stats-dark-section" data-aos="fade-up">
+  <div class="container">
+    <div class="grid-4" style="gap:24px;">
+      <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="0">
+        <span class="stat-icon">🎓</span>
+        <span class="stat-number" data-count="250" data-suffix="+">0</span>
+        <p class="stat-label">Active Cadets</p>
+      </div>
+      <div class="stat-card-dark red" data-aos="fade-up" data-aos-delay="100">
+        <span class="stat-icon">⛺</span>
+        <span class="stat-number" data-count="48" data-suffix="+">0</span>
+        <p class="stat-label">Camps Attended</p>
+      </div>
+      <div class="stat-card-dark sky" data-aos="fade-up" data-aos-delay="200">
+        <span class="stat-icon">🏆</span>
+        <span class="stat-number" data-count="32" data-suffix="+">0</span>
+        <p class="stat-label">Awards & Honours</p>
+      </div>
+      <div class="stat-card-dark" data-aos="fade-up" data-aos-delay="300">
+        <span class="stat-icon">📅</span>
+        <span class="stat-number" data-count="20" data-suffix="+">0</span>
+        <p class="stat-label">Years of Service</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT TEASER ───────────────────────────────────── -->
+<section class="about-teaser section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image-stack" data-aos="fade-right">
+        <img src="images/new_img1.jpg" alt="Government Polytechnic Hamirpur (HP) Campus" class="about-img-main parallax" data-speed="0.08" />
+        <img src="images/new_img2.jpg" alt="Academic Block – Govt. Polytechnic Hamirpur (HP)" class="about-img-secondary parallax" data-speed="0.15" />
+        <div class="about-badge-chip float-anim">
+          <strong>1963</strong>
+          Est. Year
+        </div>
+      </div>
+      <div class="about-text" data-aos="fade-left">
+        <div class="section-header">
+          <p class="section-label">Who We Are</p>
+          <h2 class="section-title">The NCC Unit of<br/><span>Govt. Polytechnic Hamirpur (HP)</span></h2>
+          <p class="section-subtitle">Building character, courage, and commitment in the youth of Himachal Pradesh since over two decades.</p>
+        </div>
+        <div class="about-features">
+          <div class="about-feature">
+            <div class="af-icon navy"><i class="fas fa-flag"></i></div>
+            <div class="af-text">
+              <h4>Patriotism & Discipline</h4>
+              <p>We instil national pride and a disciplined lifestyle through structured training programs and ceremonial activities.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="af-icon red"><i class="fas fa-hands-helping"></i></div>
+            <div class="af-text">
+              <h4>Community Service</h4>
+              <p>Our cadets actively participate in social service, disaster relief, and national integration camps.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="af-icon sky"><i class="fas fa-medal"></i></div>
+            <div class="af-text">
+              <h4>Excellence & Awards</h4>
+              <p>Our unit has consistently produced top performers in RDC, TSC, and national-level NCC events.</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-32">
+          <a href="pages/about.html" class="btn btn-outline float-anim" style="margin-top:20px;">
+            Read Full History <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ACTIVITIES ─────────────────────────────────────── -->
+<section class="activities-section-pro">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">Camps &amp; <span>Activities</span></h2>
+      <p class="section-subtitle">From Republic Day Camp to social service, our cadets experience a diverse range of activities.</p>
+    </div>
+    <div class="activities-grid">
+      <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="0">
+        <div class="activity-img-pro">
+          <img src="images/new_img3.jpg" alt="Republic Day Camp" />
+          <div class="activity-img-overlay-2"></div>
+          <span class="activity-tag-2">RDC</span>
+          <div class="activity-caption"><p>Selected cadets represent Himachal Pradesh at the prestigious Republic Day Camp in New Delhi.</p></div>
+        </div>
+        <div class="activity-body-pro">
+          <h3>Republic Day Camp</h3>
+          <a href="pages/activities.html" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="120">
+        <div class="activity-img-pro">
+          <img src="images/new_img4.jpg" alt="Thal Sainik Camp" />
+          <div class="activity-img-overlay-2"></div>
+          <span class="activity-tag-2">TSC</span>
+          <div class="activity-caption"><p>An intensive military-themed camp testing physical endurance, tactical knowledge and team spirit.</p></div>
+        </div>
+        <div class="activity-body-pro">
+          <h3>Thal Sainik Camp</h3>
+          <a href="pages/activities.html" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="240">
+        <div class="activity-img-pro">
+          <img src="images/new_img5.jpg" alt="Social Service" />
+          <div class="activity-img-overlay-2"></div>
+          <span class="activity-tag-2">SOCIAL</span>
+          <div class="activity-caption"><p>Blood donation drives, cleanliness campaigns, and community outreach at the heart of NCC ethos.</p></div>
+        </div>
+        <div class="activity-body-pro">
+          <h3>Social Service</h3>
+          <a href="pages/activities.html" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-48">
+      <a href="pages/activities.html" class="btn btn-outline">
+        View All Activities <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── LEADERBOARD PREVIEW ────────────────────────────── -->
+<section class="leaderboard-section">
+  <div class="container">
+    <div class="section-header text-center" data-aos="fade-up">
+      <p class="section-label">Cadet Rankings</p>
+      <h2 class="section-title">Hall of <span>Fame</span></h2>
+      <p class="section-subtitle">Recognising the top-performing cadets based on attendance, camps, and discipline.</p>
+    </div>
+    
+    <!-- 3D Podium Container -->
+    <div class="podium-container" id="leaderboardPodium">
+      <div style="text-align:center; padding:40px; color:var(--text-light);"><i class="fas fa-spinner fa-spin fa-2x"></i><br/>Loading Leaders...</div>
+    </div>
+    
+    <!-- List for Ranks 4-10 -->
+    <div class="leaderboard-list" id="leaderboardList" style="display:none;" data-aos="fade-up" data-aos-delay="200">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ── NOTICE PREVIEW ─────────────────────────────────── -->
+<section class="notice-preview">
+  <div class="container">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:48px;" data-aos="fade-up">
+      <div>
+        <p class="section-label">Stay Updated</p>
+        <h2 class="section-title">Latest <span>Notices</span></h2>
+      </div>
+      <a href="pages/notices.html" class="btn btn-outline">All Notices</a>
+    </div>
+    <div class="timeline-list" data-aos="fade-up">
+      <div class="timeline-item">
+        <div class="timeline-pin">
+          <div class="timeline-dot urgent"></div>
+          <div class="timeline-date">10<br/>MAR</div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-tag-row">
+            <span class="tag red">URGENT</span>
+            <span class="notice-new" style="margin-left:auto;">NEW</span>
+          </div>
+          <h4>CATC Camp Registration Open – Batch 2025</h4>
+          <p>All interested cadets must submit their applications by 20th March. Contact the ANO office for forms.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-pin">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">05<br/>MAR</div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-tag-row">
+            <span class="tag sky">INSPECTION</span>
+            <span class="notice-new" style="margin-left:auto;">NEW</span>
+          </div>
+          <h4>Annual Inspection Date Announced – 15th April 2025</h4>
+          <p>All cadets are required to attend the Annual Inspection in proper uniform. Attendance is mandatory.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-pin">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">28<br/>FEB</div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-tag-row">
+            <span class="tag">SOCIAL</span>
+          </div>
+          <h4>Blood Donation Camp – March 2025</h4>
+          <p>Annual blood donation camp to be held in collaboration with Civil Hospital Hamirpur on 22nd March 2025.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA SECTION ────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container cta-content">
+    <div data-aos="fade-up">
+      <p class="section-label" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.9);">Join Us Today</p>
+      <h2 class="cta-title">Ready to Become an NCC Cadet?</h2>
+      <p class="cta-subtitle">Take the first step towards a life of discipline, honour, and excellence. Join the NCC family today.</p>
+      <div class="cta-actions">
+        <a href="pages/enrollment.html" class="btn btn-cta-white">
+          <i class="fas fa-user-plus"></i> Enroll Now
+        </a>
+        <a href="pages/contact.html" class="btn btn-cta-outline">
+          <i class="fas fa-phone"></i> Contact ANO
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="navbar-brand">
+          <div class="brand-logo"><img src="images/ncc_badge.png" alt="NCC Logo" /></div>
+          <div class="brand-text">
+            <strong>NCC Unit</strong>
+            <span>Govt. Polytechnic Hamirpur (HP)</span>
+          </div>
+        </div>
+        <p class="footer-desc">Building disciplined, patriotic and self-reliant citizens since decades. Serving the nation through the youth of Himachal Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="pages/about.html">About NCC</a>
+          <a href="pages/unit.html">Our Unit</a>
+          <a href="pages/activities.html">Activities</a>
+          <a href="pages/gallery.html">Gallery</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <div class="footer-links">
+          <a href="pages/notices.html">Notice Board</a>
+          <a href="pages/achievements.html">Achievements</a>
+          <a href="pages/enrollment.html">Enroll Now</a>
+          <a href="pages/login.html">Cadet Login</a>
+          <a href="pages/admin-login.html">Admin</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <div class="footer-contact-item">
+          <div class="fc-icon">📍</div>
+          <span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001, Himachal Pradesh</span>
+        </div>
+        <div class="footer-contact-item">
+          <div class="fc-icon">📞</div>
+          <span>+91 1662 123456</span>
+        </div>
+        <div class="footer-contact-item">
+          <div class="fc-icon">✉️</div>
+          <span>ncc@gph.edu.in</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/three-badge.js"></script>
+<script>
+  // GSAP Hero animations
+  if (typeof gsap !== 'undefined') {
+    gsap.from('.hero-badge-chip', { opacity:0, y:30, duration:0.7, delay:0.5 });
+    gsap.from('.hero-title', { opacity:0, y:40, duration:0.8, delay:0.7 });
+    gsap.from('.hero-subtitle', { opacity:0, y:30, duration:0.7, delay:0.9 });
+    gsap.from('.hero-actions', { opacity:0, y:30, duration:0.7, delay:1.1 });
+    gsap.from('.hero-stats-row', { opacity:0, y:20, duration:0.7, delay:1.3 });
+    gsap.from('.badge-wrapper', { opacity:0, scale:0.8, duration:1, delay:0.6, ease:'back.out(1.4)' });
+  }
+</script>
+
+<script>
+/* ══ Scroll Progress Bar ══ */
+const progressBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  if (progressBar) progressBar.style.width = Math.min(scrolled, 100) + '%';
+}, { passive: true });
+
+/* ══ Custom Cursor ══ */
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let cx = 0, cy = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  if (dot)  { dot.style.left  = cx + 'px'; dot.style.top  = cy + 'px'; }
+  if (ring) { ring.style.left = cx + 'px'; ring.style.top = cy + 'px'; }
+});
+document.querySelectorAll('a,button,.btn,.activity-card-pro,.stat-card-dark,.timeline-card').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+});
+
+/* ══ Particle Canvas ══ */
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COLORS = ['rgba(13,43,94,', 'rgba(52,152,219,', 'rgba(192,57,43,'];
+  for (let i = 0; i < 55; i++) {
+    const col = COLORS[Math.floor(Math.random() * COLORS.length)];
+    particles.push({
+      x: Math.random() * 1200,
+      y: Math.random() * 800,
+      r: Math.random() * 1.8 + 0.4,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.5 + 0.15,
+      color: col
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.fill();
+    });
+    // Draw connecting lines between nearby particles
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(13,43,94,' + ((1 - dist/120) * 0.08) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══ Typewriter Effect ══ */
+(function() {
+  const el = document.getElementById('typewriter-text');
+  if (!el) return;
+  const words = ['Above All', 'For India', 'With Pride'];
+  let wi = 0, ci = 0, deleting = false;
+  function type() {
+    const word = words[wi];
+    if (!deleting) {
+      el.textContent = word.slice(0, ++ci);
+      if (ci === word.length) { deleting = true; setTimeout(type, 2200); return; }
+    } else {
+      el.textContent = word.slice(0, --ci);
+      if (ci === 0) { deleting = false; wi = (wi + 1) % words.length; }
+    }
+    setTimeout(type, deleting ? 50 : 90);
+  }
+  setTimeout(type, 1200);
+})();
+
+/* ══ Counter-up on scroll ══ */
+const counterObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count), suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = Math.ceil(target / 60);
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current + suffix;
+        if (current >= target) clearInterval(timer);
+      }, 24);
+    });
+    counterObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.stats-dark-section').forEach(s => counterObserver.observe(s));
+
+/* ══ 3D Leaderboard Data Fetch ══ */
+(async function initLeaderboard() {
+  const podiumDiv = document.getElementById('leaderboardPodium');
+  const listDiv = document.getElementById('leaderboardList');
+  if (!podiumDiv) return;
+
+  try {
+    const res = await fetch('/api/leaderboard').then(r => r.json());
+    if (res.success && res.leaderboard.length > 0) {
+      const leaders = res.leaderboard;
+      
+      // Top 3 Podium: Render order should be Rank 2, Rank 1, Rank 3 for visual balance
+      let podiumHtml = '';
+      if(leaders[1]) podiumHtml += renderPodiumStep(leaders[1], 2);
+      if(leaders[0]) podiumHtml += renderPodiumStep(leaders[0], 1);
+      if(leaders[2]) podiumHtml += renderPodiumStep(leaders[2], 3);
+      
+      podiumDiv.innerHTML = podiumHtml;
+      
+      // Rank 4-10 List
+      if (leaders.length > 3) {
+        listDiv.style.display = 'block';
+        listDiv.innerHTML = leaders.slice(3).map((l, idx) => `
+          <div class="lb-row">
+            <div class="lb-rank">#${idx + 4}</div>
+            <div class="lb-details">
+              <span class="lb-name">${l.name}</span>
+              <span class="lb-branch">${l.roll_no}</span>
+            </div>
+            <div class="lb-points">${l.points} pts</div>
+          </div>
+        `).join('');
+      } else {
+        listDiv.style.display = 'none';
+      }
+    } else {
+      podiumDiv.innerHTML = '<p style="color:var(--text-light);">No leaderboard data yet.</p>';
+    }
+  } catch (e) {
+    podiumDiv.innerHTML = '<p style="color:var(--red);">Error loading leaderboard.</p>';
+  }
+})();
+
+function renderPodiumStep(cadet, rank) {
+  const photo = cadet.photo_url || 'images/default_avatar.png'; // Fallback
+  return `
+    <div class="podium-step rank-${rank}" data-aos="fade-up" data-aos-delay="${rank * 150}">
+      <img src="${photo}" alt="${cadet.name}" class="podium-avatar" />
+      <div class="podium-box">
+        <strong>${rank}</strong>
+        <span>Rank</span>
+      </div>
+      <div class="podium-name">${cadet.name.split(' ')[0]}</div>
+      <div class="podium-points">${cadet.points} pts</div>
+    </div>
+  `;
+}
+</script>
+
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="display:none;">
+  <span>📲</span>
+  <p>Install NCC GPH app on your device!</p>
+  <button id="pwa-install-btn">Install</button>
+  <button id="pwa-dismiss-btn">✕</button>
+</div>
+
+<!-- API Scripts -->
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+// ── Wire stats from API ───────────────────────────────────────────────────────
+(async function loadStats() {
+  const res = await NccAPI.getPublicStats();
+  if (res.success && res.stats) {
+    const s = res.stats;
+    // Update all data-count elements on the page with live values
+    document.querySelectorAll('[data-count="250"]').forEach(el => el.dataset['count'] = s.active_cadets || 250);
+    document.querySelectorAll('[data-count="48"]').forEach(el => el.dataset['count'] = s.camps_attended || 48);
+    document.querySelectorAll('[data-count="32"]').forEach(el => el.dataset['count'] = s.awards_won || 32);
+    document.querySelectorAll('[data-count="20"]').forEach(el => el.dataset['count'] = s.years_of_service || 20);
+  }
+})();
+
+// ── Wire Leaderboard from API ────────────────────────────────────────────────
+(async function loadLeaderboard() {
+  const podiumDiv = document.getElementById('leaderboardPodium');
+  const listDiv   = document.getElementById('leaderboardList');
+  if (!podiumDiv) return;
+
+  const res = await NccAPI.getLeaderboard();
+  if (!res.success || !res.leaderboard || res.leaderboard.length === 0) {
+    podiumDiv.innerHTML = '<p style="color:var(--text-light);padding:40px;text-align:center;">No leaderboard data yet.</p>';
+    return;
+  }
+  const leaders = res.leaderboard;
+  let podiumHtml = '';
+  function renderPodiumStep(l, rank) {
+    return `
+      <div class="podium-step rank-${rank}" data-aos="fade-up" data-aos-delay="${rank * 150}">
+        <div class="podium-avatar" style="width:80px;height:80px;border-radius:50%;border:4px solid white;background:linear-gradient(135deg,var(--sky),var(--navy));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:white;">${l.cadet_name.charAt(0)}</div>
+        <div class="podium-box">
+          <strong>${rank}</strong>
+          <span>Rank</span>
+        </div>
+        <div class="podium-name">${l.cadet_name.split(' ')[0]}</div>
+        <div class="podium-points">${l.points} pts &bull; ${l.branch}</div>
+      </div>`;
+  }
+  if(leaders[1]) podiumHtml += renderPodiumStep(leaders[1], 2);
+  if(leaders[0]) podiumHtml += renderPodiumStep(leaders[0], 1);
+  if(leaders[2]) podiumHtml += renderPodiumStep(leaders[2], 3);
+  podiumDiv.innerHTML = podiumHtml;
+
+  if (leaders.length > 3 && listDiv) {
+    listDiv.style.display = 'block';
+    listDiv.innerHTML = leaders.slice(3).map((l, idx) => `
+      <div class="lb-row">
+        <div class="lb-rank">#${idx+4}</div>
+        <div class="lb-details">
+          <span class="lb-name">${l.cadet_name}</span>
+          <span class="lb-branch">${l.branch}</span>
+        </div>
+        <div class="lb-points">${l.points} pts</div>
+      </div>`).join('');
+  }
+})();
+
+// ── Wire Notice Preview from API ─────────────────────────────────────────────
+(async function loadNoticePreview() {
+  const listEl = document.querySelector('.notice-list');
+  if (!listEl) return;
+  const res = await NccAPI.getNotices({ page: 1 });
+  if (!res.success || !res.notices) return;
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  listEl.innerHTML = res.notices.slice(0,3).map(n => {
+    const d = new Date(n.created_at);
+    const isNew = n.is_new;
+    return `
+      <div class="notice-item ${n.category?.toLowerCase() === 'urgent' ? 'urgent' : ''}">
+        <div class="notice-date-badge ${n.category?.toLowerCase() === 'urgent' ? 'red' : ''}">
+          <div class="nd-day">${d.getDate()}</div>
+          <div class="nd-month">${months[d.getMonth()] || 'JAN'}</div>
+        </div>
+        <div class="notice-content">
+          <h4>${n.title}</h4>
+          <p>${n.description?.slice(0,100)}...</p>
+        </div>
+        ${isNew ? '<span class="notice-new">NEW</span>' : ''}
+      </div>`;
+  }).join('');
+})();
+
+// ── WebSocket: Live notice toast alerts ──────────────────────────────────────
+(function() {
+  try {
+    const ws = new WebSocket('ws://localhost:8000/api/notices/ws');
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (data.type === 'new_notice' && data.notice) {
+        showToast(`🔔 New Notice: ${data.notice.title}`, 'info', 6000);
+      }
+    };
+    ws.onerror = () => {};
+  } catch(_) {}
+})();
+
+// ── PWA install prompt ───────────────────────────────────────────────────────
+let deferredInstall;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  const banner = document.getElementById('pwa-banner');
+  if (banner && !localStorage.getItem('pwa-dismissed')) banner.style.display = 'flex';
+});
+document.getElementById('pwa-install-btn')?.addEventListener('click', () => {
+  deferredInstall?.prompt();
+  document.getElementById('pwa-banner').style.display = 'none';
+});
+document.getElementById('pwa-dismiss-btn')?.addEventListener('click', () => {
+  localStorage.setItem('pwa-dismissed', '1');
+  document.getElementById('pwa-banner').style.display = 'none';
+});
+
+// ── Register Service Worker ──────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
+</script>
+
+</body>
+</html>
+

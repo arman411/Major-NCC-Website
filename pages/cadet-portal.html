@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadet Portal – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <script src="../js/dark-mode.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Portal</p></div>
+
+<nav id="navbar"><div class="navbar-inner">
+  <a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <div class="navbar-links">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="notices.html" class="nav-link">Notices</a>
+    <a href="events-calendar.html" class="nav-link">Events</a>
+    <a href="achievements.html" class="nav-link">Achievements</a>
+    <a href="contact.html" class="nav-link">Contact</a>
+  </div>
+  <div class="navbar-actions">
+    <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+    <button onclick="window.doLogout()" class="btn-nav-enroll" style="border:none;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</div></nav>
+
+<main style="padding-top:calc(var(--navbar-h) + 40px);padding-bottom:80px;background:var(--off-white);min-height:100vh;">
+  <div class="container">
+    <div class="portal-grid" id="portalGrid">
+      <!-- Sidebar -->
+      <div class="portal-sidebar" id="portalSidebar">
+        <div class="portal-avatar" id="portalAvatar">?</div>
+        <div class="portal-name" id="portalName">Loading...</div>
+        <div class="portal-role">Cadet</div>
+        <div class="portal-stat-row">
+          <div class="portal-mini-stat"><strong id="ps-status">—</strong><span>Status</span></div>
+          <div class="portal-mini-stat"><strong id="ps-wing">—</strong><span>Wing</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+          <button class="portal-nav-link active" onclick="showSection('overview', this)"><i class="fas fa-home"></i> Overview</button>
+          <button class="portal-nav-link" onclick="showSection('enrollment', this)"><i class="fas fa-id-card"></i> Enrollment</button>
+          <button class="portal-nav-link" onclick="showSection('certificates', this)"><i class="fas fa-certificate"></i> Certificates</button>
+          <button class="portal-nav-link" onclick="showSection('notices', this)"><i class="fas fa-bell"></i> Notices</button>
+          <button class="portal-nav-link" onclick="showSection('events', this)"><i class="fas fa-calendar"></i> Upcoming Events</button>
+          <hr style="border-color:rgba(255,255,255,0.1);margin:12px 0;" />
+          <button class="portal-nav-link" onclick="window.doLogout()" style="color:rgba(255,100,100,0.8);"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="portal-content">
+        <!-- Overview -->
+        <div class="portal-section active" id="sec-overview">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Welcome Back, <span id="welcomeName">Cadet</span>! 👋</h2>
+          <div class="grid-3" style="margin-bottom:32px;">
+            <div class="card"><div class="card-body"><div class="card-icon navy"><i class="fas fa-id-badge"></i></div><h3>Cadet No.</h3><p id="ov-cadet-no" style="font-size:1.2rem;font-weight:700;color:var(--navy);">Pending</p></div></div>
+            <div class="card"><div class="card-body"><div class="card-icon red"><i class="fas fa-circle-notch"></i></div><h3>Enrollment Status</h3><p id="ov-status">Loading...</p></div></div>
+            <div class="card"><div class="card-body"><div class="card-icon sky"><i class="fas fa-graduation-cap"></i></div><h3>Branch</h3><p id="ov-branch">—</p></div></div>
+          </div>
+          <div class="card"><div class="card-body">
+            <h3 style="color:var(--navy);margin-bottom:16px;"><i class="fas fa-info-circle"></i> Quick Info</h3>
+            <div class="grid-2" style="gap:16px;">
+              <div><span style="font-size:0.78rem;color:var(--text-light);text-transform:uppercase;font-weight:600;">Roll No.</span><p id="ov-roll" style="font-weight:600;color:var(--navy);margin-top:4px;">—</p></div>
+              <div><span style="font-size:0.78rem;color:var(--text-light);text-transform:uppercase;font-weight:600;">NCC Wing</span><p id="ov-wing" style="font-weight:600;color:var(--navy);margin-top:4px;">—</p></div>
+              <div><span style="font-size:0.78rem;color:var(--text-light);text-transform:uppercase;font-weight:600;">Year</span><p id="ov-year" style="font-weight:600;color:var(--navy);margin-top:4px;">—</p></div>
+              <div><span style="font-size:0.78rem;color:var(--text-light);text-transform:uppercase;font-weight:600;">Enrolled On</span><p id="ov-enrolled" style="font-weight:600;color:var(--navy);margin-top:4px;">—</p></div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Enrollment -->
+        <div class="portal-section" id="sec-enrollment">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Enrollment Details</h2>
+          <div class="card"><div class="card-body" id="enrollmentDetails">
+            <div class="skeleton skeleton-text" style="width:60%;"></div>
+            <div class="skeleton skeleton-text" style="width:45%;"></div>
+            <div class="skeleton skeleton-text" style="width:70%;"></div>
+          </div></div>
+        </div>
+
+        <!-- Certificates -->
+        <div class="portal-section" id="sec-certificates">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">My Certificates</h2>
+          <div id="certList"><div class="skeleton skeleton-card"></div></div>
+        </div>
+
+        <!-- Notices -->
+        <div class="portal-section" id="sec-notices">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Latest Notices</h2>
+          <div id="portalNotices"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div></div>
+          <div class="mt-24"><a href="notices.html" class="btn btn-outline">View All Notices <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+
+        <!-- Events -->
+        <div class="portal-section" id="sec-events">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Upcoming Events</h2>
+          <div id="portalEvents"><div class="skeleton skeleton-card"></div></div>
+          <div class="mt-24"><a href="events-calendar.html" class="btn btn-outline">View Full Calendar <i class="fas fa-calendar"></i></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+// Gate: require login
+requireAuth();
+
+const user = Auth.getUser();
+
+function showSection(name, clickedBtn) {
+  document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.portal-nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name)?.classList.add('active');
+  clickedBtn?.classList.add('active');
+}
+
+async function initPortal() {
+  if (!user) return;
+  document.getElementById('portalName').textContent = user.username || 'Cadet';
+  document.getElementById('welcomeName').textContent = user.username || 'Cadet';
+  document.getElementById('portalAvatar').textContent = (user.username || 'C').charAt(0).toUpperCase();
+
+  // Load enrollment/student data
+  const certs = await NccAPI.getCertificates();
+  if (certs.success) {
+    const s = certs;
+    // Update sidebar & overview
+    document.getElementById('ps-status').textContent = s.status || '—';
+    document.getElementById('ov-status').innerHTML = `<span class="status-badge ${s.status || 'pending'}">${s.status || 'pending'}</span>`;
+
+    // Certificates section
+    const certList = document.getElementById('certList');
+    if (s.certificates && s.certificates.length > 0) {
+      certList.innerHTML = s.certificates.map(c => `
+        <div class="cert-card">
+          <div class="cert-icon">📄</div>
+          <div class="cert-info">
+            <h4>${c.type}</h4>
+            <p>${c.available ? 'Ready to download' : 'Available after approval'}</p>
+          </div>
+          ${c.available && c.download_url
+            ? `<a href="${API_BASE}${c.download_url}" target="_blank" class="btn btn-primary" style="padding:10px 20px;font-size:0.85rem;"><i class="fas fa-download"></i> Download PDF</a>`
+            : `<span class="status-badge ${s.status || 'pending'}">${s.status || 'Pending'}</span>`}
+        </div>`).join('');
+    } else {
+      certList.innerHTML = '<p style="color:var(--text-light);">No enrollment found for this account. <a href="enrollment.html" style="color:var(--sky);">Enroll Now</a></p>';
+    }
+
+    // Enrollment details
+    document.getElementById('enrollmentDetails').innerHTML = `
+      <div class="grid-2" style="gap:16px;">
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;">Student ID</span><p style="font-weight:700;color:var(--navy);">${s.student_id || '—'}</p></div>
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;">Status</span><p><span class="status-badge ${s.status || 'pending'}">${s.status || 'pending'}</span></p></div>
+      </div>`;
+  }
+
+  // Load notices
+  const notices = await NccAPI.getNotices({ page: 1 });
+  const pn = document.getElementById('portalNotices');
+  if (notices.success && notices.notices) {
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    pn.innerHTML = notices.notices.slice(0,3).map(n => {
+      const d = new Date(n.created_at);
+      return `<div class="card" style="margin-bottom:16px;"><div class="card-body" style="padding:20px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="min-width:48px;text-align:center;"><strong style="font-size:1.4rem;color:var(--navy);">${d.getDate()}</strong><br><span style="font-size:0.65rem;color:var(--text-light);">${months[d.getMonth()]}</span></div>
+          <div><h4 style="font-weight:700;color:var(--navy);margin-bottom:4px;">${n.title}</h4><p style="font-size:0.83rem;color:var(--text-mid);">${n.description?.slice(0,100)}...</p></div>
+        </div>
+      </div></div>`;
+    }).join('');
+  }
+
+  // Load events
+  const events = await NccAPI.getEvents({ upcoming_only: true });
+  const pe = document.getElementById('portalEvents');
+  if (events.success && events.events) {
+    const typeColors = { Camp:'red', Parade:'navy', Social:'green', Exam:'warning', Other:'sky' };
+    pe.innerHTML = events.events.slice(0,4).map(ev => {
+      const sd = new Date(ev.start_date);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `<div class="card" style="margin-bottom:16px;"><div class="card-body" style="padding:20px;display:flex;gap:20px;align-items:center;">
+        <div style="background:var(--navy);color:white;border-radius:12px;padding:12px;text-align:center;min-width:56px;">
+          <strong style="font-size:1.4rem;line-height:1;">${sd.getDate()}</strong><br>
+          <span style="font-size:0.65rem;letter-spacing:1px;">${months[sd.getMonth()]}</span>
+        </div>
+        <div style="flex:1;">
+          <h4 style="font-weight:700;color:var(--navy);margin-bottom:4px;">${ev.title}</h4>
+          <p style="font-size:0.82rem;color:var(--text-mid);">${ev.location || ''} ${ev.is_mandatory ? '• <strong style="color:var(--red);">Mandatory</strong>' : ''}</p>
+        </div>
+        <span class="tag ${typeColors[ev.event_type]||''}">${ev.event_type}</span>
+      </div></div>`;
+    }).join('') || '<p style="color:var(--text-light);">No upcoming events.</p>';
+  }
+}
+
+window.doLogout = async function() {
+  try { await NccAPI.logout(); } catch(_) {}
+  Auth.clearTokens();
+  window.location.href = '../index.html';
+};
+
+initPortal();
+</script>
+</body>
+</html>

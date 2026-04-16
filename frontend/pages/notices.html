@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notice Board – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Latest notices, announcements and updates from NCC unit of Govt. Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .search-wrapper {
+      max-width: 600px;
+      margin: 0 auto 48px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 18px 60px 18px 24px;
+      border: 2px solid var(--mid-gray);
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: all var(--trans-fast);
+      background: white;
+      box-shadow: var(--shadow-sm);
+    }
+    .search-input:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(52,152,219,0.12); }
+    .search-icon {
+      position: absolute;
+      right: 20px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+    .notice-filter-bar { display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px; }
+    .notice-filter-btn { padding:6px 20px;border-radius:var(--radius-full);font-size:0.82rem;font-weight:600;border:2px solid var(--mid-gray);color:var(--text-mid);background:white;cursor:pointer;transition:all var(--trans-fast); }
+    .notice-filter-btn:hover, .notice-filter-btn.active { background:var(--navy);color:white;border-color:var(--navy); }
+
+    .notices-list { display:flex;flex-direction:column;gap:20px; }
+    .notice-card {
+      background:white;
+      border-radius:var(--radius-lg);
+      padding:28px;
+      display:flex;
+      gap:24px;
+      align-items:flex-start;
+      border:1px solid var(--mid-gray);
+      box-shadow:var(--shadow-sm);
+      transition:all var(--trans-mid);
+      position:relative;
+      overflow:hidden;
+    }
+    .notice-card::before {
+      content:'';
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:4px;
+      background:var(--navy);
+    }
+    .notice-card.urgent::before { background:var(--red); }
+    .notice-card.info::before { background:var(--sky); }
+    .notice-card:hover { border-color:var(--sky);box-shadow:var(--shadow-md);transform:translateX(4px); }
+    .notice-card-date {
+      min-width:64px;
+      text-align:center;
+      flex-shrink:0;
+    }
+    .ncd-day { font-size:2rem;font-weight:800;color:var(--navy);line-height:1; }
+    .ncd-month { font-size:0.7rem;font-weight:700;color:var(--text-light);letter-spacing:2px;text-transform:uppercase; }
+    .ncd-year { font-size:0.7rem;color:var(--text-light); }
+    .notice-card-divider { width:1px;background:var(--mid-gray);align-self:stretch;flex-shrink:0; }
+    .notice-card-content { flex:1; }
+    .notice-card-header { display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap; }
+    .notice-card-content h3 { font-size:1rem;font-weight:700;color:var(--navy);flex:1; }
+    .notice-card-tags { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px; }
+    .notice-card-content p { font-size:0.85rem;color:var(--text-mid);line-height:1.7; }
+    .notice-card-footer { display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap; }
+    .nc-meta { display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-light); }
+    .nc-download {
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 16px;
+      border-radius:var(--radius-full);
+      font-size:0.78rem;font-weight:600;
+      border:1px solid var(--mid-gray);
+      color:var(--navy);
+      transition:all var(--trans-fast);
+    }
+    .nc-download:hover { background:var(--navy);color:white;border-color:var(--navy); }
+    .no-results { text-align:center;padding:60px 20px;color:var(--text-light); }
+    .no-results i { font-size:3rem;margin-bottom:16px;display:block;color:var(--mid-gray); }
+  
+    /* ── Pro Notices ── */
+    .notice-filter-bar {
+      display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap;
+    }
+    .nf-btn {
+      padding:8px 20px; border-radius:var(--radius-full);
+      font-size:0.82rem; font-weight:600; cursor:pointer; border:2px solid var(--mid-gray);
+      background:white; color:var(--text-mid); transition:all 0.2s;
+    }
+    .nf-btn.active, .nf-btn:hover { background:var(--navy); color:white; border-color:var(--navy); }
+    .notice-search-wrap { position:relative; max-width:380px; margin-bottom:32px; }
+    .notice-search { width:100%; padding:12px 16px 12px 44px; border:2px solid var(--mid-gray);
+                     border-radius:var(--radius-full); font-size:0.9rem; outline:none; transition:border-color 0.2s; }
+    .notice-search:focus { border-color:var(--sky); }
+    .notice-search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-light); }
+    </style>
+</head>
+<body>
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress + Cursor -->
+<div id="scroll-progress"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Notices</p></div>
+<nav id="navbar"><div class="navbar-inner"><a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a><div class="navbar-links"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link active">Notices</a><a href="contact.html" class="nav-link">Contact</a></div><div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a></div><button class="hamburger"><span></span><span></span><span></span></button></div></nav>
+<div class="mobile-nav"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link active">Notices</a><a href="contact.html" class="nav-link">Contact</a><div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div></div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Notice Board</span></div>
+    <h1 data-aos="fade-up">Notice <span>Board</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">Stay updated with the latest announcements, camp registrations, and important circulars from the NCC unit.</p>
+  </div>
+</section>
+
+<section class="section bg-white">
+  <div class="container">
+    <div class="search-wrapper" data-aos="fade-up">
+      <input type="text" class="search-input" id="noticeSearch" placeholder="Search notices, camps, events..." />
+      <i class="fas fa-search search-icon"></i>
+    </div>
+    <div class="notice-filter-bar" data-aos="fade-up">
+      <button class="notice-filter-btn active" data-nfilter="all">All</button>
+      <button class="notice-filter-btn" data-nfilter="urgent">Urgent</button>
+      <button class="notice-filter-btn" data-nfilter="camp">Camps</button>
+      <button class="notice-filter-btn" data-nfilter="exam">Exams</button>
+      <button class="notice-filter-btn" data-nfilter="info">Information</button>
+    </div>
+    <div class="notices-list" id="noticesList">
+      <!-- Notices loaded dynamically from backend API -->
+      <div class="skeleton skeleton-shimmer" style="height:120px; border-radius:var(--radius-lg);"></div>
+      <div class="skeleton skeleton-shimmer" style="height:120px; border-radius:var(--radius-lg);"></div>
+      <div class="skeleton skeleton-shimmer" style="height:120px; border-radius:var(--radius-lg);"></div>
+    </div>
+    <div class="no-results" id="noResults" style="display:none;">
+      <i class="fas fa-search"></i>
+      <p>No notices found matching your search.</p>
+    </div>
+  </div>
+</section>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a href="gallery.html">Gallery</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="notices.html">Notice Board</a><a href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a href="login.html">Cadet Login</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 123456</span></div></div></div></div></div><p class="footer-made">Made with <span>❤️</span> for NCC Hamirpur — Serving with Pride</p><div class="hide" style="display:none"><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p><div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-btn"><i class="fab fa-instagram"></i></a></div></div></div>
+<style>
+/* Pro Footer Extras */
+#footer {
+  background: linear-gradient(160deg, #0a1f4a 0%, #0d2b5e 60%, #0f3270 100%);
+  position: relative; overflow: hidden;
+}
+#footer::before {
+  content:''; position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+}
+.social-btn:nth-child(1):hover { background:#1877f2; }
+.social-btn:nth-child(2):hover { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.social-btn:nth-child(3):hover { background:#ff0000; }
+.footer-made { text-align:center; font-size:0.75rem; color:rgba(255,255,255,0.25); padding:12px 0 0; }
+.footer-made span { color:#f0b429; }
+</style>
+</footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+<script>
+/* ─── Backend API base ─────────────────────────── */
+const API_BASE = '';  /* relative – works on any port when served via Flask */
+
+const searchInput = document.getElementById('noticeSearch');
+const noticesList = document.getElementById('noticesList');
+const noResults   = document.getElementById('noResults');
+const filterBtns  = document.querySelectorAll('.notice-filter-btn');
+let currentFilter = 'all';
+let allNotices    = [];   // cache from API
+
+/* ─── Helpers ───────────────────────────────────── */
+function formatDate(iso) {
+  const d = new Date(iso);
+  return {
+    day:   String(d.getDate()).padStart(2, '0'),
+    month: d.toLocaleString('en', { month: 'short' }).toUpperCase(),
+    year:  d.getFullYear()
+  };
+}
+
+function tagColor(cat) {
+  const c = cat.toLowerCase();
+  if (c.includes('urgent'))  return 'red';
+  if (c.includes('camp'))    return 'sky';
+  if (c.includes('exam'))    return '';
+  return 'sky';
+}
+
+function buildCard(n) {
+  const dt    = formatDate(n.created_at);
+  const isNew = n.is_new;
+  const cat   = n.category || 'General';
+  const color = tagColor(cat);
+  const urgentClass = cat.toLowerCase().includes('urgent') ? ' urgent' : (color === 'sky' ? ' info' : '');
+
+  return `
+  <div class="notice-card${urgentClass}" data-ncategory="${cat.toLowerCase()}" data-aos="fade-up">
+    <div class="notice-card-date">
+      <div class="ncd-day">${dt.day}</div>
+      <div class="ncd-month">${dt.month}</div>
+      <div class="ncd-year">${dt.year}</div>
+    </div>
+    <div class="notice-card-divider"></div>
+    <div class="notice-card-content">
+      <div class="notice-card-header">
+        <h3>${n.title}</h3>
+        ${isNew ? '<span class="notice-new">NEW</span>' : ''}
+      </div>
+      <div class="notice-card-tags">
+        <span class="tag ${color}">${cat}</span>
+      </div>
+      <p>${n.description}</p>
+      <div class="notice-card-footer">
+        <div class="nc-meta"><i class="fas fa-user"></i> Issued by: ${n.issued_by || 'ANO Office'}</div>
+        ${n.deadline ? `<div class="nc-meta"><i class="fas fa-calendar"></i> Deadline: ${new Date(n.deadline).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'})}</div>` : ''}
+        ${n.file_url  ? `<a href="${API_BASE}${n.file_url}" class="nc-download" target="_blank"><i class="fas fa-download"></i> Download</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderNotices(list) {
+  if (!list.length) {
+    noticesList.innerHTML = '';
+    noResults.style.display = 'block';
+    return;
+  }
+  noResults.style.display = 'none';
+  noticesList.innerHTML = list.map(buildCard).join('');
+  if (window.AOS) AOS.refresh();
+}
+
+function applyFilters() {
+  const q = searchInput.value.toLowerCase();
+  const filtered = allNotices.filter(n => {
+    const text = (n.title + ' ' + n.description + ' ' + (n.issued_by || '')).toLowerCase();
+    const cat  = (n.category || '').toLowerCase();
+    const matchSearch = q === '' || text.includes(q);
+    const matchFilter = currentFilter === 'all' || cat.includes(currentFilter);
+    return matchSearch && matchFilter;
+  });
+  renderNotices(filtered);
+}
+
+/* ─── Fetch from API ─────────────────────────────── */
+async function loadNotices() {
+  try {
+    const res  = await fetch(`${API_BASE}/api/notices`);
+    const data = await res.json();
+    if (data.success) {
+      allNotices = data.notices;
+      applyFilters();
+    } else {
+      noticesList.innerHTML = '<p style="text-align:center;color:var(--red);">Could not load notices.</p>';
+    }
+  } catch {
+    // Fallback: show static message if server not running
+    noticesList.innerHTML = `
+      <div style="text-align:center;padding:40px;color:var(--text-light);">
+        <i class="fas fa-server" style="font-size:2.5rem;margin-bottom:12px;display:block;color:var(--mid-gray);"></i>
+        <p style="font-weight:600;margin-bottom:8px;">Backend server not running</p>
+        <p style="font-size:0.85rem;">Start it with: <code>cd backend &amp;&amp; python app.py</code></p>
+      </div>`;
+  }
+}
+
+/* ─── Event listeners ────────────────────────────── */
+searchInput.addEventListener('input', applyFilters);
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.nfilter;
+    applyFilters();
+  });
+});
+
+loadNotices();
+</script>
+<script src="../js/pro-effects.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Get in touch with the NCC unit at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .contact-layout { display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start; }
+    .contact-info-card { background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:var(--radius-xl);padding:48px;color:white; }
+    .ci-item { display:flex;gap:20px;align-items:flex-start;margin-bottom:28px; }
+    .ci-icon { width:48px;height:48px;border-radius:var(--radius-md);background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0; }
+    .ci-text h4 { font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px; }
+    .ci-text p { font-size:0.92rem;color:white;font-weight:500; }
+    .ci-text a { color:rgba(255,255,255,0.85);font-size:0.92rem; }
+    .office-hours { margin-top:28px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.15); }
+    .office-hours h4 { font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px; }
+    .oh-row { display:flex;justify-content:space-between;font-size:0.88rem;margin-bottom:8px; }
+    .oh-row span:first-child { color:rgba(255,255,255,0.7); }
+    .oh-row span:last-child { color:white;font-weight:600; }
+
+    .contact-form-card { background:white;border-radius:var(--radius-xl);padding:48px;box-shadow:var(--shadow-lg);border:1px solid var(--mid-gray); }
+    .form-row { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+
+    .map-placeholder {
+      margin-top:64px;
+      border-radius:var(--radius-xl);
+      overflow:hidden;
+      height:380px;
+      background:linear-gradient(135deg,var(--light-gray),#e0e8f5);
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:16px;
+      border:2px dashed var(--mid-gray);
+      position:relative;
+    }
+    .map-pin { font-size:3rem;animation:mapBounce 1.5s ease-in-out infinite; }
+    @keyframes mapBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .map-label { text-align:center; }
+    .map-label h4 { font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px; }
+    .map-label p { font-size:0.85rem;color:var(--text-light); }
+
+    .contact-success { text-align:center;display:none;padding:40px; }
+    .contact-success.show { display:block; }
+    @media(max-width:768px){ .contact-layout{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;} .contact-form-card{padding:28px;} .contact-info-card{padding:32px;} }
+  </style>
+</head>
+<body>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Contact</p></div>
+<nav id="navbar"><div class="navbar-inner"><a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a><div class="navbar-links"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link active">Contact</a></div><div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a></div><button class="hamburger"><span></span><span></span><span></span></button></div></nav>
+<div class="mobile-nav"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link active">Contact</a><div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div></div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Contact</span></div>
+    <h1 data-aos="fade-up">Contact <span>Us</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">Have a question? Want to visit our unit? Reach out to the ANO office and we'll get back to you promptly.</p>
+  </div>
+</section>
+
+<section class="section bg-white">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="contact-info-card" data-aos="fade-right">
+        <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:32px;">Get In Touch</h2>
+        <div class="ci-item"><div class="ci-icon">📍</div><div class="ci-text"><h4>Address</h4><p>Government Polytechnic Hamirpur (HP)<br/>Maharana Pratap Chowk<br/>Hamirpur – 177001, Himachal Pradesh, India</p></div></div>
+        <div class="ci-item"><div class="ci-icon">📞</div><div class="ci-text"><h4>Phone</h4><p>+91 1662 247311</p><p style="font-size:0.82rem;color:rgba(255,255,255,0.5);">Mon–Sat, 9AM – 5PM</p></div></div>
+        <div class="ci-item"><div class="ci-icon">✉️</div><div class="ci-text"><h4>Email</h4><a href="mailto:ncc@gph.edu.in">ncc@gph.edu.in</a><br/><a href="mailto:gp-ham-hp@gov.in" style="font-size:0.82rem;">gp-ham-hp@gov.in</a></div></div>
+        <div class="ci-item"><div class="ci-icon">👨‍✈️</div><div class="ci-text"><h4>ANO Office</h4><p>Room No. 12, Administrative Block<br/>Govt. Polytechnic Hamirpur (HP)</p></div></div>
+        <div class="office-hours">
+          <h4>Training Schedule</h4>
+          <div class="oh-row"><span>Monday – Friday</span><span>4:00 PM – 6:00 PM</span></div>
+          <div class="oh-row"><span>Saturday</span><span>9:00 AM – 1:00 PM</span></div>
+          <div class="oh-row"><span>Sunday</span><span>Holiday</span></div>
+        </div>
+        <div style="margin-top:28px;display:flex;gap:12px;">
+          <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="contact-form-card">
+          <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:8px;">Send a Message</h2>
+          <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:32px;">We typically respond within 24 hours.</p>
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <input type="text" class="form-control" id="cName" placeholder="Your Name" required />
+                <label class="form-label" for="cName">Your Name</label>
+                <p class="form-error">Enter your name.</p>
+              </div>
+              <div class="form-group">
+                <input type="email" class="form-control" id="cEmail" placeholder="Email Address" required />
+                <label class="form-label" for="cEmail">Email Address</label>
+                <p class="form-error">Enter a valid email.</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="cSubject" placeholder="Subject" required />
+              <label class="form-label" for="cSubject">Subject</label>
+              <p class="form-error">Enter the subject.</p>
+            </div>
+            <div class="form-group">
+              <select class="form-control" id="cType">
+                <option value="">Query Type</option>
+                <option>Enrollment Query</option>
+                <option>Camp Information</option>
+                <option>Certificate Query</option>
+                <option>General Enquiry</option>
+              </select>
+              <label class="form-label" for="cType" style="top:-10px;font-size:0.75rem;color:var(--sky);">Query Type</label>
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" id="cMessage" placeholder="Your Message" rows="5" required></textarea>
+              <label class="form-label" for="cMessage">Your Message</label>
+              <p class="form-error">Please enter your message.</p>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+          </form>
+          <div class="contact-success" id="contactSuccess">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--sky-light));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem;color:white;">✓</div>
+            <h3 style="color:var(--navy);margin-bottom:10px;">Message Sent!</h3>
+            <p style="color:var(--text-mid);">Thank you for reaching out. We'll reply within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Placeholder -->
+    <div class="map-placeholder" data-aos="fade-up">
+      <div class="map-pin">📍</div>
+      <div class="map-label">
+        <h4>Government Polytechnic Hamirpur (HP)</h4>
+        <p>Maharana Pratap Chowk, Hamirpur – 177001, Himachal Pradesh, India</p>
+        <a href="https://maps.google.com/?q=Government+Polytechnic+Hamirpur+Himachal+Pradesh" target="_blank" class="btn btn-outline" style="margin-top:16px;padding:10px 24px;font-size:0.85rem;">Open in Google Maps <i class="fas fa-external-link-alt"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a href="unit.html">Our Unit</a><a href="activities.html">Activities</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="notices.html">Notice Board</a><a href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a href="login.html">Cadet Login</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 123456</span></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p></div></div></footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+<script>
+document.getElementById('contactForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fields = ['cName','cEmail','cSubject','cMessage'];
+  let valid = true;
+  fields.forEach(id => {
+    const input = document.getElementById(id);
+    const group = input.closest('.form-group');
+    if (!input.value.trim()) { group.classList.add('invalid'); valid = false; }
+    else { group.classList.remove('invalid'); }
+  });
+  if (!valid) return;
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('contactSuccess').classList.add('show');
+});
+</script>
+</body>
+</html>
+

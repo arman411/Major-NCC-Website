@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achievements – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="description" content="Awards, achievements, and recognitions of NCC unit at Government Polytechnic Hamirpur (HP)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .achievements-hero-stats { display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:64px; }
+    .award-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:28px; }
+    .award-card {
+      background:white;border-radius:var(--radius-xl);
+      padding:36px 28px;
+      border:1px solid var(--mid-gray);
+      box-shadow:var(--shadow-sm);
+      transition:all var(--trans-mid);
+      position:relative;overflow:hidden;
+      text-align:center;
+    }
+    .award-card::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:4px;
+      background:linear-gradient(90deg,var(--navy),var(--sky));
+    }
+    .award-card.gold::before { background:linear-gradient(90deg,#b8860b,#ffd700); }
+    .award-card.silver::before { background:linear-gradient(90deg,#708090,#c0c0c0); }
+    .award-card.red::before { background:linear-gradient(90deg,var(--red),var(--red-light)); }
+    .award-card:hover { transform:translateY(-8px);box-shadow:var(--shadow-xl); }
+    .award-emoji { font-size:3.5rem;margin-bottom:16px;display:block; }
+    .award-year {
+      display:inline-block;
+      padding:4px 14px;
+      border-radius:var(--radius-full);
+      font-size:0.75rem;font-weight:700;
+      background:rgba(13,43,94,0.08);color:var(--navy);
+      margin-bottom:16px;
+    }
+    .award-card.gold .award-year { background:rgba(255,215,0,0.2);color:#b8860b; }
+    .award-card h3 { font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:8px; }
+    .award-card p { font-size:0.85rem;color:var(--text-mid);line-height:1.7; }
+    .award-badge { display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:4px 12px;border-radius:var(--radius-full);font-size:0.75rem;font-weight:600; }
+    .award-badge.gold { background:rgba(255,215,0,0.2);color:#b8860b; }
+    .award-badge.silver { background:rgba(192,192,192,0.2);color:#708090; }
+    .award-badge.bronze { background:rgba(205,133,63,0.2);color:#cd7f32; }
+
+    .cadet-spotlight {
+      background:linear-gradient(135deg,var(--navy),var(--navy-light));
+      border-radius:var(--radius-xl);
+      padding:60px;
+      color:white;
+      display:grid;
+      grid-template-columns:1fr 2fr;
+      gap:48px;
+      align-items:center;
+    }
+    .cs-avatar { width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:3rem;border:3px solid rgba(255,255,255,0.3);margin:0 auto; }
+    .cs-name { font-size:1.5rem;font-weight:800;margin-bottom:6px; }
+    .cs-rank { background:var(--red);display:inline-block;padding:4px 16px;border-radius:var(--radius-full);font-size:0.8rem;font-weight:700;margin-bottom:16px;letter-spacing:1px; }
+    .cs-quote { font-size:0.95rem;color:rgba(255,255,255,0.8);line-height:1.8;font-style:italic; }
+    .cs-achievements { display:flex;flex-direction:column;gap:10px;margin-top:20px; }
+    .cs-ach-item { display:flex;align-items:center;gap:10px;font-size:0.85rem;color:rgba(255,255,255,0.8); }
+    .cs-ach-item i { color:var(--sky-light);width:16px; }
+
+    @media(max-width:1024px){ .achievements-hero-stats{grid-template-columns:repeat(2,1fr);} .award-grid{grid-template-columns:repeat(2,1fr);} .cadet-spotlight{grid-template-columns:1fr;padding:36px;} }
+    @media(max-width:768px){ .achievements-hero-stats{grid-template-columns:1fr 1fr;} .award-grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Achievements</p></div>
+<nav id="navbar"><div class="navbar-inner"><a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a><div class="navbar-links"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link active">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a></div><div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a></div><button class="hamburger"><span></span><span></span><span></span></button></div></nav>
+<div class="mobile-nav"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html" class="nav-link active">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a><div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div></div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Achievements</span></div>
+    <h1 data-aos="fade-up">Our <span>Achievements</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">A proud legacy of excellence — our cadets have consistently made Himachal Pradesh proud at state and national levels.</p>
+    <div class="achievements-hero-stats" data-aos="fade-up" data-aos-delay="200">
+      <div class="stat-card"><span class="stat-icon">🏆</span><span class="stat-number" data-count="32" data-suffix="+">0</span><p class="stat-label">Total Awards</p></div>
+      <div class="stat-card red"><span class="stat-icon">🇮🇳</span><span class="stat-number" data-count="12" data-suffix="">0</span><p class="stat-label">RDC Selections</p></div>
+      <div class="stat-card sky"><span class="stat-icon">🥇</span><span class="stat-number" data-count="8" data-suffix="">0</span><p class="stat-label">Gold Medals</p></div>
+      <div class="stat-card"><span class="stat-icon">🎖️</span><span class="stat-number" data-count="20" data-suffix="+">0</span><p class="stat-label">State Level Honours</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-white">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <p class="section-label">Hall of Fame</p>
+      <h2 class="section-title">Awards &amp; <span>Honours</span></h2>
+      <p class="section-subtitle">Our cadets have won recognition at every level — from district to national stages.</p>
+    </div>
+    <div class="award-grid">
+      <div class="award-card gold tilt-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="tilt-inner">
+          <span class="award-emoji">🥇</span>
+          <span class="award-year">2024</span>
+          <h3>Best NCC Unit – Himachal Pradesh State</h3>
+          <p>Awarded Best NCC Unit in Himachal Pradesh by the State Directorate for outstanding performance in training, camps and community service.</p>
+          <span class="award-badge gold">🏆 Gold</span>
+        </div>
+      </div>
+      <div class="award-card" data-aos="fade-up" data-aos-delay="80">
+        <div>
+          <span class="award-emoji">🎖️</span>
+          <span class="award-year">2024</span>
+          <h3>RDC Selection – Republic Day Camp</h3>
+          <p>Two cadets selected to represent Himachal Pradesh at Republic Day Camp 2024, New Delhi — marching at Kartavya Path on 26th January.</p>
+          <span class="award-badge bronze">🏅 National Level</span>
+        </div>
+      </div>
+      <div class="award-card silver tilt-card" data-aos="fade-up" data-aos-delay="160">
+        <div class="tilt-inner">
+          <span class="award-emoji">🥈</span>
+          <span class="award-year">2023</span>
+          <h3>TSC Best Company – Army Wing</h3>
+          <p>Our Army Wing cadets bagged the Best Company award at Thal Sainik Camp 2023 held at Army Training Centre.</p>
+          <span class="award-badge silver">🥈 Silver</span>
+        </div>
+      </div>
+      <div class="award-card red" data-aos="fade-up" data-aos-delay="0">
+        <div>
+          <span class="award-emoji">🏅</span>
+          <span class="award-year">2023</span>
+          <h3>Prime Minister's Rally Participation</h3>
+          <p>Outstanding cadet participated in the PM's Rally at New Delhi, one of India's most prestigious NCC events.</p>
+          <span class="award-badge bronze">🌟 National Level</span>
+        </div>
+      </div>
+      <div class="award-card gold tilt-card" data-aos="fade-up" data-aos-delay="80">
+        <div class="tilt-inner">
+          <span class="award-emoji">🏆</span>
+          <span class="award-year">2022</span>
+          <h3>Best Cadet Award – Hamirpur Group</h3>
+          <p>The prestigious Best Cadet Award at Hamirpur Group level was won by our SUO for exemplary leadership and performance.</p>
+          <span class="award-badge gold">⭐ Group Level</span>
+        </div>
+      </div>
+      <div class="award-card" data-aos="fade-up" data-aos-delay="160">
+        <div>
+          <span class="award-emoji">📜</span>
+          <span class="award-year">2021–24</span>
+          <h3>C Certificate Excellence</h3>
+          <p>Over 50 cadets have secured A-grade passes in C Certificate examinations, the highest NCC cadet certification.</p>
+          <span class="award-badge bronze">🎓 Academic</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cadet Spotlight -->
+<section class="section" style="background:var(--off-white);">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <p class="section-label">Star Performers</p>
+      <h2 class="section-title">Cadet <span>Spotlight</span></h2>
+    </div>
+    <div class="cadet-spotlight" data-aos="fade-up">
+      <div style="text-align:center;">
+        <div class="cs-avatar">👨‍✈️</div>
+        <div style="margin-top:20px;">
+          <div class="cs-name">Cadet Arjun Singh</div>
+          <span class="cs-rank">Senior Under Officer (SUO)</span>
+          <p style="font-size:0.82rem;color:rgba(255,255,255,0.6);">Batch of 2024</p>
+        </div>
+      </div>
+      <div>
+        <p class="cs-quote">"The NCC gave me more than just training — it gave me purpose, discipline, and a brotherhood that I'll cherish forever. Representing Himachal Pradesh at RDC was the proudest moment of my life."</p>
+        <div class="cs-achievements">
+          <div class="cs-ach-item"><i class="fas fa-trophy"></i> RDC 2024 Selected Cadet</div>
+          <div class="cs-ach-item"><i class="fas fa-medal"></i> Best Cadet – Hamirpur Group 2023</div>
+          <div class="cs-ach-item"><i class="fas fa-star"></i> C Certificate – A Grade</div>
+          <div class="cs-ach-item"><i class="fas fa-users"></i> Led 80 cadets as SUO</div>
+          <div class="cs-ach-item"><i class="fas fa-heart"></i> Organised 3 blood donation camps</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a href="gallery.html">Gallery</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="notices.html">Notice Board</a><a href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a href="login.html">Cadet Login</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 123456</span></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p><div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-btn"><i class="fab fa-instagram"></i></a></div></div></div></footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>
+

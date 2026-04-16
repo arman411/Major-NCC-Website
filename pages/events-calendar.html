@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Calendar – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <script src="../js/dark-mode.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .calendar-wrapper { max-width: 900px; margin: 0 auto; }
+    .event-detail-popup {
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+      background:white;border-radius:var(--radius-lg);padding:32px;
+      box-shadow:var(--shadow-xl);z-index:3000;width:90%;max-width:480px;
+      animation:slideUpFade 0.25s ease;
+    }
+    [data-theme="dark"] .event-detail-popup { background:#1a2540;color:#e8ecf4; }
+    .popup-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2999; }
+    .event-list-sidebar { background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--mid-gray); }
+    [data-theme="dark"] .event-list-sidebar { background:#1a2540;border-color:#2a3a58; }
+    .event-list-item { display:flex;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--mid-gray); }
+    .event-list-item:last-child { border-bottom:none; }
+    .ev-type-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+    .ev-type-dot.Camp   { background:var(--red); }
+    .ev-type-dot.Parade { background:var(--navy); }
+    .ev-type-dot.Social { background:#27ae60; }
+    .ev-type-dot.Exam   { background:#f39c12; }
+    .ev-type-dot.Other  { background:var(--sky); }
+  </style>
+</head>
+<body>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Calendar</p></div>
+
+<nav id="navbar"><div class="navbar-inner">
+  <a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <div class="navbar-links">
+    <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="activities.html" class="nav-link">Activities</a><a href="notices.html" class="nav-link">Notices</a><a href="events-calendar.html" class="nav-link active">Calendar</a><a href="contact.html" class="nav-link">Contact</a>
+  </div>
+  <div class="navbar-actions">
+    <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+    <a href="login.html" class="btn-nav-login">Login</a>
+    <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+  </div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-nav">
+  <a href="../index.html" class="nav-link">Home</a><a href="activities.html" class="nav-link">Activities</a><a href="notices.html" class="nav-link">Notices</a><a href="events-calendar.html" class="nav-link active">Calendar</a>
+  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline">Login</a><a href="enrollment.html" class="btn btn-danger">Enroll</a></div>
+</div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Event Calendar</span></div>
+    <h1 data-aos="fade-up">Event <span>Calendar</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;" data-aos="fade-up" data-aos-delay="100">View all upcoming NCC camps, parades, exams, and social events.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <!-- Legend -->
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;" data-aos="fade-up">
+      <span style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;"><span style="width:12px;height:12px;border-radius:3px;background:rgba(192,57,43,0.2);border-left:3px solid var(--red);display:inline-block;"></span>Camp</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;"><span style="width:12px;height:12px;border-radius:3px;background:rgba(13,43,94,0.15);border-left:3px solid var(--navy);display:inline-block;"></span>Parade</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;"><span style="width:12px;height:12px;border-radius:3px;background:rgba(39,174,96,0.15);border-left:3px solid #27ae60;display:inline-block;"></span>Social</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;"><span style="width:12px;height:12px;border-radius:3px;background:rgba(243,156,18,0.15);border-left:3px solid #f39c12;display:inline-block;"></span>Exam</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;"><span style="width:12px;height:12px;border-radius:3px;background:rgba(52,152,219,0.15);border-left:3px solid var(--sky);display:inline-block;"></span>Other</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start;" id="calLayout">
+      <!-- Calendar -->
+      <div class="calendar-wrapper" data-aos="fade-up">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+          <h2 id="calMonthYear" style="font-size:1.3rem;font-weight:700;color:var(--navy);"></h2>
+          <button class="calendar-nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-grid" id="calGrid">
+          <div class="cal-day-label">Sun</div><div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div>
+          <div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div>
+        </div>
+      </div>
+
+      <!-- Event List Sidebar -->
+      <div class="event-list-sidebar" data-aos="fade-up" data-aos-delay="100">
+        <h3 style="font-weight:700;color:var(--navy);margin-bottom:16px;font-size:1rem;"><i class="fas fa-list"></i> All Events</h3>
+        <div id="eventListSidebar"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Event Popup -->
+<div class="popup-overlay" id="popupOverlay" style="display:none;" onclick="closePopup()"></div>
+<div class="event-detail-popup" id="eventPopup" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+    <h3 id="popTitle" style="font-weight:700;color:var(--navy);font-size:1.1rem;"></h3>
+    <button onclick="closePopup()" style="color:var(--text-light);font-size:1.2rem;cursor:pointer;"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="popBody"></div>
+</div>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="notices.html">Notices</a><a href="achievements.html">Achievements</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p></div></div></footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+let allEvents = [];
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // 0-indexed
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function closePopup() {
+  document.getElementById('eventPopup').style.display = 'none';
+  document.getElementById('popupOverlay').style.display = 'none';
+}
+
+function showPopup(ev) {
+  const sd = new Date(ev.start_date);
+  const ed = new Date(ev.end_date);
+  document.getElementById('popTitle').textContent = ev.title;
+  document.getElementById('popupOverlay').style.display = 'block';
+  document.getElementById('eventPopup').style.display = 'block';
+  document.getElementById('popBody').innerHTML = `
+    <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:16px;">${ev.description || ''}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.82rem;">
+      <div><strong>Type</strong><br><span class="cal-event-dot ${ev.event_type}" style="display:inline-block;margin-top:4px;">${ev.event_type}</span></div>
+      <div><strong>Location</strong><br>${ev.location || '—'}</div>
+      <div><strong>Start</strong><br>${sd.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
+      <div><strong>End</strong><br>${ed.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
+      ${ev.is_mandatory ? '<div style="grid-column:1/-1;"><strong style="color:var(--red);">⚠️ Mandatory Event</strong></div>' : ''}
+    </div>`;
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  document.getElementById('calMonthYear').textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+
+  // Remove day cells (keep day-label headers = first 7 children)
+  while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInPrev = new Date(currentYear, currentMonth, 0).getDate();
+  const today = new Date();
+
+  // Group events by date string
+  const evByDate = {};
+  allEvents.forEach(ev => {
+    const sd = new Date(ev.start_date);
+    const ed = new Date(ev.end_date);
+    // Mark all days from start to end
+    const cur = new Date(sd);
+    while (cur <= ed) {
+      if (cur.getFullYear() === currentYear && cur.getMonth() === currentMonth) {
+        const key = cur.getDate();
+        if (!evByDate[key]) evByDate[key] = [];
+        evByDate[key].push(ev);
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+  });
+
+  // Previous month trailing days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    cell.innerHTML = `<div class="day-num">${daysInPrev - i}</div>`;
+    grid.appendChild(cell);
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    const isToday = today.getDate() === d && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+    cell.className = 'cal-day' + (isToday ? ' today' : '');
+    const dayEvs = evByDate[d] || [];
+    cell.innerHTML = `<div class="day-num">${d}</div>` +
+      dayEvs.slice(0,2).map(ev => `<div class="cal-event-dot ${ev.event_type}">${ev.title.slice(0,10)}</div>`).join('') +
+      (dayEvs.length > 2 ? `<div style="font-size:0.6rem;color:var(--sky);">+${dayEvs.length-2} more</div>` : '');
+    if (dayEvs.length > 0) {
+      cell.addEventListener('click', () => showPopup(dayEvs[0]));
+      cell.style.cursor = 'pointer';
+    }
+    grid.appendChild(cell);
+  }
+
+  // Fill remaining cells
+  const totalCells = grid.children.length - 7; // minus headers
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 1; i <= remaining; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    cell.innerHTML = `<div class="day-num">${i}</div>`;
+    grid.appendChild(cell);
+  }
+}
+
+function renderEventList() {
+  const sidebar = document.getElementById('eventListSidebar');
+  const upcoming = allEvents.filter(ev => new Date(ev.end_date) >= new Date());
+  if (upcoming.length === 0) {
+    sidebar.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;">No upcoming events.</p>';
+    return;
+  }
+  sidebar.innerHTML = upcoming.map(ev => {
+    const sd = new Date(ev.start_date);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `<div class="event-list-item" style="cursor:pointer;" onclick="showPopup(${JSON.stringify(ev).replace(/"/g,'&quot;')})">
+      <div class="ev-type-dot ${ev.event_type}"></div>
+      <div style="flex:1;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--navy);">${ev.title}</div>
+        <div style="font-size:0.72rem;color:var(--text-light);">${sd.getDate()} ${months[sd.getMonth()]} · ${ev.event_type}${ev.is_mandatory ? ' · Mandatory' : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  currentMonth--;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  currentMonth++;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+});
+
+// Make sidebar stack on mobile
+if (window.innerWidth < 768) {
+  document.getElementById('calLayout').style.gridTemplateColumns = '1fr';
+}
+
+async function init() {
+  const res = await NccAPI.getEvents();
+  if (res.success && res.events) {
+    allEvents = res.events;
+  }
+  renderCalendar();
+  renderEventList();
+}
+
+init();
+</script>
+</body>
+</html>

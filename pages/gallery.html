@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <link rel="manifest" href="../manifest.json" />
+  <script src="../js/dark-mode.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .gallery-filter-bar { display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px; }
+    .gallery-filter-btn { padding:6px 20px;border-radius:var(--radius-full);font-size:0.82rem;font-weight:600;border:2px solid var(--mid-gray);color:var(--text-mid);background:var(--white);cursor:pointer;transition:all var(--trans-fast); }
+    .gallery-filter-btn:hover,.gallery-filter-btn.active { background:var(--navy);color:white;border-color:var(--navy); }
+    .gallery-empty { text-align:center;padding:80px 20px;color:var(--text-light); }
+    .gallery-empty i { font-size:3rem;display:block;margin-bottom:16px;color:var(--mid-gray); }
+    .gallery-count { text-align:center;color:var(--text-light);font-size:0.85rem;margin-bottom:24px; }
+    .load-more-btn { display:block;margin:32px auto 0;padding:12px 36px;border:2px solid var(--navy);color:var(--navy);background:white;border-radius:var(--radius-full);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all var(--trans-fast); }
+    .load-more-btn:hover { background:var(--navy);color:white; }
+  </style>
+</head>
+<body>
+<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Gallery</p></div>
+
+<nav id="navbar"><div class="navbar-inner">
+  <a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <div class="navbar-links">
+    <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link active">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a>
+  </div>
+  <div class="navbar-actions">
+    <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+    <a href="login.html" class="btn-nav-login">Login</a>
+    <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+  </div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-nav">
+  <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link active">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a>
+  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div>
+</div>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>Gallery</span></div>
+    <h1 data-aos="fade-up">Photo <span>Gallery</span></h1>
+    <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">Capturing the spirit of discipline, camaraderie, and service through our NCC journey.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="gallery-filter-bar" data-aos="fade-up">
+      <button class="gallery-filter-btn active" data-filter="all">All Photos</button>
+      <button class="gallery-filter-btn" data-filter="Camps">Camps</button>
+      <button class="gallery-filter-btn" data-filter="Parade">Parade</button>
+      <button class="gallery-filter-btn" data-filter="Social">Social Service</button>
+      <button class="gallery-filter-btn" data-filter="Campus">Campus</button>
+    </div>
+
+    <p class="gallery-count" id="galleryCount">Loading...</p>
+    <div class="masonry-grid" id="galleryGrid">
+      <div class="masonry-item skeleton" style="height:220px;"></div>
+      <div class="masonry-item skeleton" style="height:300px;"></div>
+      <div class="masonry-item skeleton" style="height:180px;"></div>
+      <div class="masonry-item skeleton" style="height:250px;"></div>
+      <div class="masonry-item skeleton" style="height:200px;"></div>
+      <div class="masonry-item skeleton" style="height:280px;"></div>
+    </div>
+    <div class="gallery-empty" id="galleryEmpty" style="display:none;">
+      <i class="fas fa-images"></i><p>No photos in this category yet.</p>
+    </div>
+    <button class="load-more-btn" id="galleryMoreBtn" style="display:none;">Load More <i class="fas fa-chevron-down"></i></button>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <img id="lb-img" src="" alt="" />
+  <div id="lb-caption"></div>
+  <button id="lb-close"><i class="fas fa-times"></i></button>
+  <button id="lb-prev"><i class="fas fa-chevron-left"></i></button>
+  <button id="lb-next"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a href="activities.html">Activities</a><a href="notices.html">Notices</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a href="login.html">Cadet Login</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p></div></div></footer>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+let galleryItems = [];
+let currentLbIdx = 0;
+let currentPage = 1;
+let currentFilter = 'all';
+let totalItems = 0;
+
+// ── Lightbox ─────────────────────────────────────────────────────────────────
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+const lbCaption = document.getElementById('lb-caption');
+
+function openLightbox(idx) {
+  currentLbIdx = idx;
+  const item = galleryItems[idx];
+  lbImg.src = API_BASE + item.image_url;
+  lbCaption.textContent = item.title + (item.category ? ' · ' + item.category : '');
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() { lb.classList.remove('active'); document.body.style.overflow = ''; }
+function prevLb() { openLightbox((currentLbIdx - 1 + galleryItems.length) % galleryItems.length); }
+function nextLb() { openLightbox((currentLbIdx + 1) % galleryItems.length); }
+
+document.getElementById('lb-close').onclick = closeLightbox;
+document.getElementById('lb-prev').onclick  = prevLb;
+document.getElementById('lb-next').onclick  = nextLb;
+lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') prevLb();
+  if (e.key === 'ArrowRight') nextLb();
+});
+
+// ── Load Gallery ─────────────────────────────────────────────────────────────
+async function loadGallery(reset = false) {
+  if (reset) { currentPage = 1; galleryItems = []; }
+  const grid = document.getElementById('galleryGrid');
+  const empty = document.getElementById('galleryEmpty');
+  const moreBtn = document.getElementById('galleryMoreBtn');
+  const countEl = document.getElementById('galleryCount');
+
+  if (reset) grid.innerHTML = '<div class="masonry-item skeleton" style="height:220px;"></div>'.repeat(6);
+
+  const params = { page: currentPage };
+  if (currentFilter !== 'all') params.category = currentFilter;
+  const res = await NccAPI.getGallery(params);
+
+  if (reset) grid.innerHTML = '';
+
+  if (!res.success || !res.gallery || res.gallery.length === 0) {
+    if (reset) {
+      empty.style.display = 'block';
+      countEl.textContent = 'No photos found';
+    }
+    moreBtn.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  totalItems = res.total || 0;
+  const startIdx = galleryItems.length;
+  galleryItems.push(...res.gallery);
+  countEl.textContent = `Showing ${galleryItems.length} of ${totalItems} photos`;
+
+  res.gallery.forEach((item, i) => {
+    const globalIdx = startIdx + i;
+    const div = document.createElement('div');
+    div.className = 'masonry-item';
+    div.innerHTML = `
+      <img src="${API_BASE}${item.image_url}" alt="${item.title}" loading="lazy" />
+      <div class="masonry-overlay">${item.title}</div>`;
+    div.addEventListener('click', () => openLightbox(globalIdx));
+    grid.appendChild(div);
+  });
+
+  const loaded = galleryItems.length;
+  moreBtn.style.display = loaded < totalItems ? 'block' : 'none';
+}
+
+document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.gallery-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    loadGallery(true);
+  });
+});
+
+document.getElementById('galleryMoreBtn').addEventListener('click', () => {
+  currentPage++;
+  loadGallery(false);
+});
+
+loadGallery(true);
+</script>
+</body>
+</html>
