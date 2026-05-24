@@ -48,7 +48,7 @@ async def lifespan(app: FastAPI):
         from app.utils.seed import seed_initial_data
         await seed_initial_data()
     except Exception as e:
-        print(f"⚠️  Seeding skipped: {e}")
+        print(f"Seeding skipped: {e}")
     yield
     await close_db()
 
@@ -64,9 +64,11 @@ app = FastAPI(
 )
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
+# In DEBUG mode allow all origins (file:// opened pages, Live Server, etc.)
+# In production restrict to ALLOWED_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"] if DEBUG else ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

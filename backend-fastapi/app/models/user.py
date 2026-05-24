@@ -3,25 +3,24 @@ models/user.py — Pydantic request/response models for Auth
 """
 
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class SignupRequest(BaseModel):
     username: str
-    email: EmailStr
+    email: str          # plain str so roll numbers also work during signup
     password: str
     confirm_password: str
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str          # accepts email OR roll number / username
     password: str
 
 
 class OTPVerifyRequest(BaseModel):
-    email: EmailStr
+    email: str          # same identifier used during login
     otp: str
-
 
 class UserResponse(BaseModel):
     id: str

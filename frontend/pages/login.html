@@ -129,6 +129,11 @@
       background: var(--light-gray);
     }
     .otp-input:focus { border-color: var(--navy); background: white; outline: none; box-shadow: 0 0 0 3px rgba(13,43,94,0.1); }
+    .glass-card{box-shadow:0 0 60px rgba(52,152,219,.12),0 32px 80px rgba(0,0,0,.4)}
+    /* ─ Back to Home Button ─ */
+    .back-home-btn { position: absolute; top: 24px; left: 24px; z-index: 10; display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(10px); transition: all 0.3s; }
+    .back-home-btn:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(-3px); border-color: rgba(255,255,255,0.3); }
+    @media(max-width:900px) { .back-home-btn { top: 16px; left: 16px; background: rgba(13,43,94,0.5); } }
     .btn-back { background: none; border: none; font-size: 0.9rem; color: var(--text-light); cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 24px; transition: color var(--trans-fast); }
     .btn-back:hover { color: var(--navy); }
 

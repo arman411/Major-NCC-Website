@@ -47,7 +47,7 @@ class Student(Base):
     ncc_wing       = Column(String(50))
     prev_experience = Column(Text)
     motivation     = Column(Text)
-    photo_path     = Column(String(300), nullable=True)
+    photo_path     = Column(Text, nullable=True)   # supports base64 or file path
     status         = Column(String(20), default="pending")  # pending|approved|rejected
     cadet_no       = Column(String(50), nullable=True)
     remarks        = Column(Text, nullable=True)

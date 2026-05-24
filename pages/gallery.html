@@ -32,14 +32,14 @@
   </div>
   <div class="navbar-actions">
     <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
-    <a href="login.html" class="btn-nav-login">Login</a>
-    <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+    <a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
   </div>
   <button class="hamburger"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-nav">
   <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html" class="nav-link">Activities</a><a href="gallery.html" class="nav-link active">Gallery</a><a href="achievements.html" class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html" class="nav-link">Contact</a>
-  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a></div>
+  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
 </div>
 
 <section class="page-hero">
@@ -89,9 +89,10 @@
 <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="../js/main.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>document.addEventListener('DOMContentLoaded',()=>{const c=document.querySelector('.footer-copy');if(c)c.innerHTML=c.innerHTML.replace('2025',new Date().getFullYear());});</script>
 <script>
 let galleryItems = [];
 let currentLbIdx = 0;
@@ -107,7 +108,8 @@ const lbCaption = document.getElementById('lb-caption');
 function openLightbox(idx) {
   currentLbIdx = idx;
   const item = galleryItems[idx];
-  lbImg.src = API_BASE + item.image_url;
+  lbImg.src = item.image_url && (item.image_url.startsWith('http') || item.image_url.startsWith('data:'))
+    ? item.image_url : API_BASE + item.image_url;
   lbCaption.textContent = item.title + (item.category ? ' · ' + item.category : '');
   lb.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -141,9 +143,17 @@ async function loadGallery(reset = false) {
   if (currentFilter !== 'all') params.category = currentFilter;
   const res = await NccAPI.getGallery(params);
 
+  // If backend offline, fall back to MockDB gallery
+  let galleryData = res;
+  if (!galleryData.success || !galleryData.gallery) {
+    const mockItems = MockDB.getGallery();
+    const filtered = currentFilter === 'all' ? mockItems : mockItems.filter(g => g.category === currentFilter);
+    galleryData = { success: true, gallery: filtered, total: filtered.length };
+  }
+
   if (reset) grid.innerHTML = '';
 
-  if (!res.success || !res.gallery || res.gallery.length === 0) {
+  if (!galleryData.gallery || galleryData.gallery.length === 0) {
     if (reset) {
       empty.style.display = 'block';
       countEl.textContent = 'No photos found';
@@ -152,17 +162,20 @@ async function loadGallery(reset = false) {
     return;
   }
   empty.style.display = 'none';
-  totalItems = res.total || 0;
+  totalItems = galleryData.total || 0;
   const startIdx = galleryItems.length;
-  galleryItems.push(...res.gallery);
+  galleryItems.push(...galleryData.gallery);
   countEl.textContent = `Showing ${galleryItems.length} of ${totalItems} photos`;
 
-  res.gallery.forEach((item, i) => {
+  galleryData.gallery.forEach((item, i) => {
     const globalIdx = startIdx + i;
+    // Support both absolute URLs (MockDB) and relative paths (backend)
+    const imgSrc = item.image_url && (item.image_url.startsWith('http') || item.image_url.startsWith('data:'))
+      ? item.image_url : API_BASE + item.image_url;
     const div = document.createElement('div');
     div.className = 'masonry-item';
     div.innerHTML = `
-      <img src="${API_BASE}${item.image_url}" alt="${item.title}" loading="lazy" />
+      <img src="${imgSrc}" alt="${item.title}" loading="lazy" />
       <div class="masonry-overlay">${item.title}</div>`;
     div.addEventListener('click', () => openLightbox(globalIdx));
     grid.appendChild(div);

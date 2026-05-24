@@ -22,12 +22,12 @@ async def seed_initial_data():
             admin = User(
                 username="admin",
                 email="admin@gph.edu.in",
-                password_hash=hash_password("admin@123"),
+                password_hash=hash_password("ncc@admin123"),
                 role="admin",
                 created_at=datetime.utcnow()
             )
             db.add(admin)
-            print("✅ Admin user created: admin@gph.edu.in / admin@123")
+            print("Admin user created: admin@gph.edu.in / ncc@admin123")
 
         # ── Notices ───────────────────────────────────────────────────────────
         notice_count = (await db.execute(select(func.count()).select_from(Notice))).scalar()
@@ -60,7 +60,7 @@ async def seed_initial_data():
             ]
             for n in notices:
                 db.add(n)
-            print(f"✅ {len(notices)} notices seeded")
+            print(f"{len(notices)} notices seeded")
 
         # ── Achievements ──────────────────────────────────────────────────────
         ach_count = (await db.execute(select(func.count()).select_from(Achievement))).scalar()
@@ -87,7 +87,7 @@ async def seed_initial_data():
             ]
             for a in achievements:
                 db.add(a)
-            print(f"✅ {len(achievements)} achievements seeded")
+            print(f"{len(achievements)} achievements seeded")
 
         # ── Camps ─────────────────────────────────────────────────────────────
         camp_count = (await db.execute(select(func.count()).select_from(Camp))).scalar()
@@ -108,7 +108,7 @@ async def seed_initial_data():
             ]
             for camp in camps:
                 db.add(camp)
-            print(f"✅ {len(camps)} camps seeded")
+            print(f"{len(camps)} camps seeded")
 
         # ── Leaderboard (CadetPoints) ─────────────────────────────────────────
         lb_count = (await db.execute(select(func.count()).select_from(CadetPoints))).scalar()
@@ -125,7 +125,7 @@ async def seed_initial_data():
             ]
             for l in leaders:
                 db.add(l)
-            print(f"✅ {len(leaders)} leaderboard entries seeded")
+            print(f"{len(leaders)} leaderboard entries seeded")
 
         # ── Events ────────────────────────────────────────────────────────────
         ev_count = (await db.execute(select(func.count()).select_from(Event))).scalar()
@@ -149,7 +149,7 @@ async def seed_initial_data():
             ]
             for ev in events:
                 db.add(ev)
-            print(f"✅ {len(events)} events seeded")
+            print(f"{len(events)} events seeded")
 
         await db.commit()
-        print("🌱 Database seeding complete.")
+        print("Database seeding complete.")

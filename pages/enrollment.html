@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enroll as Cadet – NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <title>Enroll as Cadet â€“ NCC Govt. Polytechnic Hamirpur (HP)</title>
   <meta name="description"
     content="Register to join the NCC unit at Government Polytechnic Hamirpur (HP). Fill out the enrollment form to become a cadet." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -263,8 +263,7 @@
           class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html"
           class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html"
           class="nav-link">Contact</a></div>
-      <div class="navbar-actions"><a href="login.html" class="btn-nav-login">Login</a><a href="enrollment.html"
-          class="btn-nav-enroll">Enroll Now</a></div><button
+      <div class="navbar-actions"><button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button><a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a></div><button
         class="hamburger"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -273,9 +272,7 @@
       class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html"
       class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html"
       class="nav-link">Contact</a>
-    <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline"
-        style="padding:10px 20px;font-size:.85rem;">Login</a><a href="enrollment.html" class="btn btn-danger"
-        style="padding:10px 20px;font-size:.85rem;">Enroll</a></div>
+    <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
   </div>
 
   <section class="page-hero">
@@ -299,42 +296,38 @@
           </div>
           <div class="enrollment-benefits">
             <div class="eb-item">
-              <div class="eb-icon navy">???</div>
+              <div class="eb-icon navy"><i class="fas fa-medal"></i></div>
               <div class="eb-text">
                 <h4>Defence Recruitment Advantage</h4>
-                <p>C Certificate holders get relaxed physical standards in over 25 Armed Forces recruitment processes.
-                </p>
+                <p>C Certificate holders get relaxed physical standards in over 25 Armed Forces recruitment processes.</p>
               </div>
             </div>
             <div class="eb-item">
-              <div class="eb-icon red">??</div>
+              <div class="eb-icon red"><i class="fas fa-rupee-sign"></i></div>
               <div class="eb-text">
-                <h4>Stipend & Scholarships</h4>
-                <p>Cadets receive daily allowances during camps and are eligible for special government scholarships.
-                </p>
+                <h4>Stipend &amp; Scholarships</h4>
+                <p>Cadets receive daily allowances during camps and are eligible for special government scholarships.</p>
               </div>
             </div>
             <div class="eb-item">
-              <div class="eb-icon sky">??</div>
+              <div class="eb-icon sky"><i class="fas fa-globe-asia"></i></div>
               <div class="eb-text">
-                <h4>International Exposure</h5>
-                  <p>Selected cadets participate in Youth Exchange Programmes with countries like the UK, USA, Japan and
-                    more.</p>
+                <h4>International Exposure</h4>
+                <p>Selected cadets participate in Youth Exchange Programmes with countries like the UK, USA, Japan and more.</p>
               </div>
             </div>
             <div class="eb-item">
-              <div class="eb-icon navy">??</div>
+              <div class="eb-icon navy"><i class="fas fa-users"></i></div>
               <div class="eb-text">
                 <h4>Leadership Development</h4>
                 <p>Develop communication, team management and decision-making skills valued in all careers.</p>
               </div>
             </div>
             <div class="eb-item">
-              <div class="eb-icon red">??</div>
+              <div class="eb-icon red"><i class="fas fa-star"></i></div>
               <div class="eb-text">
                 <h4>Bonus Marks in Govt. Jobs</h4>
-                <p>NCC B/C certificate holders receive additional marks in many state government job recruitment tests.
-                </p>
+                <p>NCC B/C certificate holders receive additional marks in many state government job recruitment tests.</p>
               </div>
             </div>
           </div>
@@ -358,7 +351,7 @@
                   <div class="ps-dot" id="dot3">3</div><span class="ps-label">NCC Details</span>
                 </div>
                 <div class="progress-step">
-                  <div class="ps-dot" id="dot4">?</div><span class="ps-label">Submit</span>
+                   <div class="ps-dot" id="dot4"><i class="fas fa-check" style="font-size:0.7rem;"></i></div><span class="ps-label">Submit</span>
                 </div>
               </div>
             </div>
@@ -384,21 +377,41 @@
                     Birth</label>
                   <p class="form-error">Please enter your date of birth.</p>
                 </div>
-                <div class="form-group">
-                  <select class="form-control" id="gender" required>
-                    <option value="">Select Gender</option>
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                  </select>
-                  <label class="form-label" for="gender"
-                    style="top:-10px;font-size:0.75rem;color:var(--sky);">Gender</label>
-                  <p class="form-error">Please select your gender.</p>
+                <div class="form-row">
+                  <div class="form-group">
+                    <select class="form-control" id="gender" required>
+                      <option value="">Select Gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                    <label class="form-label" for="gender"
+                      style="top:-10px;font-size:0.75rem;color:var(--sky);">Gender</label>
+                    <p class="form-error">Please select your gender.</p>
+                  </div>
+                  <div class="form-group">
+                    <select class="form-control" id="bloodGroup" required>
+                      <option value="">Select Blood Group</option>
+                      <option>A+</option><option>A-</option>
+                      <option>B+</option><option>B-</option>
+                      <option>AB+</option><option>AB-</option>
+                      <option>O+</option><option>O-</option>
+                    </select>
+                    <label class="form-label" for="bloodGroup" style="top:-10px;font-size:0.75rem;color:var(--sky);">Blood Group</label>
+                    <p class="form-error">Please select your blood group.</p>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <input type="tel" class="form-control" id="phone" placeholder="Phone Number" required />
-                  <label class="form-label" for="phone">Phone Number</label>
-                  <p class="form-error">Please enter a valid phone number.</p>
+                <div class="form-row">
+                  <div class="form-group">
+                    <input type="tel" class="form-control" id="phone" placeholder="Phone Number" required />
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <p class="form-error">Please enter a valid phone number.</p>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="aadhaar" placeholder="Aadhaar Number (12 digits)" pattern="\d{12}" required />
+                    <label class="form-label" for="aadhaar">Aadhaar Number</label>
+                    <p class="form-error">Please enter valid 12-digit Aadhaar.</p>
+                  </div>
                 </div>
                 <div class="step-actions">
                   <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next Step <i
@@ -456,9 +469,9 @@
                 <div class="form-group">
                   <select class="form-control" id="wing" required>
                     <option value="">Select NCC Wing</option>
-                    <option>Army Wing</option>
-                    <option>Naval Wing</option>
-                    <option>Air Wing</option>
+                    <option value="Army">Army Wing</option>
+                    <option value="Naval">Naval Wing</option>
+                    <option value="Air">Air Wing</option>
                   </select>
                   <label class="form-label" for="wing" style="top:-10px;font-size:0.75rem;color:var(--sky);">Preferred
                     NCC Wing</label>
@@ -479,12 +492,24 @@
                     rows="4"></textarea>
                   <label class="form-label" for="motivation">Motivation Statement</label>
                 </div>
-                <div class="file-drop" id="fileDrop" onclick="document.getElementById('photoFile').click()">
-                  <i class="fas fa-cloud-upload-alt"></i>
-                  <p><strong>Upload Passport Photo</strong></p>
-                  <p>JPG, PNG up to 2MB. Click or drag & drop.</p>
+                <div class="form-row" style="margin-bottom:16px;">
+                  <div style="position:relative;">
+                    <div class="file-drop" id="fileDrop" onclick="document.getElementById('photoFile').click()">
+                      <i class="fas fa-cloud-upload-alt"></i>
+                      <p><strong>Upload Passport Photo</strong></p>
+                      <p>JPG, PNG up to 2MB.</p>
+                    </div>
+                    <input type="file" id="photoFile" accept="image/*" style="display:none;" />
+                  </div>
+                  <div style="position:relative;">
+                    <div class="file-drop" id="medFileDrop" onclick="document.getElementById('medicalFile').click()">
+                      <i class="fas fa-notes-medical"></i>
+                      <p><strong>Medical Certificate</strong></p>
+                      <p>PDF, JPG up to 2MB.</p>
+                    </div>
+                    <input type="file" id="medicalFile" accept=".pdf,image/*" style="display:none;" />
+                  </div>
                 </div>
-                <input type="file" id="photoFile" accept="image/*" style="display:none;" />
                 <div style="margin-top:20px;padding:16px;background:var(--off-white);border-radius:var(--radius-md);">
                   <label style="display:flex;gap:12px;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
                     <input type="checkbox" id="agree" required style="margin-top:3px;" />
@@ -502,7 +527,7 @@
             </form>
 
             <div class="success-state" id="successState">
-              <div class="success-icon">?</div>
+              <div class="success-icon"><i class="fas fa-check"></i></div>
               <h2 style="color:var(--navy);margin-bottom:12px;">Application Submitted!</h2>
               <p style="color:var(--text-mid);margin-bottom:24px;">Thank you for applying. The ANO office will contact
                 you within 3-5 working days to confirm your enrollment and schedule an orientation.</p>
@@ -538,22 +563,74 @@
         <div class="footer-col">
           <h4>Contact</h4>
           <div class="footer-contact-item">
-            <div class="fc-icon">??</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span>
+            <div class="fc-icon"><i class="fas fa-map-marker-alt"></i></div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur â€“ 177001</span>
           </div>
           <div class="footer-contact-item">
-            <div class="fc-icon">??</div><span>+91 1662 123456</span>
+            <div class="fc-icon"><i class="fas fa-phone"></i></div><span>+91 1662 123456</span>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
+        <p class="footer-copy">&copy; 2025 NCC Unit â€“ Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
       </div>
     </div>
   </footer>
   <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
   <script src="../js/main.js"></script>
+
   <script>
+    if (!Auth.isLoggedIn()) {
+      window.location.href = 'login.html';
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        const user = Auth.getUser();
+        if (user) {
+          // Fix #10: Check if already enrolled â€” prevent duplicate submissions
+          const cadets = MockDB.getCadets() || [];
+          const alreadyEnrolled = cadets.some(c =>
+            (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) ||
+            c.roll === user.username || c.roll_no === user.username
+          );
+          if (alreadyEnrolled) {
+            const section = document.querySelector('main') || document.body;
+            const banner = document.createElement('div');
+            banner.style.cssText = `
+              position:fixed; top:0; left:0; right:0; z-index:9999;
+              background:linear-gradient(135deg,#27ae60,#2ecc71);
+              color:white; padding:18px 24px; text-align:center;
+              font-size:0.95rem; font-weight:600; box-shadow:0 4px 20px rgba(0,0,0,0.2);
+            `;
+            banner.innerHTML = `
+              <i class="fas fa-check-circle"></i>
+              &nbsp; You are already enrolled! Your application is being reviewed.
+              &nbsp;<a href="cadet-portal.html" style="color:white;text-decoration:underline;font-weight:800;">
+                View Your Portal â†’
+              </a>
+              &nbsp;&nbsp;<a href="javascript:void(0)" onclick="this.parentElement.remove()" style="color:rgba(255,255,255,0.7);font-size:1.2rem;margin-left:12px;">&times;</a>`;
+            document.body.insertBefore(banner, document.body.firstChild);
+          }
+
+          // Fix #3: Prefill form fields using DOMContentLoaded (elements guaranteed to exist)
+          const emailEl = document.getElementById('email');
+          const rollEl = document.getElementById('rollNo');
+          if (emailEl && user.email) emailEl.value = user.email;
+          if (rollEl && user.username) rollEl.value = user.username;
+
+          const dbUsers = MockDB.getUsers() || [];
+          const dbUser = dbUsers.find(u => u.username === user.username || u.email === user.email);
+          if (dbUser) {
+            const firstEl = document.getElementById('firstName');
+            const lastEl  = document.getElementById('lastName');
+            if (firstEl && dbUser.first_name) firstEl.value = dbUser.first_name;
+            if (lastEl  && dbUser.last_name)  lastEl.value  = dbUser.last_name;
+          }
+        }
+      });
+    }
+
     let currentStep = 1;
     const totalSteps = 3;
 
@@ -591,14 +668,64 @@
     }
     function prevStep(n) { if (n > 1) showStep(n - 1); }
 
-    document.getElementById('enrollForm').addEventListener('submit', (e) => {
+    document.getElementById('enrollForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!validateStep(3)) return;
       const agree = document.getElementById('agree');
-      if (!agree.checked) { alert('Please agree to the NCC code of conduct.'); return; }
-      document.getElementById('enrollForm').style.display = 'none';
-      document.getElementById('successState').classList.add('show');
-      document.querySelector('.progress-bar-wrap').style.display = 'none';
+      if (!agree.checked) { showToast('Please agree to the NCC code of conduct.', 'warning'); return; }
+
+      // Fix: use correct selector for the submit button
+      const btn = e.target.querySelector('[type="submit"]');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+      btn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('first_name', document.getElementById('firstName').value.trim());
+        formData.append('last_name', document.getElementById('lastName').value.trim());
+        formData.append('dob', document.getElementById('dob').value);
+        formData.append('gender', document.getElementById('gender').value);
+        formData.append('phone', document.getElementById('phone').value.trim());
+        formData.append('roll_number', document.getElementById('rollNo').value.trim());
+        formData.append('year', document.getElementById('year').value);
+        formData.append('branch', document.getElementById('branch').value);
+        formData.append('email', document.getElementById('email').value.trim());
+        formData.append('wing', document.getElementById('wing').value);
+        formData.append('motivation', document.getElementById('motivation').value.trim());
+        formData.append('blood_group', document.getElementById('bloodGroup').value);
+        formData.append('aadhaar', document.getElementById('aadhaar').value.trim());
+        formData.append('prev_exp', document.getElementById('prevExp').value);
+
+        const photoInput = document.getElementById('photoFile');
+        if (photoInput && photoInput.files[0]) {
+          formData.append('photo', photoInput.files[0]);
+        }
+        const medInput = document.getElementById('medicalFile');
+        if (medInput && medInput.files[0]) {
+          formData.append('medical_cert', medInput.files[0]);
+        }
+
+        const res = await NccAPI.enroll(formData);
+
+        if (res.error) {
+          showToast(res.message || 'Enrollment failed. Please check inputs.', 'error');
+        } else {
+          document.getElementById('enrollForm').style.display = 'none';
+          document.getElementById('successState').classList.add('show');
+          document.querySelector('.progress-bar-wrap').style.display = 'none';
+          if (res.reference_number) {
+            const h2 = document.querySelector('#successState h2');
+            h2.innerHTML = `Enrollment Submitted!<br><span style="font-size:1.2rem;color:var(--sky);">Ref: ${res.reference_number}</span>`;
+          }
+          showToast('Application submitted successfully!', 'success');
+        }
+      } catch (err) {
+        showToast('Unexpected error while enrolling. Try again later.', 'error');
+      } finally {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+      }
     });
 
     // File drop styling
@@ -606,7 +733,12 @@
       const f = e.target.files[0];
       if (f) document.getElementById('fileDrop').innerHTML = `<i class="fas fa-check-circle" style="color:var(--sky)"></i><p><strong>${f.name}</strong></p><p>Photo selected.</p>`;
     });
+    document.getElementById('medicalFile').addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (f) document.getElementById('medFileDrop').innerHTML = `<i class="fas fa-check-circle" style="color:var(--sky)"></i><p><strong>${f.name}</strong></p><p>Med Cert selected.</p>`;
+    });
   </script>
 </body>
 
 </html>
+

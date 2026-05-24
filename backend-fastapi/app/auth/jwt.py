@@ -7,6 +7,14 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
+
+# BCrypt monkeypatch for passlib>=1.7.4 with python>=3.12 MUST be before passlib import
+import bcrypt
+if not hasattr(bcrypt, "__about__"):
+    class _About:
+        __version__ = getattr(bcrypt, "__version__", "4.0.0")
+    bcrypt.__about__ = _About
+
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
@@ -22,9 +30,17 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # ── Password helpers ──────────────────────────────────────────────────────────
 def hash_password(password: str) -> str:
+    """Hash a plain-text password with bcrypt via passlib.
+    Pass the raw string — passlib/bcrypt handle UTF-8 encoding internally.
+    Pre-encoding to bytes causes a double-encode that triggers the 72-byte limit error.
+    """
+    if isinstance(password, bytes):
+        password = password.decode("utf-8")
     return pwd_context.hash(password)
 
 def verify_password(plain: str, hashed: str) -> bool:
+    if isinstance(plain, bytes):
+        plain = plain.decode("utf-8")
     return pwd_context.verify(plain, hashed)
 
 

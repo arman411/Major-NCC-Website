@@ -233,6 +233,28 @@ input, textarea, select { font-family: inherit; }
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(192,57,43,0.4);
 }
+.btn-nav-signup {
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--sky), var(--sky-light));
+  border-radius: var(--radius-full);
+  transition: all var(--trans-fast);
+  box-shadow: 0 4px 15px rgba(52,152,219,0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-nav-signup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52,152,219,0.4);
+}
+.btn-nav-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
 /* Hamburger */
 .hamburger {

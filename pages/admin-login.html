@@ -1,100 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Login � NCC Govt. Polytechnic Hamirpur (HP)</title>
-  <meta name="description" content="Admin login portal for NCC unit management at Government Polytechnic Hamirpur (HP)." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login – NCC Govt. Polytechnic Hamirpur</title>
+  <meta name="robots" content="noindex"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
-    body { min-height:100vh;background:linear-gradient(160deg,#f0f4ff 0%,#e8edf8 50%,#f5f7fd 100%);display:flex;align-items:center;justify-content:center;padding:24px; }
-    .admin-login-card {
-      width:100%;max-width:440px;
-      background:white;
-      border-radius:var(--radius-xl);
-      box-shadow:var(--shadow-xl);
-      border:1px solid var(--mid-gray);
-      overflow:hidden;
-    }
-    .admin-login-header {
-      background:linear-gradient(135deg,var(--navy),var(--navy-light));
-      padding:40px 40px 32px;
-      text-align:center;
-      position:relative;
-      overflow:hidden;
-    }
-    .admin-login-header::before {
-      content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,0.05);border-radius:50%;
-    }
-    .admin-shield { width:80px;height:80px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.5rem;border:2px solid rgba(255,255,255,0.2); }
-    .admin-login-header h2 { font-size:1.4rem;font-weight:800;color:white;line-height:1.2; }
-    .admin-login-header p { font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:6px; }
-    .admin-login-body { padding:40px; }
-    .admin-divider { display:flex;align-items:center;gap:10px;margin-bottom:24px; }
-    .admin-divider-line { flex:1;height:1px;background:var(--mid-gray); }
-    .admin-divider span { font-size:0.72rem;font-weight:700;color:var(--red);letter-spacing:2px;text-transform:uppercase; }
-    .pwd-toggle { position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--text-light);cursor:pointer; }
-    .admin-footer { padding:16px 40px;background:var(--off-white);border-top:1px solid var(--mid-gray);display:flex;align-items:center;justify-content:space-between; }
-    .admin-footer a { font-size:0.8rem;color:var(--sky); }
-    .admin-footer a:hover { text-decoration:underline; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#c0392b;--navy:#0d2b5e;--sky:#3498db}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;background:#06080f;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;position:relative}
+
+    /* ── Terminal boot overlay ── */
+    #boot-overlay{position:fixed;inset:0;background:#06080f;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px}
+    #boot-overlay.hide{animation:bootFade .6s ease forwards}
+    @keyframes bootFade{to{opacity:0;pointer-events:none}}
+    .boot-screen{width:100%;max-width:620px;font-family:'Courier New',monospace;color:#c0392b;font-size:.88rem;line-height:1.8}
+    .boot-line{opacity:0;animation:lineIn .15s ease forwards}
+    @keyframes lineIn{to{opacity:1}}
+    .boot-cursor{display:inline-block;width:8px;height:14px;background:#c0392b;animation:blink .7s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .boot-logo{font-size:2rem;font-weight:900;color:#e74c3c;letter-spacing:4px;margin-bottom:24px;text-shadow:0 0 20px rgba(192,57,43,.6)}
+    .boot-dim{color:rgba(192,57,43,.45)}
+    .boot-ok{color:#27ae60}
+
+    /* animated grid */
+    .bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(192,57,43,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.08) 1px,transparent 1px);background-size:40px 40px;animation:gridMove 20s linear infinite;pointer-events:none}
+    @keyframes gridMove{from{background-position:0 0}to{background-position:40px 40px}}
+    .bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,.12) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:glowPulse 4s ease-in-out infinite}
+    @keyframes glowPulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+
+    /* card */
+    .admin-card{position:relative;z-index:1;width:100%;max-width:420px;background:rgba(10,5,5,.6);border:1px solid rgba(192,57,43,.35);border-radius:20px;overflow:hidden;backdrop-filter:blur(30px);box-shadow:0 0 80px rgba(192,57,43,.25),0 0 0 1px rgba(192,57,43,.1),0 32px 80px rgba(0,0,0,.7);animation:cardIn .5s ease}
+    @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+    /* device info bar */
+    .device-bar{background:rgba(192,57,43,.06);border-bottom:1px solid rgba(192,57,43,.1);padding:8px 16px;font-size:.67rem;color:rgba(255,255,255,.25);display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;letter-spacing:.5px}
+    .device-bar i{color:rgba(192,57,43,.5);font-size:.7rem}
+    .device-sep{color:rgba(255,255,255,.1);margin:0 4px}
+    /* ios toggle */
+    .ios-toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+    .ios-toggle input{opacity:0;width:0;height:0;position:absolute}
+    .ios-slider{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:11px;cursor:pointer;transition:all .3s;border:1px solid rgba(255,255,255,.1)}
+    .ios-slider::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.4);top:2px;left:2px;transition:transform .3s}
+    .ios-toggle input:checked+.ios-slider{background:#c0392b;border-color:#c0392b;box-shadow:0 0 10px rgba(192,57,43,.4)}
+    .ios-toggle input:checked+.ios-slider::before{transform:translateX(18px);background:white}
+
+    /* scanner line */
+    .scanner-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(192,57,43,.8),transparent);animation:scanLine 3s ease-in-out infinite;z-index:10}
+    @keyframes scanLine{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+
+    /* header */
+    .card-header{background:linear-gradient(135deg,rgba(192,57,43,.2),rgba(139,0,0,.3));padding:36px 36px 28px;text-align:center;border-bottom:1px solid rgba(192,57,43,.2);position:relative}
+    .shield-wrap{width:76px;height:76px;border-radius:16px;background:rgba(192,57,43,.15);border:2px solid rgba(192,57,43,.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+    .shield-wrap::after{content:'';position:absolute;inset:-4px;border-radius:20px;border:1px solid rgba(192,57,43,.2);animation:ringPulse 2s ease-in-out infinite}
+    @keyframes ringPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.08);opacity:1}}
+    .card-header h1{font-size:1.25rem;font-weight:800;color:white;letter-spacing:.5px}
+    .card-header p{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:4px}
+    .secure-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:4px 14px;border-radius:20px;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);font-size:.68rem;font-weight:700;color:rgba(192,57,43,.9);letter-spacing:1.5px;text-transform:uppercase}
+
+    /* body */
+    .card-body{padding:32px 36px}
+
+    /* lockout banner */
+    .lockout-banner{display:none;background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:.78rem;color:#e74c3c;text-align:center}
+    .lockout-banner.show{display:block}
+
+    /* demo hint */
+    .demo-hint{background:rgba(52,152,219,.08);border:1px solid rgba(52,152,219,.2);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:.74rem;color:rgba(255,255,255,.55);line-height:1.7}
+    .demo-hint strong{color:#7ec8f5}
+
+    /* form */
+    .form-group{margin-bottom:16px;position:relative}
+    .input-wrap{position:relative}
+    .in-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:.85rem;pointer-events:none;transition:color .3s}
+    .form-input{width:100%;padding:13px 13px 13px 40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:11px;color:white;font-family:'Poppins',sans-serif;font-size:.86rem;outline:none;transition:all .3s}
+    .form-input::placeholder{color:rgba(255,255,255,.25)}
+    .form-input:focus{border-color:rgba(192,57,43,.5);background:rgba(192,57,43,.07);box-shadow:0 0 0 3px rgba(192,57,43,.12)}
+    .form-input:focus+.in-icon,.input-wrap:focus-within .in-icon{color:rgba(192,57,43,.8)}
+    .pwd-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);cursor:pointer;background:none;border:none;padding:0;font-size:.85rem;transition:color .2s}
+    .pwd-eye:hover{color:rgba(255,255,255,.6)}
+    .form-error-msg{font-size:.71rem;color:#e74c3c;margin-top:4px;display:none}
+    .form-group.invalid .form-input{border-color:#e74c3c!important}
+    .form-group.invalid .form-error-msg{display:block}
+
+    /* attempt dots */
+    .attempt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .attempt-label{font-size:.72rem;color:rgba(255,255,255,.35);letter-spacing:1px}
+    .attempt-dots{display:flex;gap:6px}
+    .attempt-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .4s}
+    .attempt-dot.used{background:#e74c3c;box-shadow:0 0 6px rgba(192,57,43,.6)}
+
+    /* remember */
+    .remember-row{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+    .remember-row label{font-size:.8rem;color:rgba(255,255,255,.4);cursor:pointer;user-select:none;flex:1}
+
+    /* button */
+    .submit-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#c0392b,#922b21);color:white;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:700;border:none;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.5px}
+    .submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,57,43,.5)}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* warning */
+    .warning-bar{margin-top:20px;padding:10px 14px;background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.15);border-radius:10px;font-size:.72rem;color:rgba(192,57,43,.7);text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
+
+    /* footer */
+    .card-footer{padding:16px 36px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center}
+    .card-footer a{font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;display:flex;align-items:center;gap:6px}
+    .card-footer a:hover{color:rgba(255,255,255,.7)}
+
+    /* otp step */
+    .otp-step{display:none}
+    .otp-step.show{display:block}
+    .otp-input{text-align:center;letter-spacing:10px;font-size:1.5rem;font-weight:700;padding-left:13px!important}
+    .otp-note{font-size:.72rem;color:rgba(255,255,255,.35);text-align:center;margin-bottom:14px}
+
+    /* toast */
+    #toast-wrap{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:10px 16px;border-radius:10px;font-size:.8rem;font-weight:600;color:white;display:flex;align-items:center;gap:8px;animation:sin .3s ease;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    @keyframes sin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+    .toast.success{background:linear-gradient(135deg,#27ae60,#1e8449)}
+    .toast.error{background:linear-gradient(135deg,#c0392b,#922b21)}
+    .toast.info{background:linear-gradient(135deg,#2980b9,#1a6ca8)}
+    .toast.warning{background:linear-gradient(135deg,#e67e22,#ca6f1e)}
   </style>
 </head>
 <body>
-<div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Admin</p></div>
-<div class="admin-login-card">
-  <div class="admin-login-header">
-    <div class="admin-shield">???</div>
-    <h2>Administrator Login</h2>
-    <p>NCC Unit � Govt. Polytechnic Hamirpur (HP)</p>
-  </div>
-  <div class="admin-login-body">
-    <div class="admin-divider"><div class="admin-divider-line"></div><span>?? Secure Access</span><div class="admin-divider-line"></div></div>
-    <form id="adminLoginForm" novalidate>
-      <div class="form-group">
-        <input type="text" class="form-control" id="adminUser" placeholder="Admin Username" required />
-        <label class="form-label" for="adminUser">Admin Username</label>
-        <p class="form-error">Enter your admin username.</p>
-      </div>
-      <div class="form-group" style="position:relative;">
-        <input type="password" class="form-control" id="adminPwd" placeholder="Password" required />
-        <label class="form-label" for="adminPwd">Password</label>
-        <i class="fas fa-eye pwd-toggle" id="adminPwdTog"></i>
-        <p class="form-error">Enter your password.</p>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
-        <input type="checkbox" id="adminRemember" />
-        <label for="adminRemember" style="font-size:0.85rem;color:var(--text-mid);cursor:pointer;">Remember this device</label>
-      </div>
-      <button type="submit" class="btn btn-danger" style="width:100%;">
-        <i class="fas fa-shield-alt"></i> Access Admin Panel
-      </button>
-    </form>
-    <div style="margin-top:20px;padding:14px;background:rgba(192,57,43,0.06);border-radius:var(--radius-md);border:1px solid rgba(192,57,43,0.15);">
-      <p style="font-size:0.78rem;color:var(--red);text-align:center;"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>Unauthorized access is strictly prohibited and logged.</p>
-    </div>
-  </div>
-  <div class="admin-footer">
-    <a href="login.html"><i class="fas fa-arrow-left" style="margin-right:6px;"></i> Cadet Login</a>
-    <a href="../index.html">Main Website ?</a>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div id="toast-wrap"></div>
+
+<!-- ── Terminal Boot Overlay ── -->
+<div id="boot-overlay">
+  <div class="boot-screen">
+    <div class="boot-logo">NCC // GPH</div>
+    <div id="boot-lines"></div>
+    <span class="boot-cursor" id="bootCursor"></span>
   </div>
 </div>
+
+<div class="admin-card" id="adminCard" style="opacity:0">
+  <div class="scanner-line"></div>
+
+  <!-- Device info bar -->
+  <div class="device-bar">
+    <i class="fas fa-desktop"></i><span id="devOS">–</span>
+    <span class="device-sep">·</span>
+    <i class="fas fa-globe"></i><span id="devBrowser">–</span>
+    <span class="device-sep">·</span>
+    <i class="fas fa-map-marker-alt"></i><span id="devIP">local</span>
+  </div>
+  <!-- Header -->
+  <div class="card-header">
+    <div class="shield-wrap">
+      <i class="fas fa-shield-alt" style="font-size:2rem;color:#e74c3c"></i>
+    </div>
+    <h1>Administrator Access</h1>
+    <p>NCC Unit — Govt. Polytechnic Hamirpur (HP)</p>
+    <div class="secure-badge"><i class="fas fa-lock"></i> Restricted Area</div>
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+    <div class="lockout-banner" id="lockoutBanner">
+      <i class="fas fa-ban"></i> Account temporarily locked — <strong id="lockCountdown">—</strong>
+    </div>
+
+    <div class="demo-hint">
+      <strong>Admin Credentials:</strong><br>
+      Username: <strong>admin</strong> &nbsp;·&nbsp; Password: <strong>ncc@admin123</strong>
+    </div>
+
+    <!-- Credentials form -->
+    <form id="adminForm" novalidate>
+      <div id="creds-step">
+        <div class="form-group" id="grp-user">
+          <div class="input-wrap">
+            <input type="text" class="form-input" id="adminUser" placeholder="Admin Username" autocomplete="username" required/>
+            <i class="in-icon fas fa-user-shield"></i>
+          </div>
+          <div class="form-error-msg">Enter admin username.</div>
+        </div>
+        <div class="form-group" id="grp-pwd" style="position:relative">
+          <div class="input-wrap" style="position:relative">
+            <input type="password" class="form-input" id="adminPwd" placeholder="Password" autocomplete="current-password" required/>
+            <i class="in-icon fas fa-lock"></i>
+            <button type="button" class="pwd-eye" id="adminPwdEye"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="form-error-msg">Enter password.</div>
+        </div>
+        <div class="attempt-row">
+          <span class="attempt-label">LOGIN ATTEMPTS</span>
+          <div class="attempt-dots">
+            <div class="attempt-dot" id="dot0"></div>
+            <div class="attempt-dot" id="dot1"></div>
+            <div class="attempt-dot" id="dot2"></div>
+          </div>
+        </div>
+        <div class="remember-row">
+          <label for="adminRemember" style="font-size:.8rem;color:rgba(255,255,255,.4);">Remember this device for 7 days</label>
+          <label class="ios-toggle"><input type="checkbox" id="adminRemember"/><span class="ios-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- OTP Step -->
+      <div class="otp-step" id="otp-step">
+        <div class="otp-note">OTP sent to admin email — check server console</div>
+        <div class="form-group" id="grp-otp">
+          <div class="input-wrap">
+            <input type="text" class="form-input otp-input" id="otpInput" placeholder="••••••" maxlength="6"/>
+            <i class="in-icon fas fa-key"></i>
+          </div>
+          <div class="form-error-msg">Enter the 6-digit OTP.</div>
+        </div>
+        <p style="font-size:.72rem;color:rgba(255,255,255,.3);text-align:center;margin-bottom:14px;cursor:pointer" onclick="cancelOtp()">← Back to credentials</p>
+      </div>
+
+      <button type="submit" class="submit-btn" id="adminBtn">
+        <i class="fas fa-fingerprint"></i> <span id="adminBtnText">Access Command Center</span>
+      </button>
+    </form>
+
+    <div class="warning-bar">
+      <i class="fas fa-exclamation-triangle"></i>
+      Unauthorized access is strictly prohibited and logged
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="card-footer">
+    <a href="login.html"><i class="fas fa-arrow-left"></i> Cadet Login</a>
+    <a href="../index.html"><i class="fas fa-home"></i> Main Site</a>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
 <script src="../js/main.js"></script>
 <script>
-document.getElementById('adminLoginForm').addEventListener('submit', e => {
+// ── Terminal Boot Sequence ──────────────────────────────────────────────────
+(function(){
+  const lines = [
+    {t:0,   txt:'<span class="boot-dim">[SYSTEM]</span> Initializing NCC Command System v3.1...'},
+    {t:400, txt:'<span class="boot-dim">[CRYPTO]</span> Loading AES-256 encryption module... <span class="boot-ok">OK</span>'},
+    {t:750, txt:'<span class="boot-dim">[NET]</span>    Establishing secure channel... <span class="boot-ok">CONNECTED</span>'},
+    {t:1050,txt:'<span class="boot-dim">[AUTH]</span>   Loading admin credential validator... <span class="boot-ok">READY</span>'},
+    {t:1350,txt:'<span class="boot-dim">[LOG]</span>    Session logging: <span class="boot-ok">ACTIVE</span>'},
+    {t:1600,txt:'<span class="boot-dim">[WARN]</span>   Unauthorized access will be traced and reported.'},
+    {t:1900,txt:''},
+    {t:1950,txt:'<span style="color:white;font-weight:700">NCC Command Center ready. Awaiting authentication.</span>'},
+  ];
+  const container = document.getElementById('boot-lines');
+  const cursor = document.getElementById('bootCursor');
+  const overlay = document.getElementById('boot-overlay');
+  const card = document.getElementById('adminCard');
+  lines.forEach(({t,txt})=>{
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='boot-line'; d.innerHTML=txt;
+      container.insertBefore(d,cursor);
+    },t);
+  });
+  setTimeout(()=>{
+    overlay.classList.add('hide');
+    card.style.opacity='1';
+    setTimeout(()=>overlay.remove(),700);
+  },2600);
+  // Device info
+  const ua=navigator.userAgent;
+  const os=ua.includes('Win')?'Windows':ua.includes('Mac')?'macOS':ua.includes('Linux')?'Linux':'Unknown';
+  const br=ua.includes('Chrome')?'Chrome':ua.includes('Firefox')?'Firefox':ua.includes('Safari')?'Safari':'Browser';
+  document.getElementById('devOS').textContent=os;
+  document.getElementById('devBrowser').textContent=br;
+})();
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(msg,type='info',dur=3500){
+  const icons={success:'check-circle',error:'times-circle',info:'info-circle',warning:'exclamation-triangle'};
+  const t=document.createElement('div'); t.className=`toast ${type}`;
+  t.innerHTML=`<i class="fas fa-${icons[type]}"></i>${msg}`;
+  document.getElementById('toast-wrap').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},dur);
+}
+
+// ── Redirect if already admin ──────────────────────────────────────────────────
+(function(){
+  if(MockDB.getAdminSession()||( Auth.isLoggedIn()&&Auth.isAdmin()))
+    window.location.href='admin-dashboard.html';
+})();
+
+// ── Lockout Management ─────────────────────────────────────────────────────────
+let attempts=0; const MAX=3;
+let lockoutTimer=null;
+function markAttempt(){
+  attempts++;
+  const d=document.getElementById('dot'+(attempts-1));
+  if(d) d.classList.add('used');
+  if(attempts>=MAX) startLockout();
+}
+function startLockout(){
+  let secs=60;
+  document.getElementById('adminBtn').disabled=true;
+  document.getElementById('lockoutBanner').classList.add('show');
+  lockoutTimer=setInterval(()=>{
+    secs--;
+    document.getElementById('lockCountdown').textContent=`${secs}s remaining`;
+    if(secs<=0){
+      clearInterval(lockoutTimer);
+      attempts=0;
+      document.querySelectorAll('.attempt-dot').forEach(d=>d.classList.remove('used'));
+      document.getElementById('adminBtn').disabled=false;
+      document.getElementById('lockoutBanner').classList.remove('show');
+    }
+  },1000);
+}
+
+// ── Password Toggle ────────────────────────────────────────────────────────────
+document.getElementById('adminPwdEye').addEventListener('click',function(){
+  const f=document.getElementById('adminPwd');
+  const show=f.type==='password'; f.type=show?'text':'password';
+  this.querySelector('i').className=`fas fa-${show?'eye-slash':'eye'}`;
+});
+
+// ── OTP State ─────────────────────────────────────────────────────────────────
+let _otpEmail=null;
+function showOtpStep(email){ _otpEmail=email; document.getElementById('creds-step').style.display='none'; document.getElementById('otp-step').classList.add('show'); document.getElementById('adminBtnText').textContent='Verify OTP'; }
+function cancelOtp(){ _otpEmail=null; document.getElementById('creds-step').style.display='block'; document.getElementById('otp-step').classList.remove('show'); document.getElementById('adminBtnText').textContent='Access Command Center'; }
+
+// ── Form Submit ────────────────────────────────────────────────────────────────
+document.getElementById('adminForm').addEventListener('submit', async(e)=>{
   e.preventDefault();
-  const u = document.getElementById('adminUser'), p = document.getElementById('adminPwd');
-  let ok = true;
-  [u,p].forEach(el => { const g=el.closest('.form-group'); if(!el.value.trim()){g.classList.add('invalid');ok=false;}else g.classList.remove('invalid'); });
-  if (ok) window.location.href = 'admin-dashboard.html';
+  if(attempts>=MAX) return;
+  const btn=document.getElementById('adminBtn');
+  const orgHtml=btn.innerHTML; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verifying...'; btn.disabled=true;
+  try {
+    // OTP verification
+    if(_otpEmail){
+      const otp=document.getElementById('otpInput').value.trim();
+      if(!otp||otp.length<6){ document.getElementById('grp-otp').classList.add('invalid'); return; }
+      const res=await NccAPI.verifyOtp({email:_otpEmail, otp});
+      if(res.error||!res.access_token){ showToast('Invalid OTP.','error'); return; }
+      Auth.setTokens(res.access_token,res.refresh_token||null);
+      if(res.user) Auth.setUser(res.user);
+      grantAccess(); return;
+    }
+    // Credentials
+    const user=document.getElementById('adminUser').value.trim();
+    const pwd=document.getElementById('adminPwd').value;
+    let ok=true;
+    if(!user){ document.getElementById('grp-user').classList.add('invalid'); ok=false; }
+    else document.getElementById('grp-user').classList.remove('invalid');
+    if(!pwd){ document.getElementById('grp-pwd').classList.add('invalid'); ok=false; }
+    else document.getElementById('grp-pwd').classList.remove('invalid');
+    if(!ok) return;
+
+    const res=await NccAPI.login({username:user, password:pwd});
+    if(res.otp_required){ showToast('OTP sent! Check server console.','info',6000); showOtpStep(res.email||user); return; }
+    if(res.error){ markAttempt(); showToast(res.message||'Invalid credentials.','error'); return; }
+    const u=Auth.getUser();
+    if(u&&u.role==='admin'){ grantAccess(); }
+    else { Auth.clearTokens(); markAttempt(); showToast('Access denied — not an admin account.','error'); }
+  } catch(err){ showToast('Login error. Try again.','error'); }
+  finally { btn.innerHTML=orgHtml; if(attempts<MAX) btn.disabled=false; }
 });
-document.getElementById('adminPwdTog').addEventListener('click', function() {
-  const f=document.getElementById('adminPwd'), show=f.type==='password';
-  f.type=show?'text':'password'; this.className=`fas fa-${show?'eye-slash':'eye'} pwd-toggle`;
-});
+
+function grantAccess(){
+  MockDB.setAdminSession();
+  if(document.getElementById('adminRemember').checked)
+    localStorage.setItem('ncc_admin_remember', Date.now()+7*86400000);
+  showToast('Access granted! Loading command center...','success');
+  setTimeout(()=>window.location.href='admin-dashboard.html',1100);
+}
 </script>
 </body>
 </html>
-

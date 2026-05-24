@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadet Login – NCC Govt. Polytechnic Hamirpur</title>
+  <meta name="description" content="Login to the NCC Cadet Portal at Government Polytechnic Hamirpur (HP)."/>
+  <script src="/js/dark-mode.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0d2b5e;--sky:#3498db;--red:#c0392b;--green:#27ae60}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;overflow:hidden;background:linear-gradient(135deg,#0a1628 0%,#0d2b5e 50%,#1a1a2e 100%)}
+    canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+    /* layout */
+    .page{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 480px}
+    @media(max-width:900px){.page{grid-template-columns:1fr}.left-panel{display:none}}
+
+    /* left hero panel */
+    .left-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:white;position:relative}
+    .lp-badge{width:110px;height:110px;border-radius:50%;border:3px solid rgba(52,152,219,.4);background:rgba(52,152,219,.1);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:32px;animation:floatY 4s ease-in-out infinite}
+    @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+    .lp-title{font-size:2.6rem;font-weight:800;line-height:1.15;text-align:center;margin-bottom:16px;background:linear-gradient(135deg,#fff,#7ec8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .lp-sub{font-size:.95rem;color:rgba(255,255,255,.6);text-align:center;max-width:340px;line-height:1.8;margin-bottom:40px}
+    .feature-list{display:flex;flex-direction:column;gap:14px;width:100%;max-width:360px}
+    .feature-item{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);font-size:.85rem;color:rgba(255,255,255,.8);transition:all .3s}
+    .feature-item:hover{background:rgba(52,152,219,.12);border-color:rgba(52,152,219,.3)}
+    .fi-icon{width:36px;height:36px;border-radius:10px;background:rgba(52,152,219,.2);display:flex;align-items:center;justify-content:center;font-size:.95rem;color:#7ec8f5;flex-shrink:0}
+
+    /* right glass card */
+    .right-panel{display:flex;align-items:center;justify-content:center;padding:32px 28px;background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.06);backdrop-filter:blur(20px)}
+    .glass-card{width:100%;max-width:400px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:40px 36px;backdrop-filter:blur(30px);box-shadow:0 32px 80px rgba(0,0,0,.4)}
+
+    .card-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+    .card-logo img{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.2)}
+    .card-logo-text strong{display:block;font-size:.92rem;font-weight:700;color:white}
+    .card-logo-text span{font-size:.68rem;color:rgba(255,255,255,.45)}
+
+    h1{font-size:1.75rem;font-weight:800;color:white;margin-bottom:6px}
+    .subtitle{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:28px}
+
+    /* demo hint */
+    .demo-box{background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.25);border-radius:12px;padding:12px 14px;margin-bottom:24px;font-size:.76rem;color:rgba(255,255,255,.65);line-height:1.7}
+    .demo-box strong{color:#7ec8f5}
+    .demo-fill-btn{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 12px;border-radius:20px;border:1px solid rgba(52,152,219,.4);background:rgba(52,152,219,.15);color:#7ec8f5;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .demo-fill-btn:hover{background:rgba(52,152,219,.3)}
+
+    /* form elements */
+    .form-group{margin-bottom:18px;position:relative}
+    .input-wrap{position:relative}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.35);font-size:.9rem;pointer-events:none;transition:color .3s;z-index:2}
+    .form-input{width:100%;padding:14px 14px 14px 42px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:white;font-family:'Poppins',sans-serif;font-size:.88rem;outline:none;transition:all .3s}
+    .form-input::placeholder{color:rgba(255,255,255,.3)}
+    .form-input:focus{border-color:rgba(52,152,219,.6);background:rgba(52,152,219,.08);box-shadow:0 0 0 3px rgba(52,152,219,.15)}
+    .form-input:focus~.input-icon,.input-wrap:focus-within .input-icon{color:#7ec8f5}
+    .pwd-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);cursor:pointer;z-index:2;transition:color .2s;background:none;border:none;padding:0}
+    .pwd-eye:hover{color:rgba(255,255,255,.7)}
+    .form-error-msg{font-size:.72rem;color:#e74c3c;margin-top:5px;display:none}
+    .form-group.invalid .form-input{border-color:#e74c3c}
+    .form-group.invalid .form-error-msg{display:block}
+    .form-label-float{position:absolute;left:42px;top:50%;transform:translateY(-50%);font-size:.85rem;color:rgba(255,255,255,.3);pointer-events:none;transition:all .25s;z-index:1}
+    .form-input:focus~.form-label-float,.form-input:not(:placeholder-shown)~.form-label-float{top:-9px;left:12px;font-size:.68rem;color:#7ec8f5;background:rgba(13,27,60,.95);padding:0 6px;border-radius:4px}
+
+    /* OTP field */
+    .otp-group{display:none}
+    .otp-group.show{display:block}
+    .otp-input{text-align:center;letter-spacing:8px;font-size:1.4rem;font-weight:700;padding-left:14px!important}
+
+    /* forgot */
+    .forgot-row{text-align:right;margin-bottom:20px;margin-top:-6px}
+    .forgot-link{font-size:.78rem;color:rgba(52,152,219,.8);cursor:pointer;text-decoration:none;transition:color .2s}
+    .forgot-link:hover{color:#7ec8f5}
+
+    /* submit button */
+    .submit-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#3498db,#1a6ca8);color:white;font-family:'Poppins',sans-serif;font-size:.92rem;font-weight:700;border:none;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px}
+    .submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(52,152,219,.4)}
+    .submit-btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
+
+    /* links */
+    .auth-links{text-align:center;font-size:.82rem;color:rgba(255,255,255,.4);margin-top:4px}
+    .auth-links a{color:#7ec8f5;font-weight:600;text-decoration:none;transition:color .2s}
+    .auth-links a:hover{color:white}
+    .divider{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.2);font-size:.72rem;margin:12px 0}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+
+    /* step indicator */
+    .step-label{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .step-dot{width:8px;height:8px;border-radius:50%;background:rgba(52,152,219,.5);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+    /* last login */
+    .last-login-bar{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.2);border-radius:10px;padding:8px 14px;font-size:.72rem;color:rgba(39,174,96,.9);margin-bottom:20px;display:none;align-items:center;gap:8px}
+    .last-login-bar.show{display:flex}
+
+    /* toast */
+    #toast-container{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:12px 18px;border-radius:12px;font-size:.82rem;font-weight:600;color:white;min-width:240px;display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    .toast.success{background:linear-gradient(135deg,#27ae60,#1e8449)}
+    .toast.error{background:linear-gradient(135deg,#c0392b,#922b21)}
+    .toast.info{background:linear-gradient(135deg,#2980b9,#1a6ca8)}
+    .toast.warning{background:linear-gradient(135deg,#e67e22,#ca6f1e)}
+    /* ─ Shake animation (wrong password) ─ */
+    @keyframes shake{0%,100%{transform:translateX(0)}15%,45%,75%{transform:translateX(-7px)}30%,60%,90%{transform:translateX(7px)}}
+    .shake{animation:shake .5s ease !important;border-color:#e74c3c !important;box-shadow:0 0 0 3px rgba(231,76,60,.2) !important}
+    /* ─ Password strength bar ─ */
+    .pwd-strength-bar{height:3px;border-radius:2px;margin-top:6px;background:rgba(255,255,255,.1);overflow:hidden;transition:all .3s}
+    .pwd-strength-fill{height:100%;width:0;border-radius:2px;transition:all .4s ease}
+    .pwd-strength-label{font-size:.66rem;margin-top:3px;font-weight:600;color:rgba(255,255,255,.4);transition:color .3s}
+    /* ─ Ripple button ─ */
+    .submit-btn{overflow:hidden;position:relative}
+    .ripple{position:absolute;border-radius:50%;transform:scale(0);animation:rippleOut .6s linear;background:rgba(255,255,255,.25);pointer-events:none}
+    @keyframes rippleOut{to{transform:scale(4);opacity:0}}
+    /* ─ Card entrance ─ */
+    .glass-card{animation:cardIn .5s ease}
+    @keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    /* ─ Enhanced glow ─ */
+    .right-panel{box-shadow:inset -1px 0 0 rgba(52,152,219,.1)}
+    .glass-card{box-shadow:0 0 60px rgba(52,152,219,.12),0 32px 80px rgba(0,0,0,.4)}
+    /* ─ Back to Home Button ─ */
+    .back-home-btn { position: absolute; top: 24px; left: 24px; z-index: 10; display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(10px); transition: all 0.3s; }
+    .back-home-btn:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(-3px); border-color: rgba(255,255,255,0.3); }
+    @media(max-width:900px) { .back-home-btn { top: 16px; left: 16px; background: rgba(13,43,94,0.5); } }
+  </style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div id="toast-container"></div>
+
+<div class="page">
+  <a href="../index.html" class="back-home-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  <!-- Left Hero -->
+  <div class="left-panel">
+    <div class="lp-badge">🎖️</div>
+    <h2 class="lp-title">NCC Unit<br/>Cadet Portal</h2>
+    <p class="lp-sub">Govt. Polytechnic Hamirpur (HP) — Sign in to access your cadet dashboard, attendance records, certificates, and upcoming camp schedules. Admin? Use your admin credentials to access the dashboard.</p>
+    <div class="feature-list">
+      <div class="feature-item"><div class="fi-icon"><i class="fas fa-id-card"></i></div>View your enrollment & status</div>
+      <div class="feature-item"><div class="fi-icon"><i class="fas fa-certificate"></i></div>Download NCC certificates</div>
+      <div class="feature-item"><div class="fi-icon"><i class="fas fa-calendar-check"></i></div>Track attendance & parades</div>
+      <div class="feature-item"><div class="fi-icon"><i class="fas fa-bell"></i></div>Get real-time unit notices</div>
+    </div>
+  </div>
+
+  <!-- Right Glass Card -->
+  <div class="right-panel">
+    <div class="glass-card">
+      <div class="card-logo">
+        <img src="/images/ncc_badge.png" alt="NCC"/>
+        <div class="card-logo-text">
+          <strong>NCC Unit</strong>
+          <span>Govt. Polytechnic Hamirpur (HP)</span>
+        </div>
+      </div>
+
+      <h1>Sign In</h1>
+      <p class="subtitle">Enter your credentials to access the cadet portal</p>
+
+      <div class="last-login-bar" id="lastLoginBar">
+        <i class="fas fa-check-circle"></i>
+        <span id="lastLoginText">Last login: —</span>
+      </div>
+
+      <!-- Demo hint (click to expand) -->
+      <details class="demo-box" style="cursor:pointer;">
+        <summary style="font-weight:700;color:#7ec8f5;list-style:none;display:flex;align-items:center;gap:6px;">
+          <i class="fas fa-info-circle"></i> Demo / Test Credentials
+        </summary>
+        <div style="margin-top:8px;line-height:1.8;">
+          Admin: <strong>admin</strong> / <strong>ncc@admin123</strong><br/>
+          Cadet: <strong>arjun@ncc.in</strong> / <strong>cadet123</strong>
+          <br/><button class="demo-fill-btn" onclick="fillDemo('admin')"><i class="fas fa-bolt"></i> Fill Admin</button>
+          <button class="demo-fill-btn" onclick="fillDemo('cadet')" style="margin-left:6px"><i class="fas fa-user"></i> Fill Cadet</button>
+        </div>
+      </details>
+
+      <form id="loginForm" novalidate>
+        <!-- Step 1: Credentials -->
+        <div id="step-creds">
+          <div class="form-group" id="grp-identifier">
+            <div class="input-wrap">
+              <i class="input-icon fas fa-user"></i>
+              <input type="text" class="form-input" id="loginIdentifier" placeholder=" " required autocomplete="username"/>
+              <label class="form-label-float">Roll No. / Email / Username</label>
+            </div>
+            <div class="form-error-msg">Please enter your username or email.</div>
+          </div>
+          <div class="form-group" id="grp-password">
+            <div class="input-wrap" style="position:relative">
+              <i class="input-icon fas fa-lock"></i>
+              <input type="password" class="form-input" id="loginPwd" placeholder=" " required autocomplete="current-password"/>
+              <label class="form-label-float">Password</label>
+              <button type="button" class="pwd-eye" id="pwdEye"><i class="fas fa-eye"></i></button>
+            </div>
+            <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="strengthFill"></div></div>
+            <div class="pwd-strength-label" id="strengthLabel"></div>
+            <div class="form-error-msg">Please enter your password.</div>
+          </div>
+          <div class="forgot-row">
+            <a class="forgot-link" id="forgotLink">Forgot password?</a>
+          </div>
+        </div>
+
+        <!-- Step 2: OTP (hidden until needed) -->
+        <div id="step-otp" class="otp-group">
+          <div class="step-label"><div class="step-dot"></div> OTP Verification</div>
+          <div class="form-group" id="grp-otp">
+            <div class="input-wrap">
+              <i class="input-icon fas fa-key"></i>
+              <input type="text" class="form-input otp-input" id="otpInput" placeholder="• • • • • •" maxlength="6"/>
+            </div>
+            <div class="form-error-msg">Enter the 6-digit OTP sent to your email.</div>
+          </div>
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:16px;text-align:center">
+            OTP sent to <strong id="otpEmailDisplay" style="color:#7ec8f5">—</strong>
+            &nbsp;·&nbsp;<span style="cursor:pointer;color:rgba(52,152,219,.7)" onclick="cancelOtp()">← Change account</span>
+          </p>
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i> <span id="loginBtnText">Sign In</span>
+        </button>
+      </form>
+
+      <div class="auth-links">Don't have an account? <a href="signup.html">Create one here</a></div>
+      <div class="divider">or</div>
+      <div class="auth-links"><a href="admin-login.html"><i class="fas fa-shield-alt"></i> Admin Login</a></div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/main.js"></script>
+<script>
+// ── Particle Canvas ────────────────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('particles');
+  const ctx = c.getContext('2d');
+  let W, H, dots = [];
+  function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for(let i=0;i<80;i++) dots.push({x:Math.random()*9999,y:Math.random()*9999,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    dots.forEach(d=>{
+      d.x+=d.vx; d.y+=d.vy;
+      if(d.x<0||d.x>W) d.vx*=-1;
+      if(d.y<0||d.y>H) d.vy*=-1;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(52,152,219,.4)'; ctx.fill();
+    });
+    dots.forEach((a,i)=>dots.slice(i+1).forEach(b=>{
+      const dx=a.x-b.x,dy=a.y-b.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(52,152,219,${.2*(1-dist/120)})`;ctx.lineWidth=.6;ctx.stroke();}
+    }));
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(msg, type='info', dur=3500){
+  const icons={success:'check-circle',error:'times-circle',info:'info-circle',warning:'exclamation-triangle'};
+  const t=document.createElement('div'); t.className=`toast ${type}`;
+  t.innerHTML=`<i class="fas fa-${icons[type]}"></i>${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(20px)';setTimeout(()=>t.remove(),300)},dur);
+}
+
+// ── Redirect if already logged in ─────────────────────────────────────────────
+(function(){
+  if(Auth.isLoggedIn()){
+    const u=Auth.getUser();
+    window.location.href = u&&u.role==='admin'?'admin-dashboard.html':'cadet-portal.html';
+  }
+  // Show last login
+  const ll=localStorage.getItem('ncc_last_login');
+  if(ll){
+    const bar=document.getElementById('lastLoginBar');
+    bar.classList.add('show');
+    document.getElementById('lastLoginText').textContent='Last login: '+new Date(ll).toLocaleString();
+  }
+})();
+
+// ── Demo Fill ──────────────────────────────────────────────────────────────────
+function fillDemo(who){
+  if(who==='admin'){
+    document.getElementById('loginIdentifier').value='admin';
+    document.getElementById('loginPwd').value='ncc@admin123';
+  } else {
+    document.getElementById('loginIdentifier').value='arjun@ncc.in';
+    document.getElementById('loginPwd').value='cadet123';
+  }
+  // trigger float label
+  ['loginIdentifier','loginPwd'].forEach(id=>{
+    const el=document.getElementById(id); el.dispatchEvent(new Event('input'));
+  });
+}
+
+// ── Password Strength ─────────────────────────────────────────────────────
+document.getElementById('loginPwd').addEventListener('input', function(){
+  const v = this.value;
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  if(!v){fill.style.width='0';label.textContent='';return;}
+  let score = 0;
+  if(v.length >= 6) score++;
+  if(v.length >= 10) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const levels = [
+    {w:'20%',c:'#e74c3c',t:'Very Weak'},
+    {w:'40%',c:'#e67e22',t:'Weak'},
+    {w:'60%',c:'#f39c12',t:'Fair'},
+    {w:'80%',c:'#27ae60',t:'Strong'},
+    {w:'100%',c:'#1abc9c',t:'Very Strong'}
+  ];
+  const l = levels[Math.min(score,4)];
+  fill.style.width=l.w; fill.style.background=l.c;
+  label.textContent=l.t; label.style.color=l.c;
+});
+
+// ── Ripple Effect on Submit Button ────────────────────────────────────────
+document.getElementById('loginBtn').addEventListener('click', function(e){
+  const btn = this;
+  const ripple = document.createElement('span');
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  btn.appendChild(ripple);
+  setTimeout(()=>ripple.remove(), 700);
+});
+
+// ── Shake on Invalid Submit ───────────────────────────────────────────────
+function shakeCard(){
+  const card = document.querySelector('.glass-card');
+  card.classList.remove('shake');
+  void card.offsetWidth; // reflow to restart animation
+  card.classList.add('shake');
+  setTimeout(()=>card.classList.remove('shake'), 600);
+}
+// ── Password Toggle ────────────────────────────────────────────────────────────
+document.getElementById('pwdEye').addEventListener('click',function(){
+  const f=document.getElementById('loginPwd');
+  const show=f.type==='password'; f.type=show?'text':'password';
+  this.querySelector('i').className=`fas fa-${show?'eye-slash':'eye'}`;
+});
+
+// ── Forgot Password ────────────────────────────────────────────────────────────
+document.getElementById('forgotLink').addEventListener('click',function(e){
+  e.preventDefault();
+  showToast('Please contact the ANO office at ncc@gph.edu.in to reset your password.','info',6000);
+});
+
+// ── OTP State ─────────────────────────────────────────────────────────────────
+let _otpEmail=null;
+function showOtpStep(email){
+  _otpEmail=email;
+  document.getElementById('step-creds').style.display='none';
+  document.getElementById('step-otp').classList.add('show');
+  document.getElementById('otpEmailDisplay').textContent=email;
+  document.getElementById('loginBtnText').textContent='Verify OTP';
+  document.getElementById('loginBtn').querySelector('i').className='fas fa-shield-alt';
+  document.getElementById('otpInput').focus();
+}
+function cancelOtp(){
+  _otpEmail=null;
+  document.getElementById('step-creds').style.display='block';
+  document.getElementById('step-otp').classList.remove('show');
+  document.getElementById('loginBtnText').textContent='Sign In';
+  document.getElementById('loginBtn').querySelector('i').className='fas fa-sign-in-alt';
+}
+
+// ── Form Submit ────────────────────────────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async(e)=>{
+  e.preventDefault();
+  const btn=document.getElementById('loginBtn');
+  const orgHtml=btn.innerHTML;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Please wait...';
+  btn.disabled=true;
+
+  try {
+    // OTP step
+    if(_otpEmail){
+      const otp=document.getElementById('otpInput').value.trim();
+      if(!otp||otp.length<6){
+        document.getElementById('grp-otp').classList.add('invalid');
+        showToast('Enter the 6-digit OTP.','warning'); return;
+      }
+      const res=await NccAPI.verifyOtp({email:_otpEmail, otp});
+      if(res.error||!res.access_token){ showToast(res.message||'Invalid OTP. Try again.','error'); return; }
+      Auth.setTokens(res.access_token, res.refresh_token||null);
+      if(res.user) Auth.setUser(res.user);
+      finishLogin();
+      return;
+    }
+
+    // Credentials step
+    const identifier=document.getElementById('loginIdentifier').value.trim();
+    const password=document.getElementById('loginPwd').value;
+    let valid=true;
+    if(!identifier){ document.getElementById('grp-identifier').classList.add('invalid'); valid=false; }
+    else document.getElementById('grp-identifier').classList.remove('invalid');
+    if(!password){ document.getElementById('grp-password').classList.add('invalid'); valid=false; }
+    else document.getElementById('grp-password').classList.remove('invalid');
+    if(!valid) return;
+
+    const res=await NccAPI.login({username:identifier, password});
+    if(res.otp_required){ showToast('OTP sent! Check your email.','info',5000); showOtpStep(res.email||identifier); return; }
+    if(res.error){ shakeCard(); showToast(res.message||'Invalid credentials. Please try again.','error'); return; }
+    if(res.access_token) Auth.setTokens(res.access_token, res.refresh_token||null);
+    if(res.user) Auth.setUser(res.user);
+    finishLogin();
+  } catch(err){
+    showToast('Unexpected error. Please try again.','error');
+  } finally {
+    btn.innerHTML=orgHtml; btn.disabled=false;
+  }
+});
+
+function finishLogin(){
+  localStorage.setItem('ncc_last_login', new Date().toISOString());
+  const user=Auth.getUser();
+  showToast('Welcome back! Redirecting...','success');
+  setTimeout(()=>{
+    if(user&&user.role==='admin'){
+      window.location.href='admin-dashboard.html';
+    } else {
+      const cadets=MockDB.getCadets()||[];
+      // Match by email (reliable) or roll/username
+      const enrolled=cadets.some(c=>
+        (user?.email && c.email && c.email.toLowerCase()===user.email.toLowerCase()) ||
+        (user?.username && (c.roll_no===user.username || c.roll===user.username))
+      );
+      window.location.href=enrolled?'cadet-portal.html':'enrollment.html';
+    }
+  },1000);
+}
+</script>
+</body>
+</html>

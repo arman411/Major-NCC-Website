@@ -64,8 +64,12 @@ async def signup(data: SignupRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login")
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
+    # Try by email first, then by username (for cadets using roll number)
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
+    if not user:
+        result2 = await db.execute(select(User).where(User.username == data.email))
+        user = result2.scalar_one_or_none()
 
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(401, "Invalid email or password")
@@ -94,8 +98,12 @@ async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/verify-otp", response_model=TokenResponse)
 async def verify_otp(data: OTPVerifyRequest, db: AsyncSession = Depends(get_db)):
+    # Look up by email or username
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
+    if not user:
+        result2 = await db.execute(select(User).where(User.username == data.email))
+        user = result2.scalar_one_or_none()
 
     if not user or not user.otp_code:
         raise HTTPException(400, "OTP flow not initiated")

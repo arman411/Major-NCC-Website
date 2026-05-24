@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up – NCC Govt. Polytechnic Hamirpur</title>
+  <meta name="description" content="Create your NCC cadet account at Government Polytechnic Hamirpur (HP)."/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#c0392b;--navy:#0d2b5e;--sky:#3498db;--green:#27ae60}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;background:linear-gradient(135deg,#0a1628 0%,#0d2b5e 50%,#1a1a2e 100%);display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow-x:hidden}
+
+    canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+    canvas#confetti{position:fixed;inset:0;z-index:9999;pointer-events:none;}
+
+    /* Split Layout */
+    .split-layout { display:flex; width:100%; max-width:1100px; height:90vh; min-height:600px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.1); border-radius:24px; overflow:hidden; backdrop-filter:blur(30px); box-shadow:0 32px 80px rgba(0,0,0,.5); position:relative; z-index:1; }
+    .split-left { flex:1; position:relative; display:none; overflow:hidden; background:linear-gradient(135deg, var(--navy), #1a1a2e); }
+    @media(min-width:900px){ .split-left { display:block; } }
+    .carousel-slide { position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; transition:opacity 1s ease-in-out; }
+    .carousel-slide.active { opacity:0.4; }
+    .carousel-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(13,43,94,0.9) 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:40px; }
+    .carousel-overlay h2 { font-size:2.5rem; font-weight:800; color:white; margin-bottom:12px; text-shadow:0 4px 12px rgba(0,0,0,0.5); }
+    .carousel-overlay p { font-size:1.1rem; color:rgba(255,255,255,0.8); line-height:1.5; }
+    
+    .split-right { flex:1; padding:40px; overflow-y:auto; display:flex; flex-direction:column; }
+    .split-right::-webkit-scrollbar { width:6px; }
+    .split-right::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:3px; }
+
+
+    /* glass card overrides */
+    .page-wrap{position:relative;z-index:1;width:100%;max-width:520px; margin:auto;}
+
+    /* logo */
+    .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .logo-row img{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.2)}
+    .logo-text strong{display:block;font-size:.9rem;font-weight:700;color:white}
+    .logo-text span{font-size:.68rem;color:rgba(255,255,255,.4)}
+
+    h1{font-size:1.6rem;font-weight:800;color:white;margin-bottom:4px}
+    .sub{font-size:.85rem;color:rgba(255,255,255,.45);margin-bottom:28px}
+
+    /* step progress */
+    .progress-wrap{display:flex;align-items:center;margin-bottom:32px;position:relative}
+    .step-node{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;z-index:1}
+    .step-circle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.35);transition:all .5s cubic-bezier(0.4, 0, 0.2, 1)}
+    .step-circle.active{background:rgba(52,152,219,.25);border-color:#3498db;color:#7ec8f5;box-shadow:0 0 16px rgba(52,152,219,.3); border-radius:12px; transform:scale(1.1);}
+    .step-circle.done{background:rgba(39,174,96,.2);border-color:#27ae60;color:#27ae60}
+    .step-lbl{font-size:.62rem;font-weight:600;color:rgba(255,255,255,.25);letter-spacing:.5px;text-transform:uppercase;text-align:center;transition:color .4s; margin-top:4px;}
+    .step-lbl.active{color:rgba(52,152,219,.8)}
+    .step-lbl.done{color:rgba(39,174,96,.7)}
+    .progress-line{flex:1;height:4px;background:rgba(255,255,255,.08);position:relative;top:-10px;transition:background .4s; border-radius:2px; overflow:hidden;}
+    .progress-line::after { content:''; position:absolute; left:0; top:0; height:100%; width:0%; background:linear-gradient(90deg, #3498db, #2ecc71); transition:width 0.5s ease; box-shadow:0 0 10px rgba(46,204,113,0.5); }
+    .progress-line.done::after { width:100%; }
+
+    /* form groups */
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:480px){.form-row{grid-template-columns:1fr}}
+    .form-group{margin-bottom:16px;position:relative}
+    .input-wrap{position:relative}
+    .in-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:.85rem;pointer-events:none;transition:color .3s}
+    .form-input{width:100%;padding:13px 13px 13px 40px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:white;font-family:'Poppins',sans-serif;font-size:.86rem;outline:none;transition:all .3s}
+    .form-input::placeholder{color:rgba(255,255,255,.25)}
+    .form-input:focus{border-color:rgba(52,152,219,.5);background:rgba(52,152,219,.06);box-shadow:0 0 0 3px rgba(52,152,219,.12)}
+    .form-input:focus~.in-icon,.input-wrap:focus-within .in-icon{color:#7ec8f5}
+    .form-input.valid{border-color:rgba(39,174,96,.5)}
+    .form-input.invalid-field{border-color:#e74c3c!important}
+    .form-error-msg{font-size:.71rem;color:#e74c3c;margin-top:4px;display:none}
+    .form-group.invalid .form-error-msg{display:block}
+    .form-group.invalid .form-input{border-color:#e74c3c!important}
+    .pwd-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);cursor:pointer;background:none;border:none;padding:0;font-size:.85rem;transition:color .2s}
+    .pwd-eye:hover{color:rgba(255,255,255,.6)}
+
+    /* password strength */
+    .strength-bar-wrap{height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:6px;overflow:hidden}
+    .strength-bar{height:100%;border-radius:4px;transition:width .3s,background .3s;width:0%}
+    .strength-label{font-size:.7rem;margin-top:4px;color:rgba(255,255,255,.35)}
+
+    /* select */
+    .form-select{width:100%;padding:13px 13px 13px 40px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.7);font-family:'Poppins',sans-serif;font-size:.86rem;outline:none;transition:all .3s;appearance:none}
+    .form-select:focus{border-color:rgba(52,152,219,.5);background:rgba(52,152,219,.06)}
+    .form-select option{background:#0d2b5e;color:white}
+
+    /* terms */
+    .terms-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:16px}
+    .terms-row input[type=checkbox]{margin-top:2px;accent-color:#3498db;cursor:pointer;flex-shrink:0}
+    .terms-row label{font-size:.78rem;color:rgba(255,255,255,.5);cursor:pointer;line-height:1.5}
+    .terms-row label a{color:#7ec8f5}
+
+    /* review card */
+    .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+    .review-item{background:rgba(255,255,255,.05);border-radius:10px;padding:10px 14px}
+    .review-item .rl{font-size:.65rem;color:rgba(255,255,255,.3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+    .review-item .rv{font-size:.85rem;font-weight:600;color:white}
+
+    /* navigation buttons */
+    .btn-row{display:flex;gap:12px;margin-top:4px}
+    .btn-back{flex:1;padding:13px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-back:hover{background:rgba(255,255,255,.1);color:white}
+    .btn-next,.btn-submit{flex:2;padding:13px;border-radius:12px;background:linear-gradient(135deg,#3498db,#1a6ca8);border:none;color:white;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-next:hover,.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(52,152,219,.35)}
+    .btn-submit{background:linear-gradient(135deg,#27ae60,#1e8449)}
+    .btn-submit:hover{box-shadow:0 8px 24px rgba(39,174,96,.35)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* success screen */
+    .success-screen{display:none;text-align:center;padding:20px 0}
+    .success-screen.show{display:block}
+    .success-ring{width:90px;height:90px;border-radius:50%;background:rgba(39,174,96,.15);border:3px solid #27ae60;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.5rem;animation:popIn .5s ease}
+    @keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+    .success-title{font-size:1.4rem;font-weight:800;color:white;margin-bottom:8px}
+    .success-sub{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:24px;line-height:1.7}
+    .btn-portal{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:12px;background:linear-gradient(135deg,#3498db,#1a6ca8);color:white;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:700;text-decoration:none;transition:all .3s}
+    .btn-portal:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(52,152,219,.35)}
+
+    .auth-switch{text-align:center;margin-top:16px;font-size:.82rem;color:rgba(255,255,255,.3)}
+    .auth-switch a{color:#7ec8f5;font-weight:600;text-decoration:none}
+
+    /* toast */
+    #toastWrap{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:10px 16px;border-radius:10px;font-size:.8rem;font-weight:600;color:white;display:flex;align-items:center;gap:8px;min-width:220px;animation:sIn .3s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    @keyframes sIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+    .toast.success{background:linear-gradient(135deg,#27ae60,#1e8449)}
+    .toast.error{background:linear-gradient(135deg,#c0392b,#922b21)}
+    .toast.info{background:linear-gradient(135deg,#2980b9,#1a6ca8)}
+    .toast.warning{background:linear-gradient(135deg,#e67e22,#ca6f1e)}
+  </style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<canvas id="confetti"></canvas>
+<div id="toastWrap"></div>
+
+<div class="split-layout">
+  <!-- Left Panel Carousel -->
+  <div class="split-left">
+    <div class="carousel-slide active" style="background-image:url('https://images.unsplash.com/photo-1541604193435-22287d32c2c2?auto=format&fit=crop&q=80');"></div>
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80');"></div>
+    <div class="carousel-overlay">
+      <h2>Join the Elite</h2>
+      <p>Become a part of the world's largest uniformed youth organization. Develop character, discipline, and leadership.</p>
+    </div>
+  </div>
+
+  <!-- Right Panel Form -->
+  <div class="split-right">
+    <div class="page-wrap">
+      <a href="login.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+
+      <div class="logo-row">
+        <img src="/images/ncc_badge.png" alt="NCC"/>
+        <div class="logo-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
+      </div>
+      <h1>Create Account</h1>
+      <p class="sub">Join the NCC cadet portal in 3 quick steps</p>
+
+    <!-- Step progress -->
+    <div class="progress-wrap" id="progressBar">
+      <div class="step-node">
+        <div class="step-circle active" id="sc1"><i class="fas fa-user"></i></div>
+        <span class="step-lbl active" id="sl1">Profile</span>
+      </div>
+      <div class="progress-line" id="pl1"></div>
+      <div class="step-node">
+        <div class="step-circle" id="sc2">2</div>
+        <span class="step-lbl" id="sl2">Account</span>
+      </div>
+      <div class="progress-line" id="pl2"></div>
+      <div class="step-node">
+        <div class="step-circle" id="sc3">3</div>
+        <span class="step-lbl" id="sl3">Confirm</span>
+      </div>
+    </div>
+
+    <!-- ── Step 1: Personal Info ──────────────────────────────────── -->
+    <div id="step1">
+      <div class="form-row">
+        <div class="form-group" id="grp-fname">
+          <div class="input-wrap">
+            <input type="text" class="form-input" id="suFirst" placeholder="First Name" required/>
+            <i class="in-icon fas fa-user"></i>
+          </div>
+          <div class="form-error-msg">Required.</div>
+        </div>
+        <div class="form-group" id="grp-lname">
+          <div class="input-wrap">
+            <input type="text" class="form-input" id="suLast" placeholder="Last Name" required/>
+            <i class="in-icon fas fa-user"></i>
+          </div>
+          <div class="form-error-msg">Required.</div>
+        </div>
+      </div>
+      <div class="form-group" id="grp-roll">
+        <div class="input-wrap">
+          <input type="text" class="form-input" id="suRoll" placeholder="College Roll Number" required/>
+          <i class="in-icon fas fa-id-card"></i>
+        </div>
+        <div class="form-error-msg">Enter your college roll number.</div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrap">
+          <select class="form-select" id="suBranch">
+            <option value="">Select Branch</option>
+            <option>Computer Engineering</option>
+            <option>Electronics Engineering</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Information Technology</option>
+          </select>
+          <i class="in-icon fas fa-graduation-cap"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrap">
+          <select class="form-select" id="suYear">
+            <option value="">Year of Study</option>
+            <option value="1st">1st Year</option>
+            <option value="2nd">2nd Year</option>
+            <option value="3rd">3rd Year</option>
+          </select>
+          <i class="in-icon fas fa-calendar"></i>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn-next" onclick="goStep(2)"><span>Next</span> <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── Step 2: Account Credentials ───────────────────────────── -->
+    <div id="step2" style="display:none">
+      <div class="form-group" id="grp-email">
+        <div class="input-wrap">
+          <input type="email" class="form-input" id="suEmail" placeholder="Email Address" required/>
+          <i class="in-icon fas fa-envelope"></i>
+        </div>
+        <div class="form-error-msg">Enter a valid email address.</div>
+      </div>
+      <div class="form-group" id="grp-pwd" style="position:relative">
+        <div class="input-wrap" style="position:relative">
+          <input type="password" class="form-input" id="suPwd" placeholder="Create Password (min 8 chars)" required/>
+          <i class="in-icon fas fa-lock"></i>
+          <button type="button" class="pwd-eye" id="pe1"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="strength-bar-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+        <div class="strength-label" id="strengthLabel">Enter password to check strength</div>
+        <div class="form-error-msg">Password must be at least 8 characters.</div>
+      </div>
+      <div class="form-group" id="grp-cpwd" style="position:relative">
+        <div class="input-wrap" style="position:relative">
+          <input type="password" class="form-input" id="suCPwd" placeholder="Confirm Password" required/>
+          <i class="in-icon fas fa-lock"></i>
+          <button type="button" class="pwd-eye" id="pe2"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="form-error-msg" id="cpwdErr">Passwords do not match.</div>
+      </div>
+      <div class="terms-row">
+        <input type="checkbox" id="suAgree"/>
+        <label for="suAgree">I confirm I am a student of Govt. Polytechnic Hamirpur and agree to the <a href="#">Terms & Conditions</a>.</label>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn-back" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn-next" onclick="goStep(3)">Review <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── Step 3: Review & Submit ────────────────────────────────── -->
+    <div id="step3" style="display:none">
+      <div class="review-grid" id="reviewGrid"></div>
+      <div class="btn-row">
+        <button type="button" class="btn-back" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> Edit</button>
+        <button type="button" class="btn-submit" id="submitBtn" onclick="doSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
+      </div>
+    </div>
+
+    <!-- ── Success Screen ─────────────────────────────────────────── -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-ring">✓</div>
+      <div class="success-title">Account Created! 🎉</div>
+      <p class="success-sub">Your NCC cadet account is ready.<br>Now complete your enrollment to join the unit officially.</p>
+      <a href="enrollment.html" class="btn-portal"><i class="fas fa-id-card"></i> Complete Enrollment</a>
+    </div>
+
+      <div class="auth-switch" id="loginLink" style="margin-top:18px">Already have an account? <a href="login.html">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/main.js"></script>
+<script>
+// ── Canvas Background ──────────────────────────────────────────────────────────
+(function(){
+  const c=document.getElementById('bg');const ctx=c.getContext('2d');
+  let W,H,dots=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<60;i++) dots.push({x:Math.random()*9999,y:Math.random()*9999,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.4});
+  function draw(){ctx.clearRect(0,0,W,H);dots.forEach(d=>{d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>W)d.vx*=-1;if(d.y<0||d.y>H)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(52,152,219,.3)';ctx.fill();});requestAnimationFrame(draw);}
+  draw();
+})();
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(msg,type='info',dur=3500){
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  const icons={success:'check-circle',error:'times-circle',info:'info-circle',warning:'exclamation-triangle'};
+  t.innerHTML=`<i class="fas fa-${icons[type]}"></i>${msg}`;
+  document.getElementById('toastWrap').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},dur);
+}
+
+// ── Password Toggle ────────────────────────────────────────────────────────────
+['pe1','pe2'].forEach((id,i)=>{
+  const tog=document.getElementById(id);
+  const field=document.getElementById(i===0?'suPwd':'suCPwd');
+  tog.addEventListener('click',()=>{const s=field.type==='password';field.type=s?'text':'password';tog.querySelector('i').className=`fas fa-${s?'eye-slash':'eye'}`;});
+});
+
+// ── Password Strength ──────────────────────────────────────────────────────────
+document.getElementById('suPwd').addEventListener('input',function(){
+  const v=this.value;
+  const bar=document.getElementById('strengthBar');
+  const lbl=document.getElementById('strengthLabel');
+  let score=0;
+  if(v.length>=8)score++;if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
+  const cfg=[[0,'',''],['25%','#e74c3c','Weak'],['50%','#e67e22','Fair'],['75%','#f39c12','Good'],['100%','#27ae60','Strong']];
+  bar.style.width=score?cfg[score][0]:'0%';bar.style.background=score?cfg[score][1]:'';
+  lbl.textContent=v?(score?`Strength: ${cfg[score][2]}`:'Too short'):'Enter password to check strength';
+  lbl.style.color=score?cfg[score][1]:'rgba(255,255,255,.35)';
+});
+
+// ── Step Navigation ────────────────────────────────────────────────────────────
+let currentStep=1;
+function updateProgress(step){
+  for(let i=1;i<=3;i++){
+    const sc=document.getElementById('sc'+i);
+    const sl=document.getElementById('sl'+i);
+    sc.className='step-circle'+(i<step?' done':i===step?' active':'');
+    sl.className='step-lbl'+(i<step?' done':i===step?' active':'');
+    if(i<step) sc.innerHTML='<i class="fas fa-check"></i>';
+    else if(i===1) sc.innerHTML='<i class="fas fa-user"></i>';
+    else sc.textContent=i;
+    if(i<3){const pl=document.getElementById('pl'+i);pl.className='progress-line'+(i<step?' done':'');}
+  }
+}
+function goStep(n){
+  if(n>currentStep&&!validateStep(currentStep)) return;
+  document.getElementById('step'+currentStep).style.display='none';
+  if(n===3) buildReview();
+  document.getElementById('step'+n).style.display='block';
+  currentStep=n;
+  updateProgress(n);
+}
+
+function validateStep(s){
+  let ok=true;
+  if(s===1){
+    ['grp-fname','grp-lname','grp-roll'].forEach(id=>{
+      const g=document.getElementById(id);
+      const inp=g.querySelector('.form-input');
+      if(!inp.value.trim()){g.classList.add('invalid');ok=false;}else g.classList.remove('invalid');
+    });
+  } else if(s===2){
+    const em=document.getElementById('suEmail');
+    const eg=document.getElementById('grp-email');
+    if(!em.value.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)){eg.classList.add('invalid');ok=false;}else eg.classList.remove('invalid');
+    const pw=document.getElementById('suPwd');
+    const pg=document.getElementById('grp-pwd');
+    if(pw.value.length<8){pg.classList.add('invalid');ok=false;}else pg.classList.remove('invalid');
+    const cp=document.getElementById('suCPwd');
+    const cg=document.getElementById('grp-cpwd');
+    if(cp.value!==pw.value){cg.classList.add('invalid');document.getElementById('cpwdErr').textContent='Passwords do not match.';ok=false;}else cg.classList.remove('invalid');
+    if(!document.getElementById('suAgree').checked){showToast('Please agree to the terms.','warning');ok=false;}
+  }
+  return ok;
+}
+
+function buildReview(){
+  const data={
+    'Full Name':document.getElementById('suFirst').value+' '+document.getElementById('suLast').value,
+    'Roll Number':document.getElementById('suRoll').value,
+    'Branch':document.getElementById('suBranch').value||'Not selected',
+    'Year':document.getElementById('suYear').value||'Not selected',
+    'Email':document.getElementById('suEmail').value,
+    'Password':'••••••••',
+  };
+  document.getElementById('reviewGrid').innerHTML=Object.entries(data).map(([k,v])=>`
+    <div class="review-item"><div class="rl">${k}</div><div class="rv">${v}</div></div>`).join('');
+}
+
+// ── Image Carousel ─────────────────────────────────────────────────────────────
+(function initCarousel(){
+  const slides = document.querySelectorAll('.carousel-slide');
+  if(!slides.length) return;
+  let idx = 0;
+  setInterval(()=>{
+    slides[idx].classList.remove('active');
+    idx = (idx + 1) % slides.length;
+    slides[idx].classList.add('active');
+  }, 5000);
+})();
+
+// ── Confetti ───────────────────────────────────────────────────────────────────
+function fireConfetti(){
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = [];
+  const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+  for(let i=0; i<100; i++) {
+    pieces.push({
+      x: canvas.width/2, y: canvas.height/2 + 100,
+      vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20 - 5,
+      size: Math.random()*10+5,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*10
+    });
+  }
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let active = false;
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.rotSpeed;
+      if(p.y < canvas.height) active = true;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+    });
+    if(active) requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────────────
+async function doSignup(){
+  const btn=document.getElementById('submitBtn');
+  const orgHtml=btn.innerHTML;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Creating...';
+  btn.disabled=true;
+  try {
+    const payload={
+      username:document.getElementById('suRoll').value.trim(),
+      email:document.getElementById('suEmail').value.trim(),
+      password:document.getElementById('suPwd').value,
+      first_name:document.getElementById('suFirst').value.trim(),
+      last_name:document.getElementById('suLast').value.trim(),
+      roll_no:document.getElementById('suRoll').value.trim(),
+      branch:document.getElementById('suBranch').value,
+      year:document.getElementById('suYear').value
+    };
+    const res=await NccAPI.signup(payload);
+    if(res.error){showToast(res.message||'Signup failed. Account may exist.','error');return;}
+    // Auto login
+    const loginRes=await NccAPI.login({username:payload.username,password:payload.password});
+    if(!loginRes.error){
+      if(loginRes.access_token) Auth.setTokens(loginRes.access_token,loginRes.refresh_token||null);
+      if(loginRes.user) Auth.setUser(loginRes.user);
+    }
+    // Show success
+    document.getElementById('step3').style.display='none';
+    document.getElementById('progressBar').style.display='none';
+    document.getElementById('loginLink').style.display='none';
+    document.querySelector('h1').style.display='none';
+    document.querySelector('.sub').style.display='none';
+    document.querySelector('.logo-row').style.display='none';
+    document.getElementById('successScreen').classList.add('show');
+    fireConfetti();
+  } catch(err){
+    showToast('Unexpected error. Please try again.','error');
+  } finally {
+    btn.innerHTML=orgHtml; btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>

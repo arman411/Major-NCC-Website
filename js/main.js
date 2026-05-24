@@ -9,7 +9,10 @@
   /* ── Page Loader ─────────────────────────────────────── */
   window.addEventListener('load', () => {
     const loader = document.getElementById('page-loader');
-    if (!loader) return;
+    if (!loader) {
+      document.body.style.overflow = '';
+      return;
+    }
     setTimeout(() => {
       loader.classList.add('loaded');
       document.body.style.overflow = '';

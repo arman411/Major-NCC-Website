@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event Calendar – NCC Govt. Polytechnic Hamirpur (HP)</title>
   <script src="../js/dark-mode.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>if (!Auth.isLoggedIn()) { window.location.href = 'login.html'; }</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
@@ -12,14 +15,18 @@
   <link rel="stylesheet" href="../css/style.css" />
   <style>
     .calendar-wrapper { max-width: 900px; margin: 0 auto; }
-    .event-detail-popup {
-      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-      background:white;border-radius:var(--radius-lg);padding:32px;
-      box-shadow:var(--shadow-xl);z-index:3000;width:90%;max-width:480px;
-      animation:slideUpFade 0.25s ease;
-    }
-    [data-theme="dark"] .event-detail-popup { background:#1a2540;color:#e8ecf4; }
-    .popup-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2999; }
+    /* Modal Styles */
+    .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;padding:20px; }
+    .modal-overlay.active { display:flex;opacity:1; }
+    .modal-content { background:var(--white);width:100%;max-width:600px;border-radius:var(--radius-xl);padding:32px;position:relative;transform:scale(0.95);transition:transform 0.3s;box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto; }
+    .modal-overlay.active .modal-content { transform:scale(1); }
+    .modal-close { position:absolute;top:20px;right:20px;background:none;border:none;font-size:1.5rem;color:var(--text-light);cursor:pointer;transition:color 0.2s; }
+    .modal-close:hover { color:var(--red); }
+    .modal-title { font-size:1.4rem;color:var(--navy);margin-bottom:16px;line-height:1.3; }
+    .modal-meta { display:flex;gap:16px;color:var(--text-light);font-size:0.85rem;margin-bottom:24px;border-bottom:1px solid var(--light-gray);padding-bottom:16px;flex-wrap:wrap; }
+    .modal-body-text { color:var(--text-mid);line-height:1.8;font-size:0.95rem;margin-bottom:24px; white-space:pre-wrap; }
+    [data-theme="dark"] .modal-content { background:#1a2540; }
+    [data-theme="dark"] .modal-title { color:#e8ecf4; }
     .event-list-sidebar { background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--mid-gray); }
     [data-theme="dark"] .event-list-sidebar { background:#1a2540;border-color:#2a3a58; }
     .event-list-item { display:flex;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--mid-gray); }
@@ -42,14 +49,14 @@
   </div>
   <div class="navbar-actions">
     <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
-    <a href="login.html" class="btn-nav-login">Login</a>
-    <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+    <a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
   </div>
   <button class="hamburger"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-nav">
   <a href="../index.html" class="nav-link">Home</a><a href="activities.html" class="nav-link">Activities</a><a href="notices.html" class="nav-link">Notices</a><a href="events-calendar.html" class="nav-link active">Calendar</a>
-  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline">Login</a><a href="enrollment.html" class="btn btn-danger">Enroll</a></div>
+  <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn btn-danger"><i class="fas fa-user-plus"></i> Sign Up</a></div>
 </div>
 
 <section class="page-hero">
@@ -94,23 +101,24 @@
   </div>
 </section>
 
-<!-- Event Popup -->
-<div class="popup-overlay" id="popupOverlay" style="display:none;" onclick="closePopup()"></div>
-<div class="event-detail-popup" id="eventPopup" style="display:none;">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
-    <h3 id="popTitle" style="font-weight:700;color:var(--navy);font-size:1.1rem;"></h3>
-    <button onclick="closePopup()" style="color:var(--text-light);font-size:1.2rem;cursor:pointer;"><i class="fas fa-times"></i></button>
+<!-- Event Modal -->
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closePopup()"><i class="fas fa-times"></i></button>
+    <h2 class="modal-title" id="popTitle">Event Title</h2>
+    <div class="modal-meta" id="popMeta"></div>
+    <div class="modal-body-text" id="popBody">Full details go here.</div>
+    <div class="modal-footer" id="popFooter" style="display:flex;gap:12px;margin-top:20px;"></div>
   </div>
-  <div id="popBody"></div>
 </div>
 
 <footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="notices.html">Notices</a><a href="achievements.html">Achievements</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p></div></div></footer>
 <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="../js/main.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
 <script>
 let allEvents = [];
 let currentYear = new Date().getFullYear();
@@ -118,26 +126,42 @@ let currentMonth = new Date().getMonth(); // 0-indexed
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function closePopup() {
-  document.getElementById('eventPopup').style.display = 'none';
-  document.getElementById('popupOverlay').style.display = 'none';
+  document.getElementById('eventModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
 }
 
 function showPopup(ev) {
   const sd = new Date(ev.start_date);
   const ed = new Date(ev.end_date);
-  document.getElementById('popTitle').textContent = ev.title;
-  document.getElementById('popupOverlay').style.display = 'block';
-  document.getElementById('eventPopup').style.display = 'block';
+  document.getElementById('popTitle').innerText = ev.title;
+  
+  document.getElementById('popMeta').innerHTML = `
+    <span><i class="fas fa-tag"></i> ${ev.event_type}</span>
+    <span><i class="fas fa-map-marker-alt"></i> ${ev.location || 'TBA'}</span>
+    ${ev.is_mandatory ? `<span style="color:var(--red);font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Mandatory</span>` : ''}
+  `;
+  
   document.getElementById('popBody').innerHTML = `
-    <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:16px;">${ev.description || ''}</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.82rem;">
-      <div><strong>Type</strong><br><span class="cal-event-dot ${ev.event_type}" style="display:inline-block;margin-top:4px;">${ev.event_type}</span></div>
-      <div><strong>Location</strong><br>${ev.location || '—'}</div>
-      <div><strong>Start</strong><br>${sd.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
-      <div><strong>End</strong><br>${ed.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
-      ${ev.is_mandatory ? '<div style="grid-column:1/-1;"><strong style="color:var(--red);">⚠️ Mandatory Event</strong></div>' : ''}
-    </div>`;
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;margin-bottom:20px;background:var(--off-white);padding:16px;border-radius:var(--radius-md);">
+      <div><strong>Start:</strong> ${sd.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
+      <div><strong>End:</strong> ${ed.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</div>
+    </div>
+    <p>${ev.description || 'No additional details provided.'}</p>
+  `;
+  
+  const waLink = `https://wa.me/?text=${encodeURIComponent('NCC Event: ' + ev.title + ' on ' + sd.toLocaleDateString())}`;
+  document.getElementById('popFooter').innerHTML = `
+    <a href="${waLink}" class="btn btn-outline" target="_blank" style="padding:6px 16px;font-size:0.8rem;border-color:#25d366;color:#25d366;"><i class="fab fa-whatsapp"></i> Share</a>
+  `;
+  
+  document.getElementById('eventModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
+
+// Close modal on outside click
+document.getElementById('eventModal').addEventListener('click', (e) => {
+  if(e.target === document.getElementById('eventModal')) closePopup();
+});
 
 function renderCalendar() {
   const grid = document.getElementById('calGrid');

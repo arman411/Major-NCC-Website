@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 – Page Not Found | NCC Govt. Polytechnic Hamirpur (HP)</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0d2b5e 0%, #1a4080 50%, #0a1f44 100%);
+      color: white;
+      text-align: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating decorative circles */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(52, 152, 219, 0.08);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -120px; left: -80px;
+      width: 350px; height: 350px;
+      border-radius: 50%;
+      background: rgba(192, 57, 43, 0.06);
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 580px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ncc-badge {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 32px;
+      font-size: 2.2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    .error-code {
+      font-size: clamp(6rem, 20vw, 10rem);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, #ffffff, #3498db);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      letter-spacing: -4px;
+    }
+
+    h1 {
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.95);
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      box-shadow: 0 4px 20px rgba(52,152,219,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(52,152,219,0.5); }
+
+    .btn-outline {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(6px);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+
+    .quick-links {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .quick-links p {
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+    }
+    .link-grid {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .link-grid a {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: all 0.2s;
+    }
+    .link-grid a:hover { color: white; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.08); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="ncc-badge">🎖️</div>
+
+    <div class="error-code">404</div>
+
+    <h1>Page Not Found</h1>
+    <p>The page you are looking for may have been moved, deleted, or simply doesn't exist.<br>Let's get you back on track, cadet!</p>
+
+    <div class="actions">
+      <a href="../index.html" class="btn btn-primary">
+        <i class="fas fa-home"></i> Go to Homepage
+      </a>
+      <a href="javascript:history.back()" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Go Back
+      </a>
+    </div>
+
+    <div class="quick-links">
+      <p>Quick Navigation</p>
+      <div class="link-grid">
+        <a href="about.html"><i class="fas fa-info-circle"></i> About NCC</a>
+        <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+        <a href="notices.html"><i class="fas fa-bell"></i> Notices</a>
+        <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="enrollment.html"><i class="fas fa-id-card"></i> Enroll</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

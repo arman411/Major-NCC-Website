@@ -45,12 +45,12 @@ async def init_db():
     )
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("✅  MySQL tables created/verified → ncc_hamirpur")
+    print("MySQL tables created/verified -> ncc_hamirpur")
 
 
 async def close_db():
     await engine.dispose()
-    print("🔒  MySQL connection pool disposed.")
+    print("MySQL connection pool disposed.")
 
 
 async def get_db():

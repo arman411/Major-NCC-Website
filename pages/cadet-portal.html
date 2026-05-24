@@ -4,11 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cadet Portal – NCC Govt. Polytechnic Hamirpur (HP)</title>
-  <script src="../js/dark-mode.js"></script>
+  <meta name="description" content="NCC Cadet Portal — view your enrollment, certificates, notices and events." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .portal-grid { display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start; }
+    .portal-sidebar { background:var(--navy);border-radius:var(--radius-xl);padding:28px;display:flex;flex-direction:column;align-items:center;gap:16px;position:sticky;top:calc(var(--navbar-h) + 24px); }
+    .portal-avatar { width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--sky-light));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:white;border:3px solid rgba(255,255,255,0.2); }
+    .portal-name { font-size:1.1rem;font-weight:700;color:white;text-align:center; }
+    .portal-role { font-size:0.72rem;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;margin-top:-8px; }
+    .portal-stat-row { display:flex;gap:12px;width:100%; }
+    .portal-mini-stat { flex:1;background:rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:12px 8px;text-align:center; }
+    .portal-mini-stat strong { display:block;font-size:1rem;font-weight:800;color:white; }
+    .portal-mini-stat span { font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px; }
+    .portal-nav-link { width:100%;text-align:left;padding:10px 14px;border-radius:var(--radius-md);font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:10px;background:transparent;border:none;cursor:pointer;font-family:inherit;transition:all var(--trans-fast); }
+    .portal-nav-link:hover { background:rgba(255,255,255,0.08);color:white; }
+    .portal-nav-link.active { background:rgba(52,152,219,0.2);color:var(--sky-light);font-weight:600; }
+    .portal-section { display:none; }
+    .portal-section.active { display:block; }
+    .portal-content { min-height:60vh; }
+    .cert-card { display:flex;align-items:center;gap:16px;padding:20px;background:white;border-radius:var(--radius-lg);border:1px solid var(--mid-gray);margin-bottom:16px;box-shadow:var(--shadow-sm); }
+    .cert-icon { width:52px;height:52px;background:rgba(52,152,219,0.1);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0; }
+    .cert-info { flex:1; }
+    .cert-info h4 { font-weight:700;color:var(--navy);margin-bottom:4px; }
+    .cert-info p { font-size:0.82rem;color:var(--text-mid); }
+    .status-badge { display:inline-block;padding:3px 12px;border-radius:var(--radius-full);font-size:0.72rem;font-weight:700;text-transform:uppercase; }
+    .status-badge.active, .status-badge.approved { background:rgba(39,174,96,0.12);color:#27ae60; }
+    .status-badge.pending { background:rgba(243,156,18,0.12);color:#f39c12; }
+    .status-badge.inactive, .status-badge.rejected { background:rgba(192,57,43,0.12);color:var(--red); }
+    @media(max-width:900px){
+      .portal-grid { grid-template-columns:1fr; }
+      .portal-sidebar { position:static; }
+    }
+    
+    /* ── Advanced UI Additions ── */
+    /* Hero Banner */
+    .hero-banner { background:linear-gradient(135deg, var(--navy), #1a365d); border-radius:var(--radius-xl); padding:32px; color:white; display:flex; align-items:center; gap:24px; position:relative; overflow:hidden; margin-bottom:32px; box-shadow:0 12px 24px rgba(13,43,94,0.15); }
+    .hero-banner::after { content:''; position:absolute; top:0; right:0; width:40%; height:100%; background:url('../images/ncc_badge.png') no-repeat right center; background-size:contain; opacity:0.1; transform:scale(1.5) translate(20%, 0); pointer-events:none; }
+    .hero-text h2 { font-size:2rem; font-weight:800; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+    .hero-text p { color:rgba(255,255,255,0.7); font-size:0.95rem; }
+    .wing-glow { padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(4px); }
+    
+    /* Rank Progression Bar */
+    .rank-bar-wrap { margin-top:24px; width:100%; max-width:600px; }
+    .rank-labels { display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.75rem; font-weight:600; color:rgba(255,255,255,0.6); }
+    .rank-labels span.active { color:var(--sky-light); }
+    .rank-track { height:6px; background:rgba(255,255,255,0.1); border-radius:3px; position:relative; overflow:hidden; }
+    .rank-fill { position:absolute; left:0; top:0; height:100%; background:linear-gradient(90deg, var(--sky), #2ecc71); width:40%; border-radius:3px; box-shadow:0 0 10px rgba(46,204,113,0.5); }
+    .rank-nodes { display:flex; justify-content:space-between; position:absolute; width:100%; top:-4px; }
+    .rank-node { width:14px; height:14px; border-radius:50%; background:#1a365d; border:2px solid rgba(255,255,255,0.2); }
+    .rank-node.active { background:var(--sky); border-color:white; box-shadow:0 0 8px var(--sky-light); }
+    
+    /* Achievement Badges */
+    .achievements-row { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+    .ach-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding:6px 12px; border-radius:20px; font-size:0.75rem; color:rgba(255,255,255,0.9); }
+    .ach-badge i { color:#f1c40f; }
+    
+    /* Next Camp Countdown */
+    .camp-countdown { background:linear-gradient(135deg, #e74c3c, #c0392b); color:white; padding:12px 20px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; box-shadow:0 8px 16px rgba(192,57,43,0.2); }
+    .camp-countdown strong { font-size:1.1rem; }
+    
+    /* FAB (Floating Action Button) */
+    .fab-container { position:fixed; bottom:30px; right:30px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+    .fab-menu { display:flex; flex-direction:column; gap:12px; opacity:0; pointer-events:none; transform:translateY(20px); transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .fab-menu.open { opacity:1; pointer-events:auto; transform:translateY(0); }
+    .fab-btn { width:56px; height:56px; border-radius:50%; background:var(--sky); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(52,152,219,0.4); transition:all 0.2s; }
+    .fab-btn:hover { transform:scale(1.05); background:#2980b9; }
+    .fab-item { display:flex; align-items:center; gap:12px; cursor:pointer; background:none; border:none; font-family:inherit; }
+    .fab-item-label { background:white; padding:6px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; color:var(--navy); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .fab-item-btn { width:44px; height:44px; border-radius:50%; background:white; color:var(--navy); display:flex; align-items:center; justify-content:center; font-size:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:transform 0.2s; }
+    .fab-item:hover .fab-item-btn { transform:scale(1.1); color:var(--sky); }
+  </style>
 </head>
 <body>
 <div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Portal</p></div>
@@ -23,18 +91,27 @@
     <a href="contact.html" class="nav-link">Contact</a>
   </div>
   <div class="navbar-actions">
-    <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
     <button onclick="window.doLogout()" class="btn-nav-enroll" style="border:none;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</button>
   </div>
   <button class="hamburger"><span></span><span></span><span></span></button>
 </div></nav>
+<div class="mobile-nav">
+  <a href="../index.html" class="nav-link">Home</a>
+  <a href="notices.html" class="nav-link">Notices</a>
+  <a href="events-calendar.html" class="nav-link">Events</a>
+  <a href="achievements.html" class="nav-link">Achievements</a>
+  <a href="contact.html" class="nav-link">Contact</a>
+  <div class="mobile-nav-actions">
+    <button onclick="window.doLogout()" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;border:none;cursor:pointer;">Logout</button>
+  </div>
+</div>
 
 <main style="padding-top:calc(var(--navbar-h) + 40px);padding-bottom:80px;background:var(--off-white);min-height:100vh;">
   <div class="container">
     <div class="portal-grid" id="portalGrid">
       <!-- Sidebar -->
       <div class="portal-sidebar" id="portalSidebar">
-        <div class="portal-avatar" id="portalAvatar">?</div>
+        <div class="portal-avatar" id="portalAvatar"><i class="fas fa-user"></i></div>
         <div class="portal-name" id="portalName">Loading...</div>
         <div class="portal-role">Cadet</div>
         <div class="portal-stat-row">
@@ -46,7 +123,9 @@
           <button class="portal-nav-link" onclick="showSection('enrollment', this)"><i class="fas fa-id-card"></i> Enrollment</button>
           <button class="portal-nav-link" onclick="showSection('certificates', this)"><i class="fas fa-certificate"></i> Certificates</button>
           <button class="portal-nav-link" onclick="showSection('notices', this)"><i class="fas fa-bell"></i> Notices</button>
-          <button class="portal-nav-link" onclick="showSection('events', this)"><i class="fas fa-calendar"></i> Upcoming Events</button>
+          <button class="portal-nav-link" onclick="showSection('events', this)"><i class="fas fa-calendar-alt"></i> Upcoming Events</button>
+          <button class="portal-nav-link" onclick="showSection('attendance', this)"><i class="fas fa-check-circle"></i> Attendance</button>
+          <button class="portal-nav-link" id="testsNavBtn" onclick="showSection('tests', this)"><i class="fas fa-pencil-alt"></i> Module Tests <span id="cadetTestBadge" style="background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:4px;">0</span></button>
           <hr style="border-color:rgba(255,255,255,0.1);margin:12px 0;" />
           <button class="portal-nav-link" onclick="window.doLogout()" style="color:rgba(255,100,100,0.8);"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
@@ -56,10 +135,53 @@
       <div class="portal-content">
         <!-- Overview -->
         <div class="portal-section active" id="sec-overview">
-          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Welcome Back, <span id="welcomeName">Cadet</span>! 👋</h2>
+          
+          <!-- Hero Banner -->
+          <div class="hero-banner">
+            <div class="hero-text" style="flex:1;">
+              <h2>Good <span id="timeOfDay">Day</span>, <span id="welcomeName">Cadet</span>! <span class="wing-glow" id="heroWingGlow">ARMY WING</span></h2>
+              <p>Welcome to your NCC Command Portal. Track your progress, attendance, and upcoming events.</p>
+              
+              <div class="rank-bar-wrap">
+                <div class="rank-labels">
+                  <span class="active">JD/JW</span>
+                  <span class="active">SD/SW</span>
+                  <span>'A' Cert</span>
+                  <span>'B' Cert</span>
+                  <span>'C' Cert</span>
+                </div>
+                <div style="position:relative;">
+                  <div class="rank-track"><div class="rank-fill" style="width:35%"></div></div>
+                  <div class="rank-nodes">
+                    <div class="rank-node active"></div>
+                    <div class="rank-node active"></div>
+                    <div class="rank-node"></div>
+                    <div class="rank-node"></div>
+                    <div class="rank-node"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="achievements-row">
+                <div class="ach-badge"><i class="fas fa-medal"></i> Best Cadet Nominee</div>
+                <div class="ach-badge"><i class="fas fa-campground"></i> CATC 2024</div>
+                <div class="ach-badge"><i class="fas fa-bullseye"></i> Firing Camp</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Camp Countdown -->
+          <div class="camp-countdown">
+            <div>
+              <i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>
+              <strong>Next Camp: Combined Annual Training Camp (CATC)</strong>
+            </div>
+            <div style="font-size:1.2rem; font-weight:800; font-variant-numeric:tabular-nums;" id="campTimer">12d 04h 23m</div>
+          </div>
+
           <div class="grid-3" style="margin-bottom:32px;">
             <div class="card"><div class="card-body"><div class="card-icon navy"><i class="fas fa-id-badge"></i></div><h3>Cadet No.</h3><p id="ov-cadet-no" style="font-size:1.2rem;font-weight:700;color:var(--navy);">Pending</p></div></div>
-            <div class="card"><div class="card-body"><div class="card-icon red"><i class="fas fa-circle-notch"></i></div><h3>Enrollment Status</h3><p id="ov-status">Loading...</p></div></div>
+            <div class="card"><div class="card-body"><div class="card-icon red"><i class="fas fa-circle-notch"></i></div><h3>Enrollment Status</h3><p id="ov-status">—</p></div></div>
             <div class="card"><div class="card-body"><div class="card-icon sky"><i class="fas fa-graduation-cap"></i></div><h3>Branch</h3><p id="ov-branch">—</p></div></div>
           </div>
           <div class="card"><div class="card-body">
@@ -71,50 +193,198 @@
               <div><span style="font-size:0.78rem;color:var(--text-light);text-transform:uppercase;font-weight:600;">Enrolled On</span><p id="ov-enrolled" style="font-weight:600;color:var(--navy);margin-top:4px;">—</p></div>
             </div>
           </div></div>
+
+          <!-- Quick links -->
+          <div class="grid-2" style="margin-top:24px;gap:16px;">
+            <a href="enrollment.html" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
+              <div class="card-icon sky"><i class="fas fa-file-alt"></i></div>
+              <div><h3 style="margin-bottom:4px;">Submit Enrollment</h3><p style="font-size:0.82rem;color:var(--text-mid);">Fill the full enrollment form</p></div>
+            </div></a>
+            <a href="notices.html" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
+              <div class="card-icon red"><i class="fas fa-bullhorn"></i></div>
+              <div><h3 style="margin-bottom:4px;">View All Notices</h3><p style="font-size:0.82rem;color:var(--text-mid);">Latest announcements &amp; updates</p></div>
+            </div></a>
+          </div>
         </div>
 
         <!-- Enrollment -->
         <div class="portal-section" id="sec-enrollment">
           <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Enrollment Details</h2>
           <div class="card"><div class="card-body" id="enrollmentDetails">
-            <div class="skeleton skeleton-text" style="width:60%;"></div>
-            <div class="skeleton skeleton-text" style="width:45%;"></div>
-            <div class="skeleton skeleton-text" style="width:70%;"></div>
+            <div style="text-align:center;padding:40px 0;">
+              <div style="font-size:3rem;margin-bottom:16px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);"></i></div>
+              <p style="color:var(--text-light);">Loading enrollment data...</p>
+            </div>
           </div></div>
         </div>
 
         <!-- Certificates -->
         <div class="portal-section" id="sec-certificates">
           <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">My Certificates</h2>
-          <div id="certList"><div class="skeleton skeleton-card"></div></div>
+          <div id="certList">
+            <div style="text-align:center;padding:40px 0;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:2rem;"></i></div>
+          </div>
         </div>
 
         <!-- Notices -->
         <div class="portal-section" id="sec-notices">
           <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Latest Notices</h2>
-          <div id="portalNotices"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div></div>
+          <div id="portalNotices">
+            <div style="text-align:center;padding:40px 0;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:2rem;"></i></div>
+          </div>
           <div class="mt-24"><a href="notices.html" class="btn btn-outline">View All Notices <i class="fas fa-arrow-right"></i></a></div>
         </div>
 
         <!-- Events -->
         <div class="portal-section" id="sec-events">
           <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Upcoming Events</h2>
-          <div id="portalEvents"><div class="skeleton skeleton-card"></div></div>
+          <div id="portalEvents">
+            <div style="text-align:center;padding:40px 0;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:2rem;"></i></div>
+          </div>
           <div class="mt-24"><a href="events-calendar.html" class="btn btn-outline">View Full Calendar <i class="fas fa-calendar"></i></a></div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="portal-section" id="sec-attendance">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:24px;">Daily Attendance</h2>
+          <div class="card"><div class="card-body" style="text-align:center;padding:40px 20px;">
+            <div style="font-size:3rem;margin-bottom:16px;color:var(--sky);"><i class="fas fa-calendar-check"></i></div>
+            <h3 style="margin-bottom:12px;color:var(--navy);" id="attDateDisplay">Loading Date...</h3>
+            <p style="color:var(--text-mid);margin-bottom:24px;">Mark your attendance for today's NCC activities.</p>
+            <button id="markAttBtn" class="btn btn-primary" style="padding:14px 32px;font-size:1rem;border-radius:var(--radius-full);" onclick="submitDailyAttendance()">
+              <i class="fas fa-fingerprint"></i> Mark Present Today
+            </button>
+          </div></div>
+        </div>
+
+        <!-- Module Tests -->
+        <div class="portal-section" id="sec-tests">
+          <h2 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:8px;">Module Tests</h2>
+          <p style="color:var(--text-mid);margin-bottom:24px;font-size:0.88rem;">Take timed tests assigned by your ANO. Each test can be attempted once.</p>
+
+          <!-- Available Tests -->
+          <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-clipboard-list" style="color:var(--sky);"></i> Available Tests</h3>
+          <div id="availableTests">
+            <div style="text-align:center;padding:32px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:2rem;"></i></div>
+          </div>
+
+          <!-- Past Results -->
+          <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin:28px 0 16px;"><i class="fas fa-history" style="color:var(--navy);"></i> My Results</h3>
+          <div id="myTestResults">
+            <div style="text-align:center;padding:20px;color:var(--text-light);">No tests taken yet.</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
+  <!-- FAB Menu -->
+  <div class="fab-container">
+    <div class="fab-menu" id="fabMenu">
+      <button class="fab-item" onclick="showSection('certificates', document.querySelectorAll('.portal-nav-link')[2])">
+        <span class="fab-item-label">Certificates</span>
+        <div class="fab-item-btn"><i class="fas fa-certificate"></i></div>
+      </button>
+      <button class="fab-item" onclick="showSection('attendance', document.querySelectorAll('.portal-nav-link')[5])">
+        <span class="fab-item-label">Attendance</span>
+        <div class="fab-item-btn"><i class="fas fa-check-circle"></i></div>
+      </button>
+      <button class="fab-item" onclick="showSection('enrollment', document.querySelectorAll('.portal-nav-link')[1])">
+        <span class="fab-item-label">ID Card</span>
+        <div class="fab-item-btn"><i class="fas fa-id-card"></i></div>
+      </button>
+    </div>
+    <button class="fab-btn" id="fabToggle" onclick="document.getElementById('fabMenu').classList.toggle('open')">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
 </main>
 
-<script src="../js/main.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
 <script>
-// Gate: require login
-requireAuth();
+// Require login
+if (!requireAuth()) { /* redirecting */ }
 
 const user = Auth.getUser();
+
+// Problem 3 Fix: Redirect unenrolled cadets to enrollment form
+(function checkEnrollment() {
+  if (!user) return;
+  const cadets = MockDB.getCadets() || [];
+  // Match by email (most reliable), then by roll_no/roll matching username
+  const isEnrolled = cadets.some(c =>
+    (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) ||
+    (user.username && (c.roll_no === user.username || c.roll === user.username))
+  );
+  if (!isEnrolled) {
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: white; padding: 16px 24px; text-align: center;
+      font-size: 0.92rem; font-weight: 600; position: sticky;
+      top: var(--navbar-h); z-index: 100; border-bottom: 2px solid rgba(0,0,0,0.1);
+    `;
+    banner.innerHTML = `
+      <i class="fas fa-exclamation-triangle"></i>
+      &nbsp; You have not completed your enrollment form yet.
+      &nbsp;<a href="enrollment.html" style="color:white;text-decoration:underline;font-weight:800;">
+        Complete Enrollment Now →
+      </a>`;
+    document.body.insertBefore(banner, document.querySelector('main'));
+  }
+})();
+
+// ── Advanced UI Logic ──────────────────────────────────────────────────
+(function initAdvancedUI() {
+  // Time of Day
+  const hour = new Date().getHours();
+  let timeStr = 'Evening';
+  if (hour >= 5 && hour < 12) timeStr = 'Morning';
+  else if (hour >= 12 && hour < 17) timeStr = 'Afternoon';
+  document.getElementById('timeOfDay').textContent = timeStr;
+  
+  // Set wing glow if enrolled
+  if(user) {
+    const cadets = MockDB.getCadets() || [];
+    const myData = cadets.find(c => (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) || (user.username && (c.roll_no === user.username || c.roll === user.username)));
+    if(myData && myData.wing) {
+      const w = document.getElementById('heroWingGlow');
+      w.textContent = myData.wing.toUpperCase() + ' WING';
+      if(myData.wing.toLowerCase().includes('army')) { w.style.borderColor='#27ae60'; w.style.color='#2ecc71'; }
+      if(myData.wing.toLowerCase().includes('naval')) { w.style.borderColor='#fff'; w.style.color='#fff'; }
+      if(myData.wing.toLowerCase().includes('air')) { w.style.borderColor='#3498db'; w.style.color='#7ec8f5'; }
+    }
+  }
+
+  // Camp Countdown (Dummy Date: 15 days from now)
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 15);
+  function updateTimer() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) { document.getElementById('campTimer').textContent = "STARTED"; return; }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / 1000 / 60) % 60);
+    document.getElementById('campTimer').textContent = `${d}d ${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m`;
+  }
+  updateTimer();
+  setInterval(updateTimer, 60000);
+})();
+
+// Close FAB when clicking outside
+document.addEventListener('click', function(e) {
+  if(!e.target.closest('.fab-container')) {
+    document.getElementById('fabMenu').classList.remove('open');
+  }
+});
+
+function sanitizeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
 
 function showSection(name, clickedBtn) {
   document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
@@ -125,90 +395,391 @@ function showSection(name, clickedBtn) {
 
 async function initPortal() {
   if (!user) return;
-  document.getElementById('portalName').textContent = user.username || 'Cadet';
-  document.getElementById('welcomeName').textContent = user.username || 'Cadet';
-  document.getElementById('portalAvatar').textContent = (user.username || 'C').charAt(0).toUpperCase();
 
-  // Load enrollment/student data
+  const displayName = user.username || user.email || 'Cadet';
+  document.getElementById('portalName').textContent = displayName;
+  document.getElementById('welcomeName').textContent = displayName;
+  document.getElementById('portalAvatar').textContent = displayName.charAt(0).toUpperCase();
+  document.getElementById('ov-roll').textContent = user.username || '—';
+
+  // Load certificate / enrollment data
   const certs = await NccAPI.getCertificates();
-  if (certs.success) {
-    const s = certs;
-    // Update sidebar & overview
-    document.getElementById('ps-status').textContent = s.status || '—';
-    document.getElementById('ov-status').innerHTML = `<span class="status-badge ${s.status || 'pending'}">${s.status || 'pending'}</span>`;
+  if (certs && certs.success) {
+    const statusLabel = certs.status || 'pending';
+    document.getElementById('ps-status').textContent = statusLabel.charAt(0).toUpperCase() + statusLabel.slice(1);
+    document.getElementById('ov-status').innerHTML = `<span class="status-badge ${statusLabel}">${statusLabel}</span>`;
+    document.getElementById('ov-cadet-no').textContent = certs.student_id || 'Pending';
 
-    // Certificates section
+    // Certificates list
     const certList = document.getElementById('certList');
-    if (s.certificates && s.certificates.length > 0) {
-      certList.innerHTML = s.certificates.map(c => `
+    const certsArr = certs.certificates || [];
+    if (certsArr.length > 0) {
+      certList.innerHTML = certsArr.map(c => `
         <div class="cert-card">
-          <div class="cert-icon">📄</div>
+          <div class="cert-icon"><i class="fas fa-certificate" style="color:var(--sky);"></i></div>
           <div class="cert-info">
             <h4>${c.type}</h4>
-            <p>${c.available ? 'Ready to download' : 'Available after approval'}</p>
+            <p>${c.available ? 'Ready to download' : 'Available after enrollment approval'}</p>
           </div>
           ${c.available && c.download_url
             ? `<a href="${API_BASE}${c.download_url}" target="_blank" class="btn btn-primary" style="padding:10px 20px;font-size:0.85rem;"><i class="fas fa-download"></i> Download PDF</a>`
-            : `<span class="status-badge ${s.status || 'pending'}">${s.status || 'Pending'}</span>`}
+            : `<span class="status-badge ${statusLabel}">${statusLabel}</span>`}
         </div>`).join('');
     } else {
-      certList.innerHTML = '<p style="color:var(--text-light);">No enrollment found for this account. <a href="enrollment.html" style="color:var(--sky);">Enroll Now</a></p>';
+      certList.innerHTML = '<p style="color:var(--text-light);">No certificates found. <a href="enrollment.html" style="color:var(--sky);">Complete enrollment first</a>.</p>';
     }
 
     // Enrollment details
     document.getElementById('enrollmentDetails').innerHTML = `
+      <h3 style="color:var(--navy);margin-bottom:20px;"><i class="fas fa-id-card"></i> Enrollment Information</h3>
       <div class="grid-2" style="gap:16px;">
-        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;">Student ID</span><p style="font-weight:700;color:var(--navy);">${s.student_id || '—'}</p></div>
-        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;">Status</span><p><span class="status-badge ${s.status || 'pending'}">${s.status || 'pending'}</span></p></div>
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;text-transform:uppercase;">Student ID</span><p style="font-weight:700;color:var(--navy);margin-top:4px;">${certs.student_id || '—'}</p></div>
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;text-transform:uppercase;">Status</span><p style="margin-top:4px;"><span class="status-badge ${statusLabel}">${statusLabel}</span></p></div>
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;text-transform:uppercase;">Username / Roll</span><p style="font-weight:600;color:var(--navy);margin-top:4px;">${user.username || '—'}</p></div>
+        <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;text-transform:uppercase;">Email</span><p style="font-weight:600;color:var(--navy);margin-top:4px;">${user.email || '—'}</p></div>
+      </div>
+      <div style="margin-top:24px;">
+        <a href="enrollment.html" class="btn btn-primary" style="padding:12px 24px;font-size:0.88rem;"><i class="fas fa-edit"></i> ${certs.status === 'approved' ? 'View Enrollment Form' : 'Complete Enrollment Form'}</a>
       </div>`;
   }
 
   // Load notices
-  const notices = await NccAPI.getNotices({ page: 1 });
+  const noticesRes = await NccAPI.getNotices({ page: 1 });
   const pn = document.getElementById('portalNotices');
-  if (notices.success && notices.notices) {
-    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    pn.innerHTML = notices.notices.slice(0,3).map(n => {
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  if (noticesRes.success && noticesRes.notices && noticesRes.notices.length > 0) {
+    pn.innerHTML = noticesRes.notices.slice(0, 4).map(n => {
       const d = new Date(n.created_at);
+      const catColors = { Urgent:'red', Exam:'sky', Camp:'navy', Information:'sky', Info:'sky' };
       return `<div class="card" style="margin-bottom:16px;"><div class="card-body" style="padding:20px;">
         <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="min-width:48px;text-align:center;"><strong style="font-size:1.4rem;color:var(--navy);">${d.getDate()}</strong><br><span style="font-size:0.65rem;color:var(--text-light);">${months[d.getMonth()]}</span></div>
-          <div><h4 style="font-weight:700;color:var(--navy);margin-bottom:4px;">${n.title}</h4><p style="font-size:0.83rem;color:var(--text-mid);">${n.description?.slice(0,100)}...</p></div>
+          <div style="min-width:52px;text-align:center;background:var(--navy);color:white;border-radius:12px;padding:10px;"><strong style="font-size:1.4rem;line-height:1;">${d.getDate()}</strong><br><span style="font-size:0.65rem;letter-spacing:1px;">${months[d.getMonth()]}</span></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <h4 style="font-weight:700;color:var(--navy);">${n.title}</h4>
+              <span class="tag ${catColors[n.category]||'sky'}" style="font-size:0.65rem;">${n.category}</span>
+            </div>
+            <p style="font-size:0.83rem;color:var(--text-mid);">${(n.description||'').slice(0,120)}${(n.description||'').length>120?'...':''}</p>
+          </div>
         </div>
       </div></div>`;
     }).join('');
+  } else {
+    pn.innerHTML = '<p style="color:var(--text-light);">No notices available at this time.</p>';
   }
 
   // Load events
-  const events = await NccAPI.getEvents({ upcoming_only: true });
+  const eventsRes = await NccAPI.getEvents({ upcoming_only: true });
   const pe = document.getElementById('portalEvents');
-  if (events.success && events.events) {
-    const typeColors = { Camp:'red', Parade:'navy', Social:'green', Exam:'warning', Other:'sky' };
-    pe.innerHTML = events.events.slice(0,4).map(ev => {
+  const evMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (eventsRes.success && eventsRes.events && eventsRes.events.length > 0) {
+    const typeColors = { Camp:'red', Parade:'navy', Social:'sky', Exam:'sky', Other:'sky' };
+    pe.innerHTML = eventsRes.events.slice(0, 4).map(ev => {
       const sd = new Date(ev.start_date);
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       return `<div class="card" style="margin-bottom:16px;"><div class="card-body" style="padding:20px;display:flex;gap:20px;align-items:center;">
-        <div style="background:var(--navy);color:white;border-radius:12px;padding:12px;text-align:center;min-width:56px;">
+        <div style="background:var(--navy);color:white;border-radius:12px;padding:12px;text-align:center;min-width:56px;flex-shrink:0;">
           <strong style="font-size:1.4rem;line-height:1;">${sd.getDate()}</strong><br>
-          <span style="font-size:0.65rem;letter-spacing:1px;">${months[sd.getMonth()]}</span>
+          <span style="font-size:0.65rem;letter-spacing:1px;">${evMonths[sd.getMonth()]}</span>
         </div>
         <div style="flex:1;">
           <h4 style="font-weight:700;color:var(--navy);margin-bottom:4px;">${ev.title}</h4>
           <p style="font-size:0.82rem;color:var(--text-mid);">${ev.location || ''} ${ev.is_mandatory ? '• <strong style="color:var(--red);">Mandatory</strong>' : ''}</p>
         </div>
-        <span class="tag ${typeColors[ev.event_type]||''}">${ev.event_type}</span>
+        <span class="tag ${typeColors[ev.event_type]||'sky'}">${ev.event_type}</span>
       </div></div>`;
-    }).join('') || '<p style="color:var(--text-light);">No upcoming events.</p>';
+    }).join('');
+  } else {
+    pe.innerHTML = '<p style="color:var(--text-light);">No upcoming events scheduled.</p>';
+  }
+
+  // Set wing and other details if cadet record found
+  const cadets = MockDB.getCadets();
+  const myCadet = cadets.find(c =>
+    (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) ||
+    (user.username && (c.roll_no === user.username || c.roll === user.username))
+  );
+  if (myCadet) {
+    document.getElementById('ps-wing').textContent = myCadet.wing || '—';
+    document.getElementById('ov-wing').textContent = myCadet.wing || '—';
+    document.getElementById('ov-branch').textContent = myCadet.branch || '—';
+    document.getElementById('ov-year').textContent = myCadet.year || '—';
+    document.getElementById('ov-enrolled').textContent = myCadet.enrolled_on || '—';
   }
 }
 
-window.doLogout = async function() {
-  try { await NccAPI.logout(); } catch(_) {}
-  Auth.clearTokens();
-  window.location.href = '../index.html';
+
+window.submitDailyAttendance = async function() {
+  const btn = document.getElementById('markAttBtn');
+  const orgHtml = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marking...';
+  btn.disabled = true;
+  
+  const today = new Date().toISOString().split('T')[0];
+  const res = await NccAPI.markAttendance({ date: today, status: 'present' });
+  
+  btn.innerHTML = orgHtml;
+  
+  if (res.error) {
+    showToast(res.message || 'Failed to mark attendance.', 'error');
+    btn.disabled = false;
+  } else {
+    showToast('Attendance marked successfully!', 'success');
+    btn.innerHTML = '<i class="fas fa-check"></i> Marked Present';
+    btn.style.background = 'var(--sky)';
+    btn.disabled = true; // prevent double clicking
+  }
 };
 
 initPortal();
+document.getElementById('attDateDisplay').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+/* ══════════════════════════════════════════════════════
+   MODULE TESTS — Cadet Side
+══════════════════════════════════════════════════════ */
+function loadModuleTests() {
+  const container = document.getElementById('availableTests');
+  const resultsContainer = document.getElementById('myTestResults');
+  if (!container || !resultsContainer) return;
+
+  const tests = MockDB.getTests().filter(t => t.status === 'active');
+  const myResults = MockDB.getResultsByUser(user?.username || user?.email || '');
+
+  // Update badge
+  const unattempted = tests.filter(t => !MockDB.hasAttempted(t.id, user?.username || ''));
+  const badge = document.getElementById('cadetTestBadge');
+  if (badge) badge.textContent = unattempted.length;
+
+  // Available tests
+  if (tests.length === 0) {
+    container.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;padding:40px;">
+      <div style="font-size:3rem;margin-bottom:12px;">📋</div>
+      <h3 style="color:var(--navy);margin-bottom:8px;">No Active Tests</h3>
+      <p style="color:var(--text-light);">Your ANO hasn't published any tests yet. Check back later.</p>
+    </div></div>`;
+  } else {
+    container.innerHTML = tests.map(t => {
+      const attempted = MockDB.hasAttempted(t.id, user?.username || '');
+      const myResult = myResults.find(r => r.testId == t.id);
+      return `<div class="card" style="margin-bottom:16px;">
+        <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:24px;">
+          <div style="flex:1;min-width:200px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <div style="width:44px;height:44px;background:${attempted?'rgba(39,174,96,.1)':'rgba(52,152,219,.1)'};border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">${attempted?'✅':'📝'}</div>
+              <div>
+                <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:2px;">${sanitizeHTML(t.title)}</h3>
+                <span style="font-size:0.75rem;background:rgba(52,152,219,.1);color:var(--sky);padding:2px 10px;border-radius:20px;">${sanitizeHTML(t.subject)}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:20px;font-size:0.78rem;color:var(--text-mid);">
+              <span><i class="fas fa-question-circle"></i> ${(t.questions||[]).length} Questions</span>
+              <span><i class="fas fa-clock"></i> ${t.duration} Minutes</span>
+              <span><i class="fas fa-calendar"></i> ${t.date||'—'}</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            ${attempted && myResult
+              ? `<div style="margin-bottom:8px;">
+                  <span style="font-size:1.4rem;font-weight:800;color:${myResult.percentage>=50?'#27ae60':'#e74c3c'};">${myResult.percentage}%</span>
+                  <span style="font-size:0.75rem;color:var(--text-light);"> (${myResult.score}/${myResult.total})</span>
+                </div>
+                <span style="padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:${myResult.percentage>=50?'rgba(39,174,96,.12)':'rgba(192,57,43,.12)'};color:${myResult.percentage>=50?'#27ae60':'#e74c3c'};">${myResult.percentage>=50?'✓ PASSED':'✗ FAILED'}</span>`
+              : `<button class="btn btn-primary" style="padding:10px 24px;font-size:0.88rem;" onclick="startTest(${t.id})">
+                  <i class="fas fa-play"></i> Start Test
+                </button>`}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // My Results history
+  if (myResults.length === 0) {
+    resultsContainer.innerHTML = '<p style="color:var(--text-light);padding:12px 0;">You haven\'t taken any tests yet.</p>';
+  } else {
+    resultsContainer.innerHTML = myResults.map(r => {
+      const t = MockDB.getTests().find(t => t.id == r.testId);
+      return `<div class="card" style="margin-bottom:12px;">
+        <div class="card-body" style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">${sanitizeHTML(t?.title||'Test')}</div>
+            <div style="font-size:0.75rem;color:var(--text-light);">${r.submittedAt?new Date(r.submittedAt).toLocaleString('en-IN'):''}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="text-align:center;">
+              <div style="font-size:1.5rem;font-weight:800;color:${r.percentage>=50?'#27ae60':'#e74c3c'};">${r.percentage}%</div>
+              <div style="font-size:0.72rem;color:var(--text-light);">${r.score}/${r.total} correct</div>
+            </div>
+            <span style="padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:${r.percentage>=50?'rgba(39,174,96,.12)':'rgba(192,57,43,.12)'};color:${r.percentage>=50?'#27ae60':'#e74c3c'};">${r.percentage>=50?'PASSED':'FAILED'}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+let _testTimer = null;
+let _testStartTime = null;
+
+function startTest(testId) {
+  const test = MockDB.getTests().find(t => t.id == testId);
+  if (!test) return;
+  if (MockDB.hasAttempted(testId, user?.username || '')) {
+    showToast('You have already attempted this test.', 'warning'); return;
+  }
+  if (!test.questions || test.questions.length === 0) {
+    showToast('This test has no questions yet.', 'warning'); return;
+  }
+
+  const totalSec = test.duration * 60;
+  let remaining = totalSec;
+  let userAnswers = new Array(test.questions.length).fill(null);
+  _testStartTime = Date.now();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'testOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,20,60,.97);z-index:99999;display:flex;flex-direction:column;overflow:hidden;font-family:Poppins,sans-serif;';
+
+  function renderTest() {
+    const mins = String(Math.floor(remaining/60)).padStart(2,'0');
+    const secs = String(remaining%60).padStart(2,'0');
+    const urgentColor = remaining < 60 ? '#e74c3c' : remaining < 300 ? '#f39c12' : '#7ec8f5';
+    const answered = userAnswers.filter(a => a !== null).length;
+
+    overlay.innerHTML = `
+      <!-- Test Header -->
+      <div style="background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <div>
+          <div style="font-size:1rem;font-weight:700;color:white;">${sanitizeHTML(test.title)}</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,.5);">${sanitizeHTML(test.subject)} &bull; ${test.questions.length} Questions</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="text-align:center;">
+            <div style="font-size:0.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Answered</div>
+            <div style="font-size:1.2rem;font-weight:800;color:#7ec8f5;">${answered}/${test.questions.length}</div>
+          </div>
+          <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:10px 20px;text-align:center;border:2px solid ${remaining<60?'#e74c3c':'rgba(255,255,255,.1)'};">
+            <div style="font-size:0.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Time Left</div>
+            <div style="font-size:1.6rem;font-weight:800;color:${urgentColor};font-variant-numeric:tabular-nums;">${mins}:${secs}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Questions -->
+      <div style="flex:1;overflow-y:auto;padding:28px;max-width:800px;width:100%;margin:0 auto;">
+        ${test.questions.map((q, qi) => `
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;margin-bottom:20px;">
+            <div style="font-size:0.72rem;color:rgba(52,152,219,.8);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:1px;">Question ${qi+1} of ${test.questions.length}</div>
+            <p style="font-size:1rem;font-weight:600;color:white;margin-bottom:20px;line-height:1.6;">${sanitizeHTML(q.q)}</p>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${q.options.map((opt, oi) => `
+                <label style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:${userAnswers[qi]===oi?'rgba(52,152,219,.25)':'rgba(255,255,255,.04)'};border:2px solid ${userAnswers[qi]===oi?'rgba(52,152,219,.6)':'rgba(255,255,255,.1)'};border-radius:12px;cursor:pointer;transition:all .2s;" onclick="selectAnswer(${qi},${oi})">
+                  <div style="width:22px;height:22px;border-radius:50%;border:2px solid ${userAnswers[qi]===oi?'var(--sky)':'rgba(255,255,255,.3)'};background:${userAnswers[qi]===oi?'var(--sky)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;">
+                    ${userAnswers[qi]===oi?'<div style="width:8px;height:8px;border-radius:50%;background:white;"></div>':''}
+                  </div>
+                  <span style="font-size:0.9rem;color:${userAnswers[qi]===oi?'white':'rgba(255,255,255,.75)'};">${String.fromCharCode(65+oi)}. ${sanitizeHTML(opt)}</span>
+                </label>`).join('')}
+            </div>
+          </div>`).join('')}
+        <div style="display:flex;gap:16px;justify-content:flex-end;margin-top:8px;padding-bottom:40px;">
+          <button onclick="confirmSubmitTest()" style="background:linear-gradient(135deg,#27ae60,#1e8449);color:white;border:none;padding:14px 36px;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;">
+            <i class="fas fa-paper-plane"></i> Submit Test
+          </button>
+        </div>
+      </div>`;
+
+    // Re-attach selectAnswer
+    window.selectAnswer = function(qi, oi) {
+      userAnswers[qi] = oi;
+      renderTest();
+    };
+    window.confirmSubmitTest = function() {
+      const unanswered = userAnswers.filter(a => a === null).length;
+      const msg = unanswered > 0 ? `You have ${unanswered} unanswered question(s). Submit anyway?` : 'Submit your test?';
+      if (!confirm(msg)) return;
+      submitTest();
+    };
+  }
+
+  function submitTest() {
+    clearInterval(_testTimer);
+    const timeTaken = Math.round((Date.now() - _testStartTime) / 1000);
+    let score = 0;
+    test.questions.forEach((q, i) => { if (userAnswers[i] === q.correct) score++; });
+    const total = test.questions.length;
+    const percentage = Math.round((score / total) * 100);
+    const result = MockDB.submitResult({
+      testId: test.id, cadetUsername: user?.username || user?.email || 'cadet',
+      score, total, percentage, timeTaken, submittedAt: new Date().toISOString(),
+      answers: userAnswers
+    });
+
+    // Show result screen
+    overlay.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:28px;">
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:24px;max-width:500px;width:100%;padding:48px;text-align:center;backdrop-filter:blur(20px);">
+          <div style="font-size:5rem;margin-bottom:20px;">${percentage>=75?'🏆':percentage>=50?'✅':'😔'}</div>
+          <h2 style="font-size:2rem;font-weight:800;color:white;margin-bottom:8px;">${percentage>=50?'Test Passed!':'Test Failed'}</h2>
+          <p style="color:rgba(255,255,255,.5);margin-bottom:32px;">You scored ${score} out of ${total} questions correctly.</p>
+          <div style="background:rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:28px;">
+            <div style="font-size:3.5rem;font-weight:900;color:${percentage>=75?'#27ae60':percentage>=50?'#f39c12':'#e74c3c'};">${percentage}%</div>
+            <div style="font-size:0.85rem;color:rgba(255,255,255,.4);margin-top:4px;">${score} correct &bull; ${total-score} wrong &bull; ${Math.floor(timeTaken/60)}m ${timeTaken%60}s</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;">
+            ${test.questions.map((q,i)=>`
+              <div style="background:${userAnswers[i]===q.correct?'rgba(39,174,96,.15)':'rgba(192,57,43,.15)'};border:1px solid ${userAnswers[i]===q.correct?'rgba(39,174,96,.3)':'rgba(192,57,43,.3)'};border-radius:10px;padding:12px;text-align:left;">
+                <div style="font-size:0.7rem;font-weight:700;color:${userAnswers[i]===q.correct?'#2ecc71':'#e74c3c'};margin-bottom:4px;">Q${i+1} ${userAnswers[i]===q.correct?'✓ Correct':'✗ Wrong'}</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,.5);">Your: ${userAnswers[i]!==null?q.options[userAnswers[i]]:'—'}</div>
+                ${userAnswers[i]!==q.correct?`<div style="font-size:0.72rem;color:#2ecc71;">Ans: ${q.options[q.correct]}</div>`:''}
+              </div>`).join('')}
+          </div>
+          <button onclick="document.getElementById('testOverlay').remove(); loadModuleTests();" style="background:linear-gradient(135deg,#3498db,#1a6ca8);color:white;border:none;padding:14px 36px;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">
+            <i class="fas fa-check"></i> Back to Tests
+          </button>
+        </div>
+      </div>`;
+  }
+
+  // Timer
+  _testTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(_testTimer);
+      submitTest();
+      return;
+    }
+    const timerEl = overlay.querySelector('[style*="tabular-nums"]');
+    if (timerEl) {
+      const m = String(Math.floor(remaining/60)).padStart(2,'0');
+      const s = String(remaining%60).padStart(2,'0');
+      timerEl.textContent = `${m}:${s}`;
+      const urgentColor = remaining < 60 ? '#e74c3c' : remaining < 300 ? '#f39c12' : '#7ec8f5';
+      timerEl.style.color = urgentColor;
+    }
+  }, 1000);
+
+  window.selectAnswer = function(qi, oi) {
+    userAnswers[qi] = oi;
+    renderTest();
+  };
+
+  document.body.appendChild(overlay);
+  renderTest();
+}
+
+// Load tests when Tests section is opened
+const _origShowSection = window.showSection;
+window.showSection = function(name, btn) {
+  _origShowSection(name, btn);
+  if (name === 'tests') loadModuleTests();
+};
+
+// Init badge on load
+window.addEventListener('load', () => {
+  const tests = MockDB.getTests().filter(t => t.status === 'active');
+  const unattempted = tests.filter(t => !MockDB.hasAttempted(t.id, user?.username||''));
+  const badge = document.getElementById('cadetTestBadge');
+  if (badge) badge.textContent = unattempted.length;
+});
+
 </script>
 </body>
 </html>

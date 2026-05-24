@@ -33,16 +33,27 @@
     applyTheme(current === 'dark' ? 'light' : 'dark');
   }
 
+  function initDarkModeBtn() {
+    const btn = document.getElementById('dark-mode-btn');
+    if (btn) {
+      // Remove old listener to avoid duplicates, then add fresh one
+      btn.replaceWith(btn.cloneNode(true));
+      const freshBtn = document.getElementById('dark-mode-btn');
+      if (freshBtn) freshBtn.addEventListener('click', toggleTheme);
+      applyTheme(getPreference()); // Sync icon state
+    }
+  }
+
   // Apply immediately to prevent flash
   applyTheme(getPreference());
 
   // After DOM is ready, wire up the toggle button
   document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('dark-mode-btn');
-    if (btn) btn.addEventListener('click', toggleTheme);
+    initDarkModeBtn();
   });
 
   // Expose globally
   window.toggleTheme = toggleTheme;
   window.applyTheme = applyTheme;
+  window.initDarkModeBtn = initDarkModeBtn;
 })();

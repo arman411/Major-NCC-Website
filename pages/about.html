@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About NCC ñ Unity, Discipline, Service</title>
+    <title>About NCC ‚Äì Unity, Discipline, Service</title>
     <meta name="description"
-        content="Learn about the National Cadet Corps ñ its history, aims, objectives, and pledge." />
+        content="Learn about the National Cadet Corps ‚Äì its history, aims, objectives, and pledge." />
+    <script src="../js/dark-mode.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
@@ -223,8 +224,9 @@
                 <a href="contact.html" class="nav-link">Contact</a>
             </div>
             <div class="navbar-actions">
-                <a href="login.html" class="btn-nav-login">Login</a>
-                <a href="enrollment.html" class="btn-nav-enroll">Enroll Now</a>
+                <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+                <a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
             </div>
             <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
         </div>
@@ -239,8 +241,8 @@
         <a href="notices.html" class="nav-link">Notices</a>
         <a href="contact.html" class="nav-link">Contact</a>
         <div class="mobile-nav-actions">
-            <a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;">Login</a>
-            <a href="enrollment.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;">Enroll</a>
+            <a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="signup.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a>
         </div>
     </div>
 
@@ -269,7 +271,7 @@
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">1948 ñ Foundation</p>
+                        <p class="timeline-year">1948 ‚Äì Foundation</p>
                         <h3>NCC Founded by Parliament</h3>
                         <p>The National Cadet Corps was established via the NCC Act of 1948 after India's independence,
                             to develop disciplined citizens among the youth.</p>
@@ -278,7 +280,7 @@
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">1950 ñ National Integration</p>
+                        <p class="timeline-year">1950 ‚Äì National Integration</p>
                         <h3>Tri-Services Integration</h3>
                         <p>The NCC expanded to include Army, Navy, and Air Force wings, promoting national integration
                             among youth from all regions of India.</p>
@@ -287,7 +289,7 @@
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">1965 ñ Republic Day Camp</p>
+                        <p class="timeline-year">1965 ‚Äì Republic Day Camp</p>
                         <h3>Republic Day Celebrations Begin</h3>
                         <p>NCC cadets began marching in Republic Day parades in New Delhi, becoming a permanent fixture
                             of the national celebration.</p>
@@ -296,7 +298,7 @@
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">1988 ñ A/B/C Certificates</p>
+                        <p class="timeline-year">1988 ‚Äì A/B/C Certificates</p>
                         <h3>Certificate Programme Revamp</h3>
                         <p>The three-tier certificate system (A, B, C) was strengthened, with C Certificate holders
                             gaining defence service recruitment benefits.</p>
@@ -305,7 +307,7 @@
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">2004 ñ GP Hisar Unit</p>
+                        <p class="timeline-year">2004 ‚Äì GP Hisar Unit</p>
                         <h3>Our Unit Established</h3>
                         <p>The NCC unit at Government Polytechnic Hamirpur (HP) was formally established, beginning its
                             journey of producing disciplined cadets in Haryana.</p>
@@ -314,7 +316,7 @@
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-dot"></div>
                     <div class="timeline-card">
-                        <p class="timeline-year">Today ñ Excellence Continues</p>
+                        <p class="timeline-year">Today ‚Äì Excellence Continues</p>
                         <h3>250+ Active Cadets</h3>
                         <p>Our unit today proudly trains over 250 cadets, winning state and national level honours year
                             after year.</p>
@@ -336,7 +338,7 @@
             <div class="objectives-grid">
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="0">
                     <div class="tilt-inner">
-                        <div class="obj-icon">???</div>
+                        <div class="obj-icon">üèÖ</div>
                         <h3>Develop Character</h3>
                         <p>Foster qualities of leadership, integrity, and national consciousness that will serve the
                             youth throughout their lives.</p>
@@ -344,7 +346,7 @@
                 </div>
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="tilt-inner">
-                        <div class="obj-icon">??</div>
+                        <div class="obj-icon">ü§ù</div>
                         <h3>National Unity</h3>
                         <p>Promote fraternity and remove regional, religious, and linguistic barriers by bringing cadets
                             from across India together.</p>
@@ -352,7 +354,7 @@
                 </div>
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="tilt-inner">
-                        <div class="obj-icon">??</div>
+                        <div class="obj-icon">üéØ</div>
                         <h3>Military Readiness</h3>
                         <p>Motivate youth to join the Armed Forces and provide basic military training that eases their
                             transition into service.</p>
@@ -360,7 +362,7 @@
                 </div>
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="tilt-inner">
-                        <div class="obj-icon">??</div>
+                        <div class="obj-icon">üåç</div>
                         <h3>Community Service</h3>
                         <p>Encourage cadets to serve society through environmental drives, disaster relief, and health &
                             hygiene campaigns.</p>
@@ -368,7 +370,7 @@
                 </div>
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="tilt-inner">
-                        <div class="obj-icon">???</div>
+                        <div class="obj-icon">üí™</div>
                         <h3>Physical Fitness</h3>
                         <p>Ensure cadets maintain high levels of physical fitness through regular drills, sports, and
                             adventure activities.</p>
@@ -376,7 +378,7 @@
                 </div>
                 <div class="obj-card tilt-card" data-aos="fade-up" data-aos-delay="500">
                     <div class="tilt-inner">
-                        <div class="obj-icon">??</div>
+                        <div class="obj-icon">‚öñÔ∏è</div>
                         <h3>Secular Values</h3>
                         <p>Instil values of secularism, social service and democratic citizenship aligned with the
                             Indian constitution.</p>
@@ -397,7 +399,7 @@
                 <p class="pledge-text" style="text-align:center;font-style:italic;">
                     "We, the cadets of the National Cadet Corps, do solemnly pledge that we shall always uphold the
                     unity of India. We resolve to be worthy citizens of our great country and to live by the motto of
-                    the National Cadet Corps ó Unity and Discipline. We shall serve our country and our people always,
+                    the National Cadet Corps ‚Äî Unity and Discipline. We shall serve our country and our people always,
                     and in so doing give meaning to the Nation."
                 </p>
                 <p
@@ -435,7 +437,7 @@
                 <div class="footer-col">
                     <h4>Contact</h4>
                     <div class="footer-contact-item">
-                        <div class="fc-icon">??</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur ñ 177001</span>
+                        <div class="fc-icon">??</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur ‚Äì 177001</span>
                     </div>
                     <div class="footer-contact-item">
                         <div class="fc-icon">??</div><span>+91 1662 123456</span>
@@ -446,7 +448,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p class="footer-copy">&copy; 2025 NCC Unit ñ Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
+                <p class="footer-copy">&copy; 2025 NCC Unit ‚Äì Govt. Polytechnic Hamirpur (HP). All rights reserved.</p>
                 <div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a
                         href="#" class="social-btn"><i class="fab fa-instagram"></i></a><a href="#"
                         class="social-btn"><i class="fab fa-youtube"></i></a></div>
@@ -456,7 +458,10 @@
     <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
     <script src="../js/main.js"></script>
+    <script>document.addEventListener('DOMContentLoaded',()=>{const c=document.querySelector('.footer-copy');if(c)c.innerHTML=c.innerHTML.replace('2025',new Date().getFullYear());});</script>
 </body>
 
 </html>
