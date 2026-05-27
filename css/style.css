@@ -1562,3 +1562,166 @@ body, #navbar, .card, .stat-card, .form-control, .mobile-nav, .timeline-card, .n
 .skeleton-text { height: 14px; margin-bottom: 10px; border-radius: 4px; }
 
 
+
+/* ══════════════════════════════════════════════════════
+   COMPREHENSIVE MOBILE RESPONSIVE FIXES
+   ══════════════════════════════════════════════════════ */
+
+/* ── Tablet (max 768px) ──────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .navbar-inner { padding: 0 16px; }
+  .brand-text strong { font-size: 0.9rem; }
+  .brand-text span { font-size: 0.65rem; }
+
+  /* Hero Section */
+  #hero { min-height: 100svh; padding: 120px 0 60px; }
+  .hero-content { text-align: center; padding: 0 16px; }
+  .hero-badge { font-size: 0.68rem; }
+  .hero-cta { flex-direction: column; align-items: center; gap: 12px; }
+  .hero-cta .btn { width: 100%; max-width: 280px; justify-content: center; }
+  .hero-stats { flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .hero-stat { min-width: 90px; }
+
+  /* Section spacing */
+  .section { padding: 56px 0; }
+  .section-title { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+  .section-sub { font-size: 0.88rem; }
+
+  /* Cards & Grids */
+  .card-body { padding: 20px; }
+  .stat-card { padding: 24px 18px; }
+
+  /* Wizard Steps */
+  .wizard-steps { gap: 0; overflow-x: auto; padding-bottom: 8px; }
+  .ws-label { display: none; }
+  .wizard-nav { flex-direction: column; }
+  .wizard-nav .btn { width: 100%; justify-content: center; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-col { text-align: center; }
+  .footer-links { align-items: center; }
+  .footer-contact-item { justify-content: center; }
+  .footer-bottom { flex-direction: column; align-items: center; text-align: center; }
+
+  /* Calendar - make cells smaller */
+  .cal-day { min-height: 52px; padding: 4px; }
+  .cal-day .day-num { font-size: 0.75rem; }
+  .cal-event-dot { display: none; }
+  .cal-day-label { font-size: 0.62rem; padding: 4px 0; }
+
+  /* Admin Dashboard */
+  .admin-sidebar {
+    position: fixed !important;
+    left: -280px;
+    top: 0; bottom: 0;
+    width: 260px !important;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+  }
+  .admin-sidebar.mobile-open { left: 0 !important; }
+  .admin-main { margin-left: 0 !important; padding: 16px !important; }
+  .admin-topbar { padding: 0 16px !important; }
+  .admin-topbar-left { gap: 8px; }
+  .stat-cards-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .charts-grid { grid-template-columns: 1fr !important; }
+  .admin-table { font-size: 0.78rem; }
+  .admin-table th, .admin-table td { padding: 10px 8px !important; }
+  .chart-card { padding: 16px !important; }
+  .table-card { padding: 0 !important; overflow-x: auto; }
+  .admin-tab-content { padding: 16px !important; }
+
+  /* Cadet Portal */
+  .portal-grid { grid-template-columns: 1fr !important; gap: 20px; }
+  .portal-sidebar { position: static !important; border-radius: var(--radius-lg); }
+  .portal-stat-row { justify-content: center; }
+  .portal-nav-link { font-size: 0.8rem; padding: 8px 12px; }
+
+  /* Tables - horizontal scroll */
+  .admin-table-wrap, .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Page Hero */
+  .page-hero { padding: calc(var(--navbar-h) + 32px) 0 48px; }
+  .page-hero h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); }
+
+  /* Enrollment Form */
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* Notices Timeline */
+  .timeline-list::before { left: 20px; }
+  .timeline-pin { width: 42px; }
+  .timeline-date { font-size: 0.58rem; }
+}
+
+/* ── Phone (max 480px) ───────────────────────────────── */
+@media (max-width: 480px) {
+  .container { padding: 0 14px; }
+  .btn { padding: 11px 20px; font-size: 0.85rem; }
+
+  /* Stats grid - 1 column on very small screens */
+  .stat-cards-grid { grid-template-columns: 1fr !important; }
+
+  /* Admin table - hide less important columns */
+  .admin-table .hide-mobile { display: none; }
+
+  /* Hide scroll indicator on small screens */
+  .scroll-indicator { display: none; }
+
+  /* Admin topbar */
+  .admin-topbar-right { gap: 6px !important; }
+  .admin-topbar-right .btn { display: none; }
+  #todayDate { display: none; }
+
+  /* Charts */
+  .chart-card canvas { max-height: 220px; }
+
+  /* Cadet portal mini stats */
+  .portal-mini-stat strong { font-size: 1.1rem; }
+  .portal-mini-stat span { font-size: 0.62rem; }
+
+  /* Cert cards */
+  .cert-card { flex-direction: column; text-align: center; gap: 12px; }
+
+  /* Page hero */
+  .page-hero h1 { font-size: 1.5rem; }
+
+  /* Quick action buttons in dashboard */
+  .quick-actions-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+
+  /* Footer */
+  #footer { padding: 40px 0 20px; }
+  .footer-grid { gap: 20px; }
+}
+
+/* ── Mobile Sidebar Overlay ──────────────────────────── */
+#mobile-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+#mobile-sidebar-overlay.active { display: block; }
+
+/* ── Mobile Menu Toggle Button ───────────────────────── */
+#mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  background: rgba(13,43,94,0.08);
+  border-radius: var(--radius-md);
+  color: var(--navy);
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  transition: background var(--trans-fast);
+}
+@media (max-width: 768px) {
+  #mobile-menu-toggle { display: flex; }
+}
+#mobile-menu-toggle:hover { background: rgba(13,43,94,0.15); }
