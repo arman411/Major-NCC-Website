@@ -11,12 +11,21 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--navy:#0d2b5e;--sky:#3498db;--red:#c0392b;--green:#27ae60}
-    body{font-family:'Poppins',sans-serif;min-height:100vh;overflow:hidden;background:linear-gradient(135deg,#0a1628 0%,#0d2b5e 50%,#1a1a2e 100%)}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;overflow-y:auto;background:linear-gradient(135deg,#0a1628 0%,#0d2b5e 50%,#1a1a2e 100%)}
     canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
 
     /* layout */
     .page{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 480px}
     @media(max-width:900px){.page{grid-template-columns:1fr}.left-panel{display:none}}
+    @media(max-width:600px){
+      .page{display:block;min-height:100vh;padding:0}
+      .right-panel{min-height:100vh;padding:20px 16px;display:flex;align-items:flex-start;justify-content:center;padding-top:60px;}
+      .glass-card{padding:28px 20px;border-radius:18px;}
+      h1{font-size:1.45rem}
+      .back-home-btn{top:12px;left:12px;font-size:0.75rem;padding:6px 12px;}
+      .demo-box{font-size:.72rem}
+      .feature-list{display:none}
+    }
 
     /* left hero panel */
     .left-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:white;position:relative}
@@ -31,7 +40,7 @@
 
     /* right glass card */
     .right-panel{display:flex;align-items:center;justify-content:center;padding:32px 28px;background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.06);backdrop-filter:blur(20px)}
-    .glass-card{width:100%;max-width:400px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:40px 36px;backdrop-filter:blur(30px);box-shadow:0 32px 80px rgba(0,0,0,.4)}
+    .glass-card{width:100%;max-width:400px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:40px 36px;backdrop-filter:blur(30px);box-shadow:0 32px 80px rgba(0,0,0,.4);box-sizing:border-box;}
 
     .card-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
     .card-logo img{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.2)}
