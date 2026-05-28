@@ -916,6 +916,102 @@ def api_public_stats():
     })
 
 
+# =============================================================================
+# ATTENDANCE ALIAS ROUTES (used by admin dashboard legacy JS)
+# =============================================================================
+
+@app.route('/api/attendance/admin-summary', methods=['GET'])
+def api_attendance_admin_summary():
+    """Alias for /api/attendance/daily — used by old admin dashboard JS."""
+    date_str = request.args.get('date', date.today().strftime('%Y-%m-%d'))
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        target_date = date.today()
+
+    cadets = User.query.filter_by(is_admin=False, is_approved=True).order_by(User.username).all()
+    attendance_today = {a.cadet_id: a for a in Attendance.query.filter_by(date=target_date).all()}
+
+    result = []
+    for cadet in cadets:
+        att = attendance_today.get(cadet.id)
+        result.append({
+            'id': cadet.id,
+            'username': cadet.username,
+            'email': cadet.email,
+            'roll_no': cadet.roll_no or '—',
+            'marked_today': att is not None and att.status == 'present',
+            'status': att.status if att else 'absent'
+        })
+
+    return jsonify({'error': False, 'date': date_str, 'cadets': result})
+
+
+@app.route('/api/attendance/admin-mark', methods=['POST'])
+def api_attendance_admin_mark():
+    """Mark a single cadet present/absent — used by admin dashboard toggle buttons."""
+    data = request.get_json(force=True) or {}
+    cadet_id = data.get('cadet_id')
+    status   = data.get('status', 'present')
+    date_str = data.get('date', date.today().strftime('%Y-%m-%d'))
+
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': True, 'message': 'Invalid date'}), 400
+
+    cadet = User.query.get(cadet_id)
+    if not cadet or cadet.is_admin:
+        return jsonify({'error': True, 'message': 'Cadet not found'}), 404
+
+    existing = Attendance.query.filter_by(cadet_id=cadet_id, date=target_date).first()
+    if existing:
+        existing.status = status
+        existing.marked_by_admin = True
+        existing.marked_at = datetime.utcnow()
+    else:
+        record = Attendance(cadet_id=cadet_id, date=target_date,
+                            status=status, marked_by_admin=True)
+        db.session.add(record)
+    db.session.commit()
+    return jsonify({'error': False, 'success': True,
+                    'message': f'{cadet.username} marked {status}'})
+
+
+@app.route('/api/attendance/admin-mark-all', methods=['POST'])
+def api_attendance_admin_mark_all():
+    """Mark ALL approved cadets as present for a date — used by Mark All Present button."""
+    data = request.get_json(force=True) or {}
+    date_str = data.get('date', date.today().strftime('%Y-%m-%d'))
+
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': True, 'message': 'Invalid date'}), 400
+
+    cadets = User.query.filter_by(is_admin=False, is_approved=True).all()
+    count = 0
+    for cadet in cadets:
+        existing = Attendance.query.filter_by(cadet_id=cadet.id, date=target_date).first()
+        if existing:
+            existing.status = 'present'
+            existing.marked_by_admin = True
+            existing.marked_at = datetime.utcnow()
+        else:
+            db.session.add(Attendance(cadet_id=cadet.id, date=target_date,
+                                      status='present', marked_by_admin=True))
+        count += 1
+    db.session.commit()
+    return jsonify({'error': False, 'success': True,
+                    'message': f'All {count} cadets marked present for {date_str}'})
+
+
+@app.route('/api/attendance/my', methods=['GET'])
+def api_attendance_my():
+    """Alias for /api/attendance/my-status — used by admin cadet history modal."""
+    return api_my_attendance_status()
+
+
 # Run the app
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
