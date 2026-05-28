@@ -993,19 +993,11 @@ const tabTitles = {
   attendance:'Attendance', achievements:'Achievements', settings:'Settings',
   'module-tests':'Module Tests'
 };
-/* ── Sidebar Collapse ──────────────────────────────────────────────── */
-let sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === '1';
-function applySidebarState(){
-  sidebar.classList.toggle('collapsed', sidebarCollapsed);
-  if(sidebarCollapsed) mainWrap.style.marginLeft = 'var(--sidebar-w-sm)';
-  else mainWrap.style.marginLeft = '';
+/* ── Attach Sidebar Toggle Listener ────────────────────────────────── */
+const toggleBtn = document.getElementById('sidebarToggle');
+if (toggleBtn) {
+  toggleBtn.addEventListener('click', handleSidebarToggle);
 }
-applySidebarState();
-document.getElementById('sidebarToggle').addEventListener('click', ()=>{
-  sidebarCollapsed = !sidebarCollapsed;
-  localStorage.setItem('sidebarCollapsed', sidebarCollapsed ? '1' : '0');
-  applySidebarState();
-});
 
 /* ── Count-Up Animation ──────────────────────────────────────────────── */
 function animateCount(el){
