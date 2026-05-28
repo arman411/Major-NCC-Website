@@ -52,6 +52,10 @@ def serve_manifest():
 def serve_sw():
     return send_from_directory('.', 'sw.js')
 
+@app.route('/googlef6cddc47ed70c3d7.html')
+def serve_google_verification():
+    return send_from_directory('.', 'googlef6cddc47ed70c3d7.html')
+
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
