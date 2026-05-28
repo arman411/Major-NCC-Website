@@ -64,6 +64,34 @@ def serve_sitemap():
 def serve_robots():
     return send_from_directory('.', 'robots.txt')
 
+# --- Health Check (for UptimeRobot and internal sync) ---
+@app.route('/api/health')
+def api_health():
+    return jsonify({'status': 'ok', 'message': 'NCC GPH Hamirpur server is running'})
+
+# --- API Logout Route ---
+@app.route('/api/auth/logout', methods=['POST', 'GET'])
+def api_auth_logout():
+    logout_user()
+    return jsonify({'error': False, 'message': 'Logged out successfully'})
+
+# --- One-time Admin Setup for Render (visit once, then it auto-disables) ---
+@app.route('/setup-admin')
+def setup_admin():
+    existing = User.query.filter_by(email='admin@ncc-gph.ac.in').first()
+    if existing:
+        return jsonify({'message': 'Admin already exists. Login with admin@ncc-gph.ac.in and NCC@Admin2025'})
+    admin = User(
+        username='admin',
+        email='admin@ncc-gph.ac.in',
+        password_hash=generate_password_hash('NCC@Admin2025', method='pbkdf2:sha256'),
+        is_admin=True,
+        is_approved=True
+    )
+    db.session.add(admin)
+    db.session.commit()
+    return jsonify({'message': 'Admin created successfully! Email: admin@ncc-gph.ac.in | Password: NCC@Admin2025'})
+
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
