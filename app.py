@@ -483,8 +483,11 @@ def api_my_attendance_status():
 # =============================================================================
 
 @app.route('/api/attendance/daily', methods=['GET'])
+@login_required
 def api_attendance_daily():
     """Admin: get all cadets with their request/attendance status for a date."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
 
     date_str = request.args.get('date', date.today().strftime('%Y-%m-%d'))
     try:
@@ -530,8 +533,11 @@ def api_attendance_daily():
 
 
 @app.route('/api/attendance/finalize', methods=['POST'])
+@login_required
 def api_attendance_finalize():
     """Admin: finalize attendance for a date. Saves present/absent for ALL cadets."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
 
     data = request.get_json(force=True) or {}
     date_str = data.get('date', date.today().strftime('%Y-%m-%d'))
@@ -576,8 +582,11 @@ def api_attendance_finalize():
 
 
 @app.route('/api/attendance/monthly-report', methods=['GET'])
+@login_required
 def api_attendance_monthly():
     """Admin: get monthly report of attendance."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
 
     today = date.today()
     month = int(request.args.get('month', today.month))
@@ -644,6 +653,8 @@ def api_attendance_monthly():
 @app.route('/api/notices/', methods=['GET', 'POST'])
 def api_notices():
     if request.method == 'POST':
+        if not current_user.is_authenticated or not current_user.is_admin:
+            return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
         title = request.form.get('title')
         category = request.form.get('category')
         description = request.form.get('description')
@@ -658,7 +669,10 @@ def api_notices():
     return jsonify({'error': False, 'success': True, 'notices': [n.to_dict() for n in notices]})
 
 @app.route('/api/notices/<int:id>', methods=['DELETE'])
+@login_required
 def delete_notice(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     notice = Notice.query.get_or_404(id)
     db.session.delete(notice)
     db.session.commit()
@@ -667,6 +681,8 @@ def delete_notice(id):
 @app.route('/api/events/', methods=['GET', 'POST'])
 def api_events():
     if request.method == 'POST':
+        if not current_user.is_authenticated or not current_user.is_admin:
+            return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
         title = request.form.get('title')
         start_date_str = request.form.get('start_date')
         location = request.form.get('location')
@@ -692,7 +708,10 @@ def api_events():
     return jsonify({'error': False, 'success': True, 'events': [e.to_dict() for e in events]})
 
 @app.route('/api/events/<int:id>', methods=['DELETE'])
+@login_required
 def delete_event(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     event = Event.query.get_or_404(id)
     db.session.delete(event)
     db.session.commit()
@@ -701,6 +720,8 @@ def delete_event(id):
 @app.route('/api/gallery/', methods=['GET', 'POST'])
 def api_gallery():
     if request.method == 'POST':
+        if not current_user.is_authenticated or not current_user.is_admin:
+            return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
         title = request.form.get('title', 'Photo')
         category = request.form.get('category', 'General')
         file = request.files.get('image')
@@ -725,7 +746,10 @@ def api_gallery():
                     'gallery': [i.to_dict() for i in items]})
 
 @app.route('/api/gallery/<int:id>', methods=['DELETE'])
+@login_required
 def delete_gallery(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     item = GalleryItem.query.get_or_404(id)
     if os.path.exists(item.image_path):
         os.remove(item.image_path)
@@ -800,8 +824,11 @@ def api_students_enroll():
     }), 201
 
 @app.route('/api/students/', methods=['GET'])
+@login_required
 def api_admin_all_cadets():
     """Admin: get all cadets."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     cadets = User.query.filter_by(is_admin=False).all()
     return jsonify({
         'error': False,
@@ -822,8 +849,11 @@ def api_admin_all_cadets():
     })
 
 @app.route('/api/admin/pending-cadets', methods=['GET'])
+@login_required
 def api_admin_pending_cadets():
     """Admin: get all cadets pending approval."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     pending = User.query.filter_by(is_admin=False, is_approved=False).all()
     return jsonify({
         'error': False,
@@ -841,8 +871,11 @@ def api_admin_pending_cadets():
     })
 
 @app.route('/api/admin/approve-cadet', methods=['POST'])
+@login_required
 def api_admin_approve_cadet():
     """Admin: approve or reject a pending cadet."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     data = request.get_json(force=True) or {}
     cadet_id = data.get('cadet_id')
     action = data.get('action') # 'approve' or 'reject'
@@ -893,8 +926,11 @@ def api_admin_approve_certificate():
     })
 
 @app.route('/api/students/<int:id>', methods=['DELETE'])
+@login_required
 def api_delete_student(id):
     """Admin: permanently delete a cadet account."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     cadet = User.query.get(id)
     if not cadet or cadet.is_admin:
         return jsonify({'error': True, 'message': 'Cadet not found'}), 404
@@ -927,18 +963,26 @@ def api_contact():
         return jsonify({'error': False, 'success': True, 'message': 'Message received! We will get back to you soon.'}), 201
 
     # GET — admin views all messages
+    if not current_user.is_authenticated or not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     contacts = Contact.query.order_by(Contact.created_at.desc()).all()
     return jsonify({'error': False, 'success': True, 'contacts': [c.to_dict() for c in contacts]})
 
 @app.route('/api/contact/<int:id>/read', methods=['PATCH'])
+@login_required
 def api_contact_read(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     contact = Contact.query.get_or_404(id)
     contact.is_read = True
     db.session.commit()
     return jsonify({'error': False, 'success': True})
 
 @app.route('/api/contact/<int:id>', methods=['DELETE'])
+@login_required
 def api_contact_delete(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     contact = Contact.query.get_or_404(id)
     db.session.delete(contact)
     db.session.commit()
@@ -952,6 +996,8 @@ def api_contact_delete(id):
 @app.route('/api/achievements/', methods=['GET', 'POST'])
 def api_achievements():
     if request.method == 'POST':
+        if not current_user.is_authenticated or not current_user.is_admin:
+            return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
         cadet = request.form.get('cadet') or request.form.get('ach-cadet', '')
         award = request.form.get('award') or request.form.get('ach-award', '')
         ach_type = request.form.get('type') or request.form.get('ach-type', '')
@@ -971,7 +1017,10 @@ def api_achievements():
     return jsonify({'error': False, 'success': True, 'achievements': [a.to_dict() for a in achievements]})
 
 @app.route('/api/achievements/<int:id>', methods=['DELETE'])
+@login_required
 def api_delete_achievement(id):
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     achievement = Achievement.query.get_or_404(id)
     db.session.delete(achievement)
     db.session.commit()
@@ -983,8 +1032,11 @@ def api_delete_achievement(id):
 # =============================================================================
 
 @app.route('/api/dashboard/stats', methods=['GET'])
+@login_required
 def api_dashboard_stats():
     """Returns real-time stats for the admin dashboard."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     total_cadets      = User.query.filter_by(is_admin=False).count()
     approved_cadets   = User.query.filter_by(is_admin=False, is_approved=True).count()
     pending_cadets    = User.query.filter_by(is_admin=False, is_approved=False).count()
@@ -1051,8 +1103,11 @@ def api_public_stats():
 # =============================================================================
 
 @app.route('/api/attendance/admin-summary', methods=['GET'])
+@login_required
 def api_attendance_admin_summary():
     """Alias for /api/attendance/daily — used by old admin dashboard JS."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     date_str = request.args.get('date', date.today().strftime('%Y-%m-%d'))
     try:
         target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -1078,8 +1133,11 @@ def api_attendance_admin_summary():
 
 
 @app.route('/api/attendance/admin-mark', methods=['POST'])
+@login_required
 def api_attendance_admin_mark():
     """Mark a single cadet present/absent — used by admin dashboard toggle buttons."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     data = request.get_json(force=True) or {}
     cadet_id = data.get('cadet_id')
     status   = data.get('status', 'present')
@@ -1109,8 +1167,11 @@ def api_attendance_admin_mark():
 
 
 @app.route('/api/attendance/admin-mark-all', methods=['POST'])
+@login_required
 def api_attendance_admin_mark_all():
     """Mark ALL approved cadets as present for a date — used by Mark All Present button."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
     data = request.get_json(force=True) or {}
     date_str = data.get('date', date.today().strftime('%Y-%m-%d'))
 

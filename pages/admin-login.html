@@ -354,6 +354,8 @@ document.getElementById('adminForm').addEventListener('submit', async(e)=>{
     const res=await NccAPI.login({username:user, password:pwd});
     if(res.otp_required){ showToast('OTP sent! Check server console.','info',6000); showOtpStep(res.email||user); return; }
     if(res.error){ markAttempt(); showToast(res.message||'Invalid credentials.','error'); return; }
+    if(res.access_token) Auth.setTokens(res.access_token, res.refresh_token||null);
+    if(res.user) Auth.setUser(res.user);
     const u=Auth.getUser();
     if(u&&u.role==='admin'){ grantAccess(); }
     else { Auth.clearTokens(); markAttempt(); showToast('Access denied — not an admin account.','error'); }
