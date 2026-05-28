@@ -153,3 +153,47 @@ class Attendance(db.Model):
             'marked_by_admin': self.marked_by_admin,
             'marked_at': self.marked_at.isoformat()
         }
+
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    subject = db.Column(db.String(200), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Contact from {self.name}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'subject': self.subject,
+            'message': self.message,
+            'is_read': self.is_read,
+            'created_at': self.created_at.isoformat()
+        }
+
+class Achievement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cadet = db.Column(db.String(100), nullable=False)
+    award = db.Column(db.String(200), nullable=False)
+    achievement_type = db.Column(db.String(50), nullable=True)
+    date = db.Column(db.String(20), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Achievement {self.award}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'cadet': self.cadet,
+            'award': self.award,
+            'type': self.achievement_type,
+            'date': self.date,
+            'created_at': self.created_at.isoformat()
+        }

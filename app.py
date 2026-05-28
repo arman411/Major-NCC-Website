@@ -7,7 +7,7 @@ import os
 from datetime import date, datetime, timedelta
 from calendar import monthrange
 
-from models import db, User, Notice, GalleryItem, Attendance, AttendanceRequest, Event
+from models import db, User, Notice, GalleryItem, Attendance, AttendanceRequest, Event, Contact, Achievement
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here_override_in_production'
@@ -761,6 +761,160 @@ def api_admin_approve_cadet():
         return jsonify({'error': False, 'message': 'Cadet rejected and removed'})
     else:
         return jsonify({'error': True, 'message': 'Invalid action'}), 400
+
+@app.route('/api/students/<int:id>', methods=['DELETE'])
+def api_delete_student(id):
+    """Admin: permanently delete a cadet account."""
+    cadet = User.query.get(id)
+    if not cadet or cadet.is_admin:
+        return jsonify({'error': True, 'message': 'Cadet not found'}), 404
+    # Also clean up their attendance records
+    Attendance.query.filter_by(cadet_id=id).delete()
+    AttendanceRequest.query.filter_by(cadet_id=id).delete()
+    db.session.delete(cadet)
+    db.session.commit()
+    return jsonify({'error': False, 'success': True, 'message': 'Cadet deleted successfully'})
+
+
+# =============================================================================
+# CONTACT FORM API
+# =============================================================================
+
+@app.route('/api/contact/', methods=['GET', 'POST'])
+def api_contact():
+    if request.method == 'POST':
+        data = request.get_json(force=True) or {}
+        # also support form data
+        name    = data.get('name') or request.form.get('name', '')
+        email   = data.get('email') or request.form.get('email', '')
+        subject = data.get('subject') or request.form.get('subject', '')
+        message = data.get('message') or request.form.get('message', '')
+        if not name or not email or not message:
+            return jsonify({'error': True, 'message': 'Name, email and message are required'}), 400
+        contact = Contact(name=name, email=email, subject=subject, message=message)
+        db.session.add(contact)
+        db.session.commit()
+        return jsonify({'error': False, 'success': True, 'message': 'Message received! We will get back to you soon.'}), 201
+
+    # GET — admin views all messages
+    contacts = Contact.query.order_by(Contact.created_at.desc()).all()
+    return jsonify({'error': False, 'success': True, 'contacts': [c.to_dict() for c in contacts]})
+
+@app.route('/api/contact/<int:id>/read', methods=['PATCH'])
+def api_contact_read(id):
+    contact = Contact.query.get_or_404(id)
+    contact.is_read = True
+    db.session.commit()
+    return jsonify({'error': False, 'success': True})
+
+@app.route('/api/contact/<int:id>', methods=['DELETE'])
+def api_contact_delete(id):
+    contact = Contact.query.get_or_404(id)
+    db.session.delete(contact)
+    db.session.commit()
+    return jsonify({'error': False, 'success': True})
+
+
+# =============================================================================
+# ACHIEVEMENTS API
+# =============================================================================
+
+@app.route('/api/achievements/', methods=['GET', 'POST'])
+def api_achievements():
+    if request.method == 'POST':
+        cadet = request.form.get('cadet') or request.form.get('ach-cadet', '')
+        award = request.form.get('award') or request.form.get('ach-award', '')
+        ach_type = request.form.get('type') or request.form.get('ach-type', '')
+        ach_date = request.form.get('date') or request.form.get('ach-date', '')
+        if not cadet or not award:
+            return jsonify({'error': True, 'message': 'Cadet name and award are required'}), 400
+        achievement = Achievement(
+            cadet=cadet, award=award,
+            achievement_type=ach_type,
+            date=ach_date or datetime.utcnow().strftime('%Y-%m-%d')
+        )
+        db.session.add(achievement)
+        db.session.commit()
+        return jsonify({'error': False, 'success': True, 'achievement': achievement.to_dict()}), 201
+
+    achievements = Achievement.query.order_by(Achievement.created_at.desc()).all()
+    return jsonify({'error': False, 'success': True, 'achievements': [a.to_dict() for a in achievements]})
+
+@app.route('/api/achievements/<int:id>', methods=['DELETE'])
+def api_delete_achievement(id):
+    achievement = Achievement.query.get_or_404(id)
+    db.session.delete(achievement)
+    db.session.commit()
+    return jsonify({'error': False, 'success': True})
+
+
+# =============================================================================
+# DASHBOARD STATS API (real data)
+# =============================================================================
+
+@app.route('/api/dashboard/stats', methods=['GET'])
+def api_dashboard_stats():
+    """Returns real-time stats for the admin dashboard."""
+    total_cadets      = User.query.filter_by(is_admin=False).count()
+    approved_cadets   = User.query.filter_by(is_admin=False, is_approved=True).count()
+    pending_cadets    = User.query.filter_by(is_admin=False, is_approved=False).count()
+    total_events      = Event.query.count()
+    active_notices    = Notice.query.count()
+    total_achievements = Achievement.query.count()
+    total_contacts    = Contact.query.filter_by(is_read=False).count()
+
+    today = date.today()
+    present_today = Attendance.query.filter_by(date=today, status='present').count()
+    attendance_pct = round((present_today / total_cadets * 100) if total_cadets > 0 else 0)
+
+    # Monthly enrollment trend (last 6 months)
+    trend = []
+    for i in range(5, -1, -1):
+        import calendar
+        m = (today.month - i - 1) % 12 + 1
+        y = today.year - ((today.month - i - 1) // 12)
+        count = User.query.filter(
+            db.extract('month', User.created_at) == m,
+            db.extract('year',  User.created_at) == y,
+            User.is_admin == False
+        ).count()
+        trend.append({'month': calendar.month_abbr[m], 'year': y, 'count': count})
+
+    return jsonify({
+        'error': False,
+        'success': True,
+        'total_cadets': total_cadets,
+        'approved_cadets': approved_cadets,
+        'pending_cadets': pending_cadets,
+        'total_events': total_events,
+        'active_notices': active_notices,
+        'total_achievements': total_achievements,
+        'unread_contacts': total_contacts,
+        'present_today': present_today,
+        'attendance_pct': attendance_pct,
+        'enrollment_trend': trend
+    })
+
+
+# =============================================================================
+# PUBLIC STATS API
+# =============================================================================
+
+@app.route('/api/stats/public', methods=['GET'])
+def api_public_stats():
+    """Public stats shown on the home page."""
+    total_cadets      = User.query.filter_by(is_admin=False, is_approved=True).count()
+    total_events      = Event.query.count()
+    total_notices     = Notice.query.count()
+    total_achievements = Achievement.query.count()
+    return jsonify({
+        'error': False,
+        'total_cadets': total_cadets,
+        'total_events': total_events,
+        'total_notices': total_notices,
+        'total_achievements': total_achievements
+    })
+
 
 # Run the app
 if __name__ == '__main__':
