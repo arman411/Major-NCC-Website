@@ -101,17 +101,17 @@ def api_auth_logout():
 def setup_admin():
     existing = User.query.filter_by(email='admin@ncc-gph.ac.in').first()
     if existing:
-        return jsonify({'message': 'Admin already exists. Login with admin@ncc-gph.ac.in and NCC@Admin2025'})
+        return jsonify({'message': 'Admin already exists. Login with admin@ncc-gph.ac.in and ncc@admin123'})
     admin = User(
         username='admin',
         email='admin@ncc-gph.ac.in',
-        password_hash=generate_password_hash('NCC@Admin2025', method='pbkdf2:sha256'),
+        password_hash=generate_password_hash('ncc@admin123', method='pbkdf2:sha256'),
         is_admin=True,
         is_approved=True
     )
     db.session.add(admin)
     db.session.commit()
-    return jsonify({'message': 'Admin created successfully! Email: admin@ncc-gph.ac.in | Password: NCC@Admin2025'})
+    return jsonify({'message': 'Admin created successfully! Email: admin@ncc-gph.ac.in | Password: ncc@admin123'})
 
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
