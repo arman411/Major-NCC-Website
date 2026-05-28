@@ -36,6 +36,21 @@ def unauthorized():
 # Create DB Tables on Startup
 with app.app_context():
     db.create_all()
+    # Robust migration check for cert_a_approved and cert_b_approved columns
+    try:
+        from sqlalchemy import text
+        columns_res = db.session.execute(text("PRAGMA table_info(user)")).fetchall()
+        column_names = [col[1] for col in columns_res]
+        
+        if 'cert_a_approved' not in column_names:
+            db.session.execute(text("ALTER TABLE user ADD COLUMN cert_a_approved BOOLEAN DEFAULT 0"))
+            print("Migration: Added cert_a_approved column to user table.")
+        if 'cert_b_approved' not in column_names:
+            db.session.execute(text("ALTER TABLE user ADD COLUMN cert_b_approved BOOLEAN DEFAULT 0"))
+            print("Migration: Added cert_b_approved column to user table.")
+        db.session.commit()
+    except Exception as e:
+        print("Migration check or columns add failed:", e)
 
 # --- Serve root-level asset folders (css, js, images) ---
 @app.route('/css/<path:filename>')
@@ -316,8 +331,8 @@ def api_certificates_mine():
         'status': status,
         'student_id': 'STU-' + current_user.username.upper(),
         'certificates': [
-            { 'type': 'A Certificate', 'available': current_user.is_approved, 'download_url': '/api/certificates/download/A' if current_user.is_approved else None },
-            { 'type': 'B Certificate', 'available': current_user.is_approved, 'download_url': '/api/certificates/download/B' if current_user.is_approved else None },
+            { 'type': 'A Certificate', 'available': current_user.cert_a_approved, 'download_url': '/api/certificates/download/A' if current_user.cert_a_approved else None },
+            { 'type': 'B Certificate', 'available': current_user.cert_b_approved, 'download_url': '/api/certificates/download/B' if current_user.cert_b_approved else None },
         ]
     })
 
@@ -326,8 +341,12 @@ def api_certificates_mine():
 def api_certificates_download(cert_type):
     if current_user.is_admin:
         return redirect(url_for('dashboard'))
-    if not current_user.is_approved:
-        flash("Your certificate is pending admin enrollment approval.")
+    
+    if cert_type == 'A' and not current_user.cert_a_approved:
+        flash("You do not have approval for Certificate A.")
+        return redirect('/pages/cadet-portal.html')
+    if cert_type == 'B' and not current_user.cert_b_approved:
+        flash("You do not have approval for Certificate B.")
         return redirect('/pages/cadet-portal.html')
     
     cert_label = f"{cert_type} Certificate"
@@ -796,7 +815,9 @@ def api_admin_all_cadets():
             'roll_no': c.roll_no or '—',
             'branch': c.branch or '—',
             'year': c.year or '—',
-            'status': 'approved' if c.is_approved else 'pending'
+            'status': 'approved' if c.is_approved else 'pending',
+            'cert_a_approved': c.cert_a_approved,
+            'cert_b_approved': c.cert_b_approved
         } for c in cadets]
     })
 
@@ -840,6 +861,36 @@ def api_admin_approve_cadet():
         return jsonify({'error': False, 'message': 'Cadet rejected and removed'})
     else:
         return jsonify({'error': True, 'message': 'Invalid action'}), 400
+
+@app.route('/api/admin/approve-certificate', methods=['POST'])
+@login_required
+def api_admin_approve_certificate():
+    """Admin: approve or revoke a cadet's certificate."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin privileges required'}), 403
+
+    data = request.get_json(force=True) or {}
+    cadet_id = data.get('cadet_id')
+    cert_type = data.get('cert_type') # 'A' or 'B'
+    approved = data.get('approved') # True or False
+
+    cadet = User.query.get(cadet_id)
+    if not cadet or cadet.is_admin:
+        return jsonify({'error': True, 'message': 'Cadet not found'}), 404
+
+    if cert_type == 'A':
+        cadet.cert_a_approved = bool(approved)
+    elif cert_type == 'B':
+        cadet.cert_b_approved = bool(approved)
+    else:
+        return jsonify({'error': True, 'message': 'Invalid certificate type'}), 400
+
+    db.session.commit()
+    return jsonify({
+        'error': False,
+        'success': True,
+        'message': f"Certificate {cert_type} {'approved' if approved else 'revoked'} successfully"
+    })
 
 @app.route('/api/students/<int:id>', methods=['DELETE'])
 def api_delete_student(id):

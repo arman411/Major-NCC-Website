@@ -827,6 +827,21 @@
           <div class="dm-motivation" id="dmMotivation">No statement provided.</div>
         </div>
       </div>
+      
+      <!-- Certificate Approval Section -->
+      <div class="dm-section dm-full-width" style="border-top:1px solid var(--mid-gray);padding-top:20px;margin-top:10px;">
+        <h3><i class="fas fa-certificate"></i> Approved Certificates</h3>
+        <div style="display:flex;gap:32px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:10px;font-size:0.92rem;font-weight:600;color:var(--navy);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="approveCertA" style="width:20px;height:20px;cursor:pointer;accent-color:var(--navy);" />
+            Certificate A Approved
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:0.92rem;font-weight:600;color:var(--navy);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="approveCertB" style="width:20px;height:20px;cursor:pointer;accent-color:var(--navy);" />
+            Certificate B Approved
+          </label>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1481,6 +1496,38 @@ window.viewCadet = async function(id) {
     photoEl.src = fallbackImg;
   }
   photoEl.onerror = function() { this.src = fallbackImg; };
+
+  // Bind Certificate Approval Checkboxes
+  const checkboxA = document.getElementById('approveCertA');
+  const checkboxB = document.getElementById('approveCertB');
+  if (checkboxA) {
+    checkboxA.checked = !!c.cert_a_approved;
+    checkboxA.onchange = async function() {
+      const isChecked = checkboxA.checked;
+      const res = await NccAPI.approveCertificate(c.id, 'A', isChecked);
+      if (res.success || !res.error) {
+        showToast(`Certificate A ${isChecked ? 'approved' : 'revoked'} successfully`, 'success');
+        c.cert_a_approved = isChecked; // Update in-memory cache
+      } else {
+        showToast('Failed to update Certificate A approval', 'error');
+        checkboxA.checked = !isChecked; // Revert checkbox
+      }
+    };
+  }
+  if (checkboxB) {
+    checkboxB.checked = !!c.cert_b_approved;
+    checkboxB.onchange = async function() {
+      const isChecked = checkboxB.checked;
+      const res = await NccAPI.approveCertificate(c.id, 'B', isChecked);
+      if (res.success || !res.error) {
+        showToast(`Certificate B ${isChecked ? 'approved' : 'revoked'} successfully`, 'success');
+        c.cert_b_approved = isChecked; // Update in-memory cache
+      } else {
+        showToast('Failed to update Certificate B approval', 'error');
+        checkboxB.checked = !isChecked; // Revert checkbox
+      }
+    };
+  }
 
   document.getElementById('cadetDetailsModal').classList.add('active');
 };

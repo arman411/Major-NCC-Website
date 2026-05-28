@@ -19,6 +19,8 @@ class User(db.Model, UserMixin):
     year = db.Column(db.String(10), nullable=True)
     theme_preference = db.Column(db.String(20), default='system')
     is_approved = db.Column(db.Boolean, default=False)
+    cert_a_approved = db.Column(db.Boolean, default=False)
+    cert_b_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):

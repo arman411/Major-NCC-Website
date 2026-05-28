@@ -539,6 +539,20 @@ const NccAPI = {
     }
     return r;
   },
+  approveCertificate: async (cadetId, certType, approved) => {
+    const r = await api.post('/api/admin/approve-certificate', { cadet_id: cadetId, cert_type: certType, approved: approved });
+    if (r.error) {
+      const cadets = MockDB.getCadets();
+      const c = cadets.find(x => x.id == cadetId);
+      if (c) {
+        if (certType === 'A') c.cert_a_approved = approved;
+        else if (certType === 'B') c.cert_b_approved = approved;
+        MockDB.saveCadets(cadets);
+      }
+      return { success: true, message: 'Updated locally.' };
+    }
+    return r;
+  },
 
   // Attendance
   markAttendance: async (json) => {
