@@ -310,10 +310,22 @@ def api_certificates_mine():
         'status': status,
         'student_id': 'STU-' + current_user.username.upper(),
         'certificates': [
-            { 'type': 'A Certificate', 'available': current_user.is_approved, 'download_url': None },
-            { 'type': 'B Certificate', 'available': current_user.is_approved, 'download_url': None },
+            { 'type': 'A Certificate', 'available': current_user.is_approved, 'download_url': '/api/certificates/download/A' if current_user.is_approved else None },
+            { 'type': 'B Certificate', 'available': current_user.is_approved, 'download_url': '/api/certificates/download/B' if current_user.is_approved else None },
         ]
     })
+
+@app.route('/api/certificates/download/<string:cert_type>', methods=['GET'])
+@login_required
+def api_certificates_download(cert_type):
+    if current_user.is_admin:
+        return redirect(url_for('dashboard'))
+    if not current_user.is_approved:
+        flash("Your certificate is pending admin enrollment approval.")
+        return redirect('/pages/cadet-portal.html')
+    
+    cert_label = f"{cert_type} Certificate"
+    return render_template('certificate.html', user=current_user, cert_type=cert_label)
 
 # --- Protected Routes ---
 

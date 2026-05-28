@@ -92,11 +92,11 @@ const MockDB = {
       if (stored) return stored;
     } catch {}
     return [
-      { id: 1, name: 'Arjun Sharma', username: 'arjun', email: 'arjun@ncc.in', roll: 'CS-2023-01', year: '2nd', wing: 'Army', status: 'active', branch: 'Computer Engineering', enrolled_on: '2023-08-15' },
-      { id: 2, name: 'Priya Verma', roll: 'EC-2023-05', year: '1st', wing: 'Naval', status: 'active', branch: 'Electronics Engineering', enrolled_on: '2023-09-01' },
-      { id: 3, name: 'Rohit Singh', roll: 'ME-2023-12', year: '1st', wing: 'Army', status: 'pending', branch: 'Mechanical Engineering', enrolled_on: '2024-01-10' },
-      { id: 4, name: 'Anjali Rani', roll: 'CS-2022-07', year: '3rd', wing: 'Air', status: 'active', branch: 'Computer Engineering', enrolled_on: '2022-08-20' },
-      { id: 5, name: 'Sandeep Kumar', roll: 'CE-2023-18', year: '1st', wing: 'Army', status: 'inactive', branch: 'Civil Engineering', enrolled_on: '2023-08-30' },
+      { id: 1, name: 'Arjun Sharma', username: 'arjun', email: 'arjun@ncc.in', roll: 'CS-2023-01', year: '2nd', wing: 'Army', status: 'active', branch: 'Computer Engineering', enrolled_on: '2023-08-15', _synced: true },
+      { id: 2, name: 'Priya Verma', roll: 'EC-2023-05', year: '1st', wing: 'Naval', status: 'active', branch: 'Electronics Engineering', enrolled_on: '2023-09-01', _synced: true },
+      { id: 3, name: 'Rohit Singh', roll: 'ME-2023-12', year: '1st', wing: 'Army', status: 'pending', branch: 'Mechanical Engineering', enrolled_on: '2024-01-10', _synced: true },
+      { id: 4, name: 'Anjali Rani', roll: 'CS-2022-07', year: '3rd', wing: 'Air', status: 'active', branch: 'Computer Engineering', enrolled_on: '2022-08-20', _synced: true },
+      { id: 5, name: 'Sandeep Kumar', roll: 'CE-2023-18', year: '1st', wing: 'Army', status: 'inactive', branch: 'Civil Engineering', enrolled_on: '2023-08-30', _synced: true },
     ];
   },
   saveCadets: (cadets) => localStorage.setItem('ncc_cadets', JSON.stringify(cadets)),
@@ -702,9 +702,20 @@ const BackgroundSync = {
         try {
           // Use FormData so the endpoint (multipart/form-data) accepts it
           const fd = new FormData();
+          
+          // Split name if first_name/last_name are missing
+          if (!cadet.first_name && cadet.name) {
+            const parts = cadet.name.split(' ');
+            cadet.first_name = parts[0] || '';
+            cadet.last_name = parts.slice(1).join(' ') || '';
+          }
+
           Object.entries(cadet).forEach(([k, v]) => {
             if (k !== '_synced' && v != null) fd.append(k, String(v));
           });
+          if (cadet.first_name && !fd.has('first_name')) fd.append('first_name', cadet.first_name);
+          if (cadet.last_name && !fd.has('last_name')) fd.append('last_name', cadet.last_name);
+
           const res = await fetch(`${API_BASE}/api/students/enroll`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },

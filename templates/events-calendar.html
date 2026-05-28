@@ -132,7 +132,7 @@ function closePopup() {
 
 function showPopup(ev) {
   const sd = new Date(ev.start_date);
-  const ed = new Date(ev.end_date);
+  const ed = ev.end_date ? new Date(ev.end_date) : new Date(ev.start_date);
   document.getElementById('popTitle').innerText = ev.title;
   
   document.getElementById('popMeta').innerHTML = `
@@ -179,7 +179,7 @@ function renderCalendar() {
   const evByDate = {};
   allEvents.forEach(ev => {
     const sd = new Date(ev.start_date);
-    const ed = new Date(ev.end_date);
+    const ed = ev.end_date ? new Date(ev.end_date) : new Date(ev.start_date);
     // Mark all days from start to end
     const cur = new Date(sd);
     while (cur <= ed) {

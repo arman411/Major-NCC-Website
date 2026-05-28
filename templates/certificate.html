@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NCC {{ cert_type }} Certificate – {{ user.first_name }} {{ user.last_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Montserrat:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --gold: #c5a059;
+      --gold-dark: #a67c33;
+      --navy: #0d2b5e;
+      --red: #c0392b;
+      --border-color: #2c3e50;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: #f4f6f9;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* Print Header controls */
+    .no-print-header {
+      background: white;
+      width: 100%;
+      max-width: 1000px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+    
+    .btn:hover { background: #123d80; }
+    .btn:active { transform: scale(0.98); }
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 2px solid var(--navy);
+    }
+    .btn-outline:hover {
+      background: rgba(13,43,94,0.05);
+    }
+
+    /* Certificate Outer Frame */
+    .certificate-frame {
+      background: #fdfbf7;
+      width: 100%;
+      max-width: 1000px;
+      aspect-ratio: 1.414 / 1; /* Standard A4 landscape aspect ratio */
+      position: relative;
+      padding: 30px;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Classical Double Border with Corner Decorations */
+    .certificate-border-outer {
+      border: 8px double var(--gold);
+      height: 100%;
+      width: 100%;
+      position: relative;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .certificate-border-inner {
+      border: 2px solid var(--gold-dark);
+      height: 100%;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      position: relative;
+    }
+
+    /* Corner Ornaments */
+    .corner-ornament {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--gold-dark);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .top-left     { top: 5px; left: 5px; border-width: 3px 0 0 3px; }
+    .top-right    { top: 5px; right: 5px; border-width: 3px 3px 0 0; }
+    .bottom-left  { bottom: 5px; left: 5px; border-width: 0 0 3px 3px; }
+    .bottom-right { bottom: 5px; right: 5px; border-width: 0 3px 3px 0; }
+
+    /* Watermark Background */
+    .watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .watermark svg { width: 50%; height: auto; }
+
+    /* Header Logo & Titles */
+    .cert-header {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .cert-logo {
+      height: 72px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+
+    .cert-title-primary {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: 3px;
+      line-height: 1.2;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .cert-title-secondary {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .cert-badge-type {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold-dark);
+      letter-spacing: 2px;
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      padding: 4px 16px;
+      display: inline-block;
+      text-transform: uppercase;
+    }
+
+    /* Certificate Body Text */
+    .cert-body {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 780px;
+      margin: 15px 0;
+    }
+
+    .cert-intro {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #7f8c8d;
+      margin-bottom: 8px;
+    }
+
+    .cert-name {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 8px 0;
+      border-bottom: 1px dashed var(--gold);
+      display: inline-block;
+      padding: 0 24px;
+      text-transform: capitalize;
+    }
+
+    .cert-text {
+      font-size: 0.9rem;
+      color: #34495e;
+      line-height: 1.8;
+      margin-top: 10px;
+    }
+
+    .cert-text strong {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    /* Footer Signatures */
+    .cert-footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+      padding: 0 20px;
+      margin-top: 15px;
+    }
+
+    .sig-block {
+      text-align: center;
+      width: 180px;
+    }
+
+    .sig-line {
+      border-top: 1px solid #7f8c8d;
+      margin-top: 40px;
+      padding-top: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+    }
+
+    .sig-title {
+      font-size: 0.68rem;
+      color: #7f8c8d;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .seal-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cert-seal {
+      width: 76px;
+      height: 76px;
+      opacity: 0.85;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+        min-height: auto;
+      }
+      .no-print-header {
+        display: none !important;
+      }
+      .certificate-frame {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        max-width: 100%;
+        width: 297mm; /* Exact A4 dimensions */
+        height: 210mm;
+        page-break-inside: avoid;
+      }
+      .certificate-border-outer {
+        border-width: 6px double var(--gold);
+        padding: 16px;
+      }
+      .certificate-border-inner {
+        padding: 15px 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls (hidden in print) -->
+  <div class="no-print-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="/pages/cadet-portal.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back to Portal</a>
+      <span style="font-size:0.85rem;color:#7f8c8d;font-weight:600;"><i class="fas fa-info-circle"></i> Best printed in <strong>Landscape</strong> orientation.</span>
+    </div>
+    <button onclick="window.print()" class="btn"><i class="fas fa-print"></i> Print / Save as PDF</button>
+  </div>
+
+  <!-- Certificate Container -->
+  <div class="certificate-frame">
+    <div class="watermark">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/>
+      </svg>
+    </div>
+    
+    <div class="certificate-border-outer">
+      <div class="certificate-border-inner">
+        <!-- Corners -->
+        <div class="corner-ornament top-left"></div>
+        <div class="corner-ornament top-right"></div>
+        <div class="corner-ornament bottom-left"></div>
+        <div class="corner-ornament bottom-right"></div>
+
+        <!-- Header -->
+        <div class="cert-header">
+          <img src="/images/ncc_badge.png" alt="NCC Badge" class="cert-logo" />
+          <h1 class="cert-title-primary">National Cadet Corps</h1>
+          <p class="cert-title-secondary">Govt. Polytechnic Hamirpur (H.P.) Unit</p>
+          <div class="cert-badge-type">Certificate of Merit</div>
+        </div>
+
+        <!-- Body -->
+        <div class="cert-body">
+          <p class="cert-intro">This is to certify that</p>
+          <div class="cert-name">{{ user.first_name }} {{ user.last_name }}</div>
+          <p class="cert-text">
+            Roll Number <strong>{{ user.roll_no or 'N/A' }}</strong>, academic year <strong>{{ user.year or 'N/A' }}</strong> of the 
+            <strong>{{ user.branch or 'General' }}</strong> branch, has successfully completed all requirements of 
+            the <strong>{{ cert_type }}</strong> training syllabus prescribed for the <strong>{{ user.wing or 'Army' }} Wing</strong> 
+            under the guidance of the National Cadet Corps unit at Government Polytechnic Hamirpur (HP).
+          </p>
+          <p class="cert-text" style="margin-top: 8px;">
+            He/She has demonstrated exemplary discipline, leadership, character, and team spirit during their tenure as an active NCC cadet.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="cert-footer">
+          <div class="sig-block">
+            <div class="sig-line">Unit Clerk</div>
+            <div class="sig-title">NCC GPH Hamirpur</div>
+          </div>
+          
+          <div class="seal-block">
+            <img src="/images/ncc_badge.png" alt="NCC Seal" class="cert-seal" />
+            <div style="font-size:0.6rem;color:#7f8c8d;font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:1px;">Official Seal</div>
+          </div>
+
+          <div class="sig-block">
+            <div class="sig-line">Associate NCC Officer</div>
+            <div class="sig-title">Govt. Polytechnic Hamirpur</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Automatically trigger browser print dialog shortly after loading
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        window.print();
+      }, 800);
+    });
+  </script>
+</body>
+</html>
