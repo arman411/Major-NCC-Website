@@ -56,6 +56,10 @@ def serve_sw():
 def serve_google_verification():
     return send_from_directory('.', 'googlef6cddc47ed70c3d7.html')
 
+@app.route('/sitemap.xml')
+def serve_sitemap():
+    return send_from_directory('.', 'sitemap.xml')
+
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
