@@ -60,6 +60,10 @@ def serve_google_verification():
 def serve_sitemap():
     return send_from_directory('.', 'sitemap.xml')
 
+@app.route('/robots.txt')
+def serve_robots():
+    return send_from_directory('.', 'robots.txt')
+
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
