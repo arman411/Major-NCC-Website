@@ -701,6 +701,67 @@ def delete_gallery(id):
 # ADMIN CADET APPROVAL API
 # =============================================================================
 
+@app.route('/api/students/enroll', methods=['POST'])
+def api_students_enroll():
+    """Public: submit enrollment application — creates a pending cadet account."""
+    first_name  = request.form.get('first_name', '').strip()
+    last_name   = request.form.get('last_name', '').strip()
+    email       = request.form.get('email', '').strip().lower()
+    roll_no     = request.form.get('roll_number') or request.form.get('roll_no', '')
+    branch      = request.form.get('branch', '')
+    year        = request.form.get('year', '')
+    phone       = request.form.get('phone', '')
+    gender      = request.form.get('gender', '')
+    blood_group = request.form.get('blood_group', '')
+    wing        = request.form.get('wing') or request.form.get('ncc_wing', '')
+    motivation  = request.form.get('motivation', '')
+
+    if not email or not first_name:
+        return jsonify({'error': True, 'message': 'Name and email are required'}), 400
+
+    # Check if email already registered
+    if User.query.filter_by(email=email).first():
+        return jsonify({
+            'error': False,
+            'success': True,
+            'already_exists': True,
+            'message': 'You have already submitted an application. Please wait for admin approval.',
+            'reference_number': 'NCC-' + email.split('@')[0].upper()[:6]
+        })
+
+    # Auto-generate a username from name + roll
+    username = (first_name[:3] + last_name[:3] + (roll_no[-4:] if roll_no else '')).lower().replace(' ', '')
+    if not username or User.query.filter_by(username=username).first():
+        import random
+        username = f"cadet{random.randint(1000,9999)}"
+
+    # Create account with a temp password (cadet must reset via admin)
+    temp_password = generate_password_hash(f"NCC{roll_no or '0000'}@2025", method='pbkdf2:sha256')
+    new_cadet = User(
+        username=username,
+        email=email,
+        password_hash=temp_password,
+        first_name=first_name,
+        last_name=last_name,
+        phone_number=phone,
+        roll_no=roll_no,
+        branch=branch,
+        year=year,
+        is_admin=False,
+        is_approved=False
+    )
+    db.session.add(new_cadet)
+    db.session.commit()
+
+    ref = f"NCC-{str(new_cadet.id).zfill(5)}"
+    return jsonify({
+        'error': False,
+        'success': True,
+        'message': 'Enrollment application submitted! The ANO will review and approve your account within 3–5 days.',
+        'reference_number': ref,
+        'username': username
+    }), 201
+
 @app.route('/api/students/', methods=['GET'])
 def api_admin_all_cadets():
     """Admin: get all cadets."""

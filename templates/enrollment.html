@@ -566,7 +566,7 @@
             <div class="fc-icon"><i class="fas fa-map-marker-alt"></i></div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span>
           </div>
           <div class="footer-contact-item">
-            <div class="fc-icon"><i class="fas fa-phone"></i></div><span>+91 1662 123456</span>
+            <div class="fc-icon"><i class="fas fa-phone"></i></div><span>+91 1662 247311</span>
           </div>
         </div>
       </div>
@@ -583,19 +583,34 @@
 
   <script>
     if (!Auth.isLoggedIn()) {
-      window.location.href = 'login.html';
+      // Show a soft login tip — don't redirect, anyone should be able to enroll
+      document.addEventListener('DOMContentLoaded', () => {
+        const banner = document.createElement('div');
+        banner.style.cssText = `
+          position:fixed;top:0;left:0;right:0;z-index:9999;
+          background:linear-gradient(135deg,#0d2b5e,#1a365d);
+          color:white;padding:14px 24px;text-align:center;
+          font-size:0.88rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+          display:flex;align-items:center;justify-content:center;gap:12px;
+        `;
+        banner.innerHTML = `
+          <i class="fas fa-info-circle"></i>
+          Already registered? <a href="login.html" style="color:#7ec8e3;font-weight:700;text-decoration:underline;">Login first</a>
+          to auto-fill your details.
+          <a href="javascript:void(0)" onclick="this.parentElement.remove()" style="color:rgba(255,255,255,0.5);font-size:1.2rem;margin-left:8px;">×</a>`;
+        document.body.insertBefore(banner, document.body.firstChild);
+      });
     } else {
       document.addEventListener('DOMContentLoaded', () => {
         const user = Auth.getUser();
         if (user) {
-          // Fix #10: Check if already enrolled — prevent duplicate submissions
+          // Check if already enrolled — prevent duplicate submissions
           const cadets = MockDB.getCadets() || [];
           const alreadyEnrolled = cadets.some(c =>
             (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) ||
             c.roll === user.username || c.roll_no === user.username
           );
           if (alreadyEnrolled) {
-            const section = document.querySelector('main') || document.body;
             const banner = document.createElement('div');
             banner.style.cssText = `
               position:fixed; top:0; left:0; right:0; z-index:9999;
@@ -613,7 +628,7 @@
             document.body.insertBefore(banner, document.body.firstChild);
           }
 
-          // Fix #3: Prefill form fields using DOMContentLoaded (elements guaranteed to exist)
+          // Prefill form fields from logged-in user
           const emailEl = document.getElementById('email');
           const rollEl = document.getElementById('rollNo');
           if (emailEl && user.email) emailEl.value = user.email;
