@@ -634,14 +634,42 @@
           if (emailEl && user.email) emailEl.value = user.email;
           if (rollEl && user.username) rollEl.value = user.username;
 
-          const dbUsers = MockDB.getUsers() || [];
-          const dbUser = dbUsers.find(u => u.username === user.username || u.email === user.email);
-          if (dbUser) {
-            const firstEl = document.getElementById('firstName');
-            const lastEl  = document.getElementById('lastName');
-            if (firstEl && dbUser.first_name) firstEl.value = dbUser.first_name;
-            if (lastEl  && dbUser.last_name)  lastEl.value  = dbUser.last_name;
-          }
+          // Prefill from real database cadet settings if available
+          fetch('/api/cadet/settings')
+            .then(res => res.json())
+            .then(data => {
+              if (data && !data.error && data.settings) {
+                const s = data.settings;
+                const firstEl = document.getElementById('firstName');
+                const lastEl  = document.getElementById('lastName');
+                const phoneEl = document.getElementById('phone');
+                const branchEl = document.getElementById('branch');
+                const yearEl = document.getElementById('year');
+                
+                if (firstEl && s.first_name) firstEl.value = s.first_name;
+                if (lastEl && s.last_name) lastEl.value = s.last_name;
+                if (phoneEl && s.phone_number) phoneEl.value = s.phone_number;
+                if (branchEl && s.branch) {
+                  // Normalize branch select
+                  for (let option of branchEl.options) {
+                    if (option.text.toLowerCase() === s.branch.toLowerCase()) {
+                      branchEl.value = option.value;
+                      break;
+                    }
+                  }
+                }
+                if (yearEl && s.year) {
+                  // Normalize year select
+                  for (let option of yearEl.options) {
+                    if (option.text.toLowerCase().includes(s.year.toLowerCase()) || s.year.toLowerCase().includes(option.text.toLowerCase())) {
+                      yearEl.value = option.value;
+                      break;
+                    }
+                  }
+                }
+              }
+            })
+            .catch(() => {});
         }
       });
     }
