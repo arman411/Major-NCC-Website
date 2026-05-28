@@ -27,6 +27,12 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    if request.path.startswith('/api/'):
+        return jsonify({'error': True, 'message': 'Session expired or unauthorized. Please login again.', 'status': 401}), 401
+    return redirect(url_for('login', next=request.path))
+
 # Create DB Tables on Startup
 with app.app_context():
     db.create_all()

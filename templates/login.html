@@ -450,6 +450,16 @@ function finishLogin(){
     }
   },1000);
 }
+
+// Check for expired session parameter
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('expired') === 'true') {
+    setTimeout(() => {
+      showToast('Your session has expired. Please log in again.', 'warning', 6000);
+    }, 500);
+  }
+});
 </script>
 </body>
 </html>

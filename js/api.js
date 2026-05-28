@@ -290,6 +290,8 @@ async function apiFetch(endpoint, options = {}) {
     clearTimeout(timeout);
     if (res.status === 401) {
       Auth.clearTokens();
+      const loginPage = window.location.pathname.includes('/pages/') ? 'login.html' : 'pages/login.html';
+      window.location.href = loginPage + '?expired=true';
       return { error: true, status: 401, message: 'Session expired. Please login again.' };
     }
     const data = await res.json().catch(() => ({}));
