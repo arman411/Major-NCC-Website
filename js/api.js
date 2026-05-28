@@ -286,7 +286,7 @@ async function apiFetch(endpoint, options = {}) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(url, { ...options, headers, signal: controller.signal });
+    const res = await fetch(url, { ...options, headers, signal: controller.signal, credentials: 'include' });
     clearTimeout(timeout);
     if (res.status === 401) {
       Auth.clearTokens();
