@@ -261,7 +261,11 @@ def api_auth_login():
     username_or_email = data.get('username', '').strip() or data.get('email', '').strip()
     password = data.get('password', '')
 
-    user = User.query.filter((User.email == username_or_email.lower()) | (User.username == username_or_email)).first()
+    from sqlalchemy import func
+    user = User.query.filter(
+        (func.lower(User.email) == username_or_email.lower()) | 
+        (func.lower(User.username) == username_or_email.lower())
+    ).first()
     if user and check_password_hash(user.password_hash, password):
         login_user(user, remember=True)
         return jsonify({
