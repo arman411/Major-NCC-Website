@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- ── ADMIN AUTH GATE: only admin role allowed ── -->
   <script>(function(){
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for(var reg of regs) { reg.unregister(); }
+      });
+    }
     var t=localStorage.getItem('ncc_access_token'),u=null;
     try{u=JSON.parse(localStorage.getItem('ncc_user')||'null');}catch(e){}
     if(!t||!u){window.location.replace('login.html');return;}
@@ -293,6 +298,8 @@
     <div class="sidebar-link" data-tab="attendance"><div class="sl-icon"><i class="fas fa-check-square"></i></div><span class="sl-label">Attendance</span></div>
     <div class="sidebar-link" data-tab="achievements"><div class="sl-icon"><i class="fas fa-trophy"></i></div><span class="sl-label">Achievements</span></div>
     <div class="sidebar-link" data-tab="module-tests"><div class="sl-icon"><i class="fas fa-file-alt"></i></div><span class="sl-label">Module Tests</span><span class="sl-badge" id="testsBadge">0</span></div>
+    <div class="sidebar-link" data-tab="camp-matrix"><div class="sl-icon"><i class="fas fa-campground"></i></div><span class="sl-label">Camp Matrix</span></div>
+    <div class="sidebar-link" data-tab="alerts-manager"><div class="sl-icon"><i class="fas fa-bullhorn"></i></div><span class="sl-label">Alerts Manager</span></div>
     <p class="sidebar-section-label" style="margin-top:16px;">Settings</p>
     <div class="sidebar-link" data-tab="settings"><div class="sl-icon"><i class="fas fa-cog"></i></div><span class="sl-label">Settings</span></div>
     <div class="sidebar-link" id="adminLogoutBtn" style="cursor:pointer;"><div class="sl-icon" style="color:var(--red-light);"><i class="fas fa-sign-out-alt"></i></div><span class="sl-label" style="color:rgba(255,255,255,.5);">Logout</span></div>
@@ -430,9 +437,15 @@
         <button class="btn btn-primary" style="padding:10px 20px;font-size:0.85rem;" onclick="openAddCadetModal()"><i class="fas fa-plus"></i> Add Cadet</button>
         <button class="btn btn-outline" style="padding:10px 20px;font-size:0.85rem;" onclick="exportCadetsCSV()"><i class="fas fa-download"></i> Export CSV</button>
       </div>
+      <div id="cadetsBulkBar" style="display:none;background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.15);padding:12px 20px;border-radius:12px;margin-bottom:16px;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--navy);" id="cadetsBulkCount">0 cadets selected</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-danger" style="padding:6px 14px;font-size:0.75rem;" onclick="submitBulkCadets('delete')"><i class="fas fa-trash"></i> Delete Selected</button>
+        </div>
+      </div>
       <div class="table-card" style="margin-bottom:0;">
         <table class="admin-table">
-          <thead><tr><th>#</th><th>Name</th><th>Roll No.</th><th>Year</th><th>Wing</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th style="width:40px;"><input type="checkbox" id="bulkSelectAllCadets" onclick="toggleBulkSelectCadets(this)"/></th><th>#</th><th>Name</th><th>Roll No.</th><th>Year</th><th>Wing</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="cadetTableBody"></tbody>
         </table>
       </div>
@@ -443,11 +456,18 @@
       <h1 class="page-title">Pending Approvals</h1>
       <p class="page-sub">Review and approve newly registered cadets before they can mark attendance.</p>
       
+      <div id="approvalsBulkBar" style="display:none;background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.15);padding:12px 20px;border-radius:12px;margin-bottom:16px;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--navy);" id="approvalsBulkCount">0 cadets selected</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" style="padding:6px 14px;font-size:0.75rem;" onclick="submitBulkApprovals('approve')"><i class="fas fa-check"></i> Approve Selected</button>
+          <button class="btn btn-danger" style="padding:6px 14px;font-size:0.75rem;" onclick="submitBulkApprovals('delete')"><i class="fas fa-trash"></i> Delete Selected</button>
+        </div>
+      </div>
       <div class="table-card" style="margin-bottom:0;">
         <table class="admin-table">
-          <thead><tr><th>Name</th><th>Roll No.</th><th>Branch & Year</th><th>Email</th><th>Actions</th></tr></thead>
+          <thead><tr><th style="width:40px;"><input type="checkbox" id="bulkSelectAllApprovals" onclick="toggleBulkSelectApprovals(this)"/></th><th>Name</th><th>Roll No.</th><th>Branch & Year</th><th>Email</th><th>Actions</th></tr></thead>
           <tbody id="pendingCadetsTbody">
-            <tr><td colspan="5" style="text-align:center;padding:16px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);"></i> Loading pending cadets...</td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:16px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);"></i> Loading pending cadets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -459,7 +479,7 @@
       <p class="page-sub">Create, edit, and delete notice board posts.</p>
       <div class="chart-card" style="margin-bottom:24px;">
         <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:20px;">Post New Notice</h3>
-        <form id="postNoticeForm">
+        <form id="postNoticeForm" onsubmit="event.preventDefault();">
           <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
             <div class="form-group"><input type="text" id="noticeTitle" class="form-control" placeholder="Notice Title" /></div>
             <div class="form-group">
@@ -570,6 +590,9 @@
           <button class="btn btn-outline" style="padding:8px 18px;font-size:0.82rem;" onclick="loadDailyAttendance()">
             <i class="fas fa-sync-alt"></i> Load
           </button>
+          <button class="btn btn-outline" style="padding:8px 18px;font-size:0.82rem;" onclick="printAttendanceRegister()">
+            <i class="fas fa-print"></i> Print Register
+          </button>
           <div id="attDailyStats" style="display:flex;gap:16px;margin-left:auto;flex-wrap:wrap;"></div>
         </div>
 
@@ -653,10 +676,10 @@
       <div class="chart-card" style="margin-bottom:24px;">
         <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:20px;">Add New Achievement</h3>
         <form id="addAchievementForm" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;">
-          <input type="text" id="ach-cadet" class="form-control" placeholder="Cadet Name" />
+          <input type="text" id="ach-cadet" class="form-control" placeholder="Cadet Name" required />
           <input type="text" id="ach-award" class="form-control" placeholder="Award/Achievement" />
           <select id="ach-type" class="form-control"><option>Award</option><option>Camp</option><option>Competition</option></select>
-          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="button" class="btn btn-primary" onclick="addNewAchievementRecord()"><i class="fas fa-plus"></i> Add</button>
         </form>
       </div>
       <div class="table-card">
@@ -721,12 +744,180 @@
         <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:24px;">General Settings</h3>
         <div class="form-group"><input type="text" class="form-control" value="NCC Unit – Govt. Polytechnic Hamirpur (HP)" placeholder="Site Title" /></div>
         <div class="form-group"><input type="email" class="form-control" value="ncc@gph.edu.in" placeholder="Contact Email" /></div>
-        <div class="form-group"><input type="tel" class="form-control" value="+91 1662 123456" placeholder="Phone" /></div>
+        <div class="form-group"><input type="tel" class="form-control" value="+91 1662 247311" placeholder="Phone" /></div>
         <button id="settingsSaveBtn" class="btn btn-primary" style="padding:10px 24px;font-size:0.85rem;"><i class="fas fa-save"></i> Save Settings</button>
       </div>
     </div>
-  </div><!-- end dashboard-content -->
-</div><!-- end main-wrap -->
+
+    <!-- ── CAMP MATRIX TAB ──────────────────────────── -->
+    <div class="admin-tab-content" id="tab-camp-matrix">
+      <h1 class="page-title">Camp Selection Matrix</h1>
+      <p class="page-sub">Create and manage camp listings, review applicants with live attendance data, and generate formal nomination lists.</p>
+
+      <!-- Stats Row -->
+      <div class="admin-stats" style="margin-bottom:28px;">
+        <div class="admin-stat-card">
+          <div class="asc-icon blue">⛺</div>
+          <div class="asc-info">
+            <div class="asc-number" id="cm-total-camps">0</div>
+            <p class="asc-label">Total Camps</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon sky">📋</div>
+          <div class="asc-info">
+            <div class="asc-number" id="cm-total-applicants">0</div>
+            <p class="asc-label">Total Applicants</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon" style="background:rgba(39,174,96,0.1);color:#27ae60;">🎖️</div>
+          <div class="asc-info">
+            <div class="asc-number" id="cm-selected">0</div>
+            <p class="asc-label">Selected Cadets</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon" style="background:rgba(192,57,43,0.1);color:#c0392b;">❌</div>
+          <div class="asc-info">
+            <div class="asc-number" id="cm-rejected">0</div>
+            <p class="asc-label">Not Selected</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camps Registry & Creator Grid -->
+      <div class="camps-registry-grid" style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:28px;">
+        <!-- Create Camp Card -->
+        <div class="chart-card" style="margin-bottom:0;padding:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h3 style="font-size:1rem;font-weight:700;color:var(--navy);"><i class="fas fa-plus-circle" style="color:var(--sky);"></i> Create New Camp</h3>
+          </div>
+          <div id="campCreateForm" style="display:grid;grid-template-columns:1fr;gap:12px;">
+            <div>
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Camp Title *</label>
+              <input type="text" id="cc-title" class="form-control" placeholder="e.g. All India TSC 2026" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Location</label>
+                <input type="text" id="cc-location" class="form-control" placeholder="e.g. Delhi Cantonment" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Camp Type</label>
+                <select id="cc-type" class="form-control">
+                  <option value="Annual">Annual (CATC)</option>
+                  <option value="State">State Level</option>
+                  <option value="National">National Level</option>
+                  <option value="Special">Special Camp</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Vacancies</label>
+                <input type="number" id="cc-vacancies" class="form-control" value="50" min="1" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Eligibility</label>
+                <input type="text" id="cc-eligibility" class="form-control" value="All" placeholder="e.g. SD/SW 2nd Year" />
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Start Date *</label>
+                <input type="date" id="cc-start" class="form-control" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">End Date *</label>
+                <input type="date" id="cc-end" class="form-control" />
+              </div>
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:4px;display:block;">Description</label>
+              <textarea id="cc-desc" class="form-control" rows="2" placeholder="Short description..." style="resize:vertical;"></textarea>
+            </div>
+            <div style="margin-top:8px;">
+              <button onclick="adminCreateCamp()" class="btn btn-primary" style="width:100%;padding:10px 24px;"><i class="fas fa-plus"></i> Create Camp</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Camp Registry Card -->
+        <div class="chart-card" style="margin-bottom:0;padding:24px;display:flex;flex-direction:column;min-height:360px;">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-tasks" style="color:var(--sky);"></i> Active Camp Registry</h3>
+          <div style="overflow-y:auto;flex:1;max-height:435px;border:1px solid var(--mid-gray);border-radius:8px;padding:2px;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--mid-gray);color:var(--text-mid);text-align:left;font-weight:700;background:var(--off-white);">
+                  <th style="padding:10px 8px;font-size:0.75rem;text-transform:uppercase;">Camp Details</th>
+                  <th style="padding:10px 8px;text-align:center;font-size:0.75rem;text-transform:uppercase;width:90px;">Vacancies</th>
+                  <th style="padding:10px 8px;text-align:center;font-size:0.75rem;text-transform:uppercase;width:100px;">Status</th>
+                  <th style="padding:10px 8px;text-align:center;font-size:0.75rem;text-transform:uppercase;width:60px;">Del</th>
+                </tr>
+              </thead>
+              <tbody id="adminCampsListTbody">
+                <tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-light);"><i class="fas fa-spinner fa-spin"></i> Loading registry...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="chart-card" style="margin-bottom:20px;padding:16px 24px;">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+          <input type="text" id="cm-search" class="form-control" placeholder="Search cadet name, roll..." oninput="applyCampMatrixFilter()" style="max-width:180px;padding:8px 12px;" />
+          <select id="cm-filter-camp" class="form-control" style="max-width:200px;" onchange="applyCampMatrixFilter()">
+            <option value="">All Camps</option>
+          </select>
+          <select id="cm-filter-status" class="form-control" style="max-width:130px;" onchange="applyCampMatrixFilter()">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="selected">Selected</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select id="cm-filter-attendance" class="form-control" style="max-width:140px;" onchange="applyCampMatrixFilter()">
+            <option value="">All Attendance</option>
+            <option value="high">&ge; 75% Only</option>
+            <option value="mid">50% - 74%</option>
+            <option value="low">&lt; 50%</option>
+          </select>
+          <select id="cm-sort" class="form-control" style="max-width:150px;" onchange="applyCampMatrixFilter()">
+            <option value="applied_newest">Applied: Newest</option>
+            <option value="applied_oldest">Applied: Oldest</option>
+            <option value="attendance_desc">Attendance: High ➔ Low</option>
+            <option value="attendance_asc">Attendance: Low ➔ High</option>
+          </select>
+          <button onclick="renderCampMatrix()" class="btn" style="background:var(--off-white);color:var(--navy);padding:8px 14px;font-size:0.82rem;border:1px solid var(--mid-gray);"><i class="fas fa-sync-alt"></i></button>
+          <button onclick="printNominationList()" class="btn btn-primary" style="margin-left:auto;padding:8px 18px;font-size:0.82rem;"><i class="fas fa-print"></i> Export Nominations</button>
+        </div>
+      </div>
+
+      <!-- Matrix Table -->
+      <div class="chart-card" style="padding:0;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+            <thead>
+              <tr style="background:var(--navy);color:white;">
+                <th style="padding:14px 16px;text-align:left;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">#</th>
+                <th style="padding:14px 16px;text-align:left;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Cadet Name</th>
+                <th style="padding:14px 16px;text-align:left;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Camp Details</th>
+                <th style="padding:14px 16px;text-align:center;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Attendance</th>
+                <th style="padding:14px 16px;text-align:center;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Ht / Wt</th>
+                <th style="padding:14px 16px;text-align:center;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Medical</th>
+                <th style="padding:14px 16px;text-align:left;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Past Camps</th>
+                <th style="padding:14px 16px;text-align:center;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Status</th>
+                <th style="padding:14px 16px;text-align:center;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;min-width:200px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="campMatrixTbody">
+              <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-light);"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
 <!-- Attendance Sub-Tab Styles -->
 <style>
@@ -736,8 +927,10 @@
 .att-toggle-btn { padding:5px 14px; border-radius:var(--radius-full); font-size:0.78rem; font-weight:700; border:2px solid; cursor:pointer; font-family:inherit; transition:all 0.2s; }
 .att-toggle-btn.present { background:rgba(39,174,96,0.1); color:#27ae60; border-color:#27ae60; }
 .att-toggle-btn.absent { background:rgba(192,57,43,0.1); color:#e74c3c; border-color:#e74c3c; }
+.att-toggle-btn.leave { background:rgba(243,156,18,0.1); color:#f39c12; border-color:#f39c12; }
 .att-toggle-btn.present:hover { background:#27ae60; color:white; }
 .att-toggle-btn.absent:hover { background:#e74c3c; color:white; }
+.att-toggle-btn.leave:hover { background:#f39c12; color:white; }
 .att-req-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:600; }
 .att-req-badge.yes { background:rgba(39,174,96,0.1); color:#27ae60; }
 .att-req-badge.no { background:rgba(var(--text-light-rgb,158,158,158),0.12); color:var(--text-light); }
@@ -751,6 +944,15 @@
 .monthly-pct-fill.high { background:linear-gradient(90deg,#27ae60,#2ecc71); }
 .monthly-pct-fill.mid { background:linear-gradient(90deg,#f39c12,#f1c40f); }
 .monthly-pct-fill.low { background:linear-gradient(90deg,#c0392b,#e74c3c); }
+@media (min-width: 992px) {
+  .camps-registry-grid {
+    grid-template-columns: 1fr 1.4fr !important;
+  }
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
 </style>
 
 <!-- Cadet Details Modal -->
@@ -825,6 +1027,21 @@
         <div class="dm-info-item">
           <label>Motivation Statement</label>
           <div class="dm-motivation" id="dmMotivation">No statement provided.</div>
+        </div>
+      </div>
+      
+      <!-- Certificate Approval Section -->
+      <div class="dm-section dm-full-width" style="border-top:1px solid var(--mid-gray);padding-top:20px;margin-top:10px;">
+        <h3><i class="fas fa-certificate"></i> Approved Certificates</h3>
+        <div style="display:flex;gap:32px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:10px;font-size:0.92rem;font-weight:600;color:var(--navy);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="approveCertA" style="width:20px;height:20px;cursor:pointer;accent-color:var(--navy);" />
+            Certificate A Approved
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:0.92rem;font-weight:600;color:var(--navy);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="approveCertB" style="width:20px;height:20px;cursor:pointer;accent-color:var(--navy);" />
+            Certificate B Approved
+          </label>
         </div>
       </div>
     </div>
@@ -933,6 +1150,311 @@
   </div>
 </div>
 
+    <!-- ── ALERTS MANAGER TAB ────────────────────────── -->
+    <div class="admin-tab-content" id="tab-alerts-manager">
+      <h1 class="page-title">Alerts & Broadcast Manager</h1>
+      <p class="page-sub">Send dual-channel PWA push notifications and simulated/Twilio SMS alerts to cadets.</p>
+
+      <!-- Stats Row -->
+      <div class="admin-stats" style="margin-bottom:28px;">
+        <div class="admin-stat-card">
+          <div class="asc-icon sky">📢</div>
+          <div class="asc-info">
+            <div class="asc-number" id="alerts-stats-sent">0</div>
+            <p class="asc-label">Total Sent Alerts</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon blue">🔔</div>
+          <div class="asc-info">
+            <div class="asc-number" id="alerts-stats-subscribers">0</div>
+            <p class="asc-label">PWA Subscribers</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon green">💬</div>
+          <div class="asc-info">
+            <div class="asc-number" id="alerts-stats-simulated">0</div>
+            <p class="asc-label">Simulated Logs</p>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="asc-icon red">⛓️</div>
+          <div class="asc-info">
+            <div class="asc-number" id="alerts-stats-twilio" style="font-size:1.15rem;font-weight:800;padding-top:4px;color:var(--text-mid);">Checking...</div>
+            <p class="asc-label">Twilio SMS Gateway</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-bottom:32px;align-items:start;">
+        <!-- Composer Card -->
+        <div class="chart-card">
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-pen-to-square" style="color:var(--sky);"></i> Advanced Compose Broadcast
+          </h3>
+          <form id="broadcastComposerForm" onsubmit="event.preventDefault();">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+              <div class="form-group">
+                <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Target Audience</label>
+                <select id="broadcastTarget" class="form-control" onchange="handleBroadcastTargetChange()">
+                  <optgroup label="📢 All Cadets">
+                    <option value="all">🌐 All Approved Cadets</option>
+                  </optgroup>
+                  <optgroup label="🪖 By Wing">
+                    <option value="army">⚔️ Army Wing</option>
+                    <option value="navy">⚓ Navy Wing</option>
+                    <option value="air">✈️ Air Wing</option>
+                  </optgroup>
+                  <optgroup label="📅 By Year">
+                    <option value="year_1">📗 1st Year Platoon</option>
+                    <option value="year_2">📘 2nd Year Platoon</option>
+                    <option value="year_3">📙 3rd Year Platoon</option>
+                  </optgroup>
+                  <optgroup label="👤 Individual">
+                    <option value="individual">🎖️ Individual Cadet</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Quick Templates & Macros</label>
+                <select id="broadcastTemplate" class="form-control" onchange="applyBroadcastTemplate()">
+                  <option value="">-- Select Template --</option>
+                  <option value="weekly_parade">📅 Weekly Parade Timings</option>
+                  <option value="uniform_inspection">🛡️ Urgent Dress Inspection</option>
+                  <option value="urgent_meeting">🏛️ Urgent Meeting with ANO</option>
+                  <option value="exam_announcement">📝 NCC Exam Dates Published</option>
+                  <option value="camp_selection">🎖️ Camp Selection Results</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" id="individualCadetSelector" style="margin-bottom:16px;display:none;">
+              <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Select Cadet</label>
+              <select id="broadcastCadetId" class="form-control">
+                <!-- Dynamically loaded -->
+              </select>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+              <div class="form-group">
+                <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Alert Priority Category</label>
+                <div style="display:flex;gap:8px;padding-top:4px;flex-wrap:wrap;">
+                  <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;padding:4px 8px;border-radius:12px;border:1px solid rgba(52,152,219,0.3);background:rgba(52,152,219,0.06);color:var(--sky);">
+                    <input type="radio" name="alertCategory" value="info" checked style="accent-color:var(--sky);" /> Info
+                  </label>
+                  <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;padding:4px 8px;border-radius:12px;border:1px solid rgba(243,156,18,0.3);background:rgba(243,156,18,0.06);color:#f39c12;">
+                    <input type="radio" name="alertCategory" value="warning" style="accent-color:#f39c12;" /> Warning
+                  </label>
+                  <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;padding:4px 8px;border-radius:12px;border:1px solid rgba(39,174,96,0.3);background:rgba(39,174,96,0.06);color:#27ae60;">
+                    <input type="radio" name="alertCategory" value="success" style="accent-color:#27ae60;" /> OK
+                  </label>
+                  <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;padding:4px 8px;border-radius:12px;border:1px solid rgba(192,57,43,0.3);background:rgba(192,57,43,0.06);color:var(--red);">
+                    <input type="radio" name="alertCategory" value="danger" style="accent-color:var(--red);" /> Critical
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Channels</label>
+                <div style="display:flex;gap:10px;padding-top:6px;flex-wrap:wrap;">
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--sky);font-size:0.78rem;font-weight:600;padding:4px 8px;border-radius:8px;border:1px solid rgba(52,152,219,0.3);background:rgba(52,152,219,0.06);">
+                    <input type="checkbox" id="channelPush" checked style="width:13px;height:13px;cursor:pointer;accent-color:var(--sky);" /> <i class="fas fa-bell"></i> Push
+                  </label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#27ae60;font-size:0.78rem;font-weight:600;padding:4px 8px;border-radius:8px;border:1px solid rgba(39,174,96,0.3);background:rgba(39,174,96,0.06);">
+                    <input type="checkbox" id="channelSms" checked style="width:13px;height:13px;cursor:pointer;accent-color:#27ae60;" /> <i class="fas fa-sms"></i> SMS
+                  </label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9b59b6;font-size:0.78rem;font-weight:600;padding:4px 8px;border-radius:8px;border:1px solid rgba(155,89,182,0.3);background:rgba(155,89,182,0.06);" title="Simulated — configure email in app settings">
+                    <input type="checkbox" id="channelEmail" style="width:13px;height:13px;cursor:pointer;accent-color:#9b59b6;" /> <i class="fas fa-envelope"></i> Email
+                  </label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#25d366;font-size:0.78rem;font-weight:600;padding:4px 8px;border-radius:8px;border:1px solid rgba(37,211,102,0.3);background:rgba(37,211,102,0.06);" title="Simulated — configure WhatsApp Business API in settings">
+                    <input type="checkbox" id="channelWhatsapp" style="width:13px;height:13px;cursor:pointer;accent-color:#25d366;" /> <i class="fab fa-whatsapp"></i> WhatsApp
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-bottom:16px;align-items:end;">
+              <div class="form-group">
+                <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Broadcast Title</label>
+                <input type="text" id="broadcastTitle" class="form-control" placeholder="e.g. Parade Rescheduled" value="NCC Announcement" />
+              </div>
+              <div class="form-group" style="padding-bottom:2px;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-mid);font-size:0.8rem;font-weight:600;user-select:none;">
+                  <input type="checkbox" id="broadcastScheduleToggle" onchange="toggleBroadcastScheduleInput()" style="width:16px;height:16px;cursor:pointer;accent-color:var(--sky);" /> Schedule for Later
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="broadcastScheduleInputWrap" style="margin-bottom:16px;display:none;">
+              <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Scheduled Date & Time</label>
+              <input type="datetime-local" id="broadcastScheduledAt" class="form-control" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+              <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Message Body</label>
+              <textarea id="broadcastMessage" class="form-control" rows="3" placeholder="Type your broadcast message here..." style="resize:vertical;" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="padding:12px 24px;font-size:0.88rem;font-weight:700;display:inline-flex;align-items:center;gap:8px;border:none;">
+              <i class="fa-solid fa-paper-plane"></i> Dispatch Broadcast
+            </button>
+          </form>
+        </div>
+
+        <!-- Help Info & Analytics Card -->
+        <div class="chart-card">
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-chart-simple" style="color:var(--sky);"></i> Delivery Analytics Monitor
+          </h3>
+          <div style="height:120px;display:flex;align-items:flex-end;gap:12px;border-bottom:1px solid var(--mid-gray);padding-bottom:10px;margin-bottom:16px;justify-content:space-around;">
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+              <div id="chart-bar-sent" style="width:24px;background:#2ecc71;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
+              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Sent</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+              <div id="chart-bar-simulated" style="width:24px;background:#f39c12;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
+              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Simulated</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+              <div id="chart-bar-scheduled" style="width:24px;background:#9b59b6;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
+              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Scheduled</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+              <div id="chart-bar-failed" style="width:24px;background:#e74c3c;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
+              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Failed</span>
+            </div>
+          </div>
+          <div style="background:rgba(52,152,219,0.06);border-left:3px solid var(--sky);padding:12px;border-radius:6px;font-size:0.78rem;color:var(--navy);line-height:1.4;">
+            <strong>Advanced Dispatch Engine:</strong> Handles multi-channel deliveries. New channels: Email &amp; WhatsApp (simulated). Scheduled entries polled every 10 seconds.
+          </div>
+        </div>
+
+      <!-- ── EMERGENCY SOS BROADCAST ─────────────────────────────── -->
+      <div id="emergencySosPanel" style="margin-bottom:28px;border:2px solid rgba(231,76,60,0.4);border-radius:14px;background:linear-gradient(135deg,rgba(231,76,60,0.08) 0%,rgba(192,57,43,0.05) 100%);padding:22px 24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;right:0;width:140px;height:140px;background:radial-gradient(circle,rgba(231,76,60,0.12),transparent 70%);pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e74c3c,#c0392b);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;animation:pulse 2s infinite;">🚨</div>
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:800;color:#c0392b;margin:0 0 4px;">Emergency SOS Broadcast</h3>
+              <p style="font-size:0.78rem;color:var(--text-mid);margin:0;">Instantly blast all approved cadets via ALL channels simultaneously — no scheduling, no filters.</p>
+            </div>
+          </div>
+          <button onclick="openEmergencyModal()" id="emergencySosBtn" style="padding:13px 28px;font-size:0.9rem;font-weight:800;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 6px 20px rgba(231,76,60,0.35);transition:all 0.2s;letter-spacing:0.5px;" onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 10px 30px rgba(231,76,60,0.5)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(231,76,60,0.35)'">
+            <i class="fas fa-exclamation-triangle"></i> SEND EMERGENCY SOS
+          </button>
+        </div>
+      </div>
+
+      <!-- Emergency SOS Modal -->
+      <div id="emergencyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:32px;max-width:500px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,0.3);border-top:6px solid #e74c3c;">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+            <span style="font-size:2.2rem;">🚨</span>
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:800;color:#c0392b;margin:0;">Emergency SOS Alert</h3>
+              <p style="font-size:0.78rem;color:var(--text-mid);margin:4px 0 0;">This will alert ALL cadets immediately</p>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Emergency Title</label>
+            <input type="text" id="sosTitle" class="form-control" value="🚨 EMERGENCY ALERT" />
+          </div>
+          <div class="form-group" style="margin-bottom:20px;">
+            <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Emergency Message</label>
+            <textarea id="sosMessage" class="form-control" rows="3" style="resize:vertical;">EMERGENCY: Urgent action required. Report to ANO/CO immediately.</textarea>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:flex-end;">
+            <button onclick="closeEmergencyModal()" style="padding:10px 20px;font-size:0.85rem;font-weight:600;background:var(--bg-alt);color:var(--text-mid);border:1px solid var(--border);border-radius:10px;cursor:pointer;">Cancel</button>
+            <button onclick="sendEmergencySOS()" id="sosSendBtn" style="padding:10px 24px;font-size:0.85rem;font-weight:800;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+              <i class="fas fa-paper-plane"></i> CONFIRM SEND
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── READ RECEIPT ANALYTICS ─────────────────────────────── -->
+      <div class="chart-card" style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px;margin:0;">
+            <i class="fas fa-chart-pie" style="color:var(--sky);"></i> Read Receipt Analytics
+            <span style="font-size:0.65rem;font-weight:700;padding:2px 10px;background:rgba(52,152,219,0.12);color:var(--sky);border-radius:20px;border:1px solid rgba(52,152,219,0.25);text-transform:uppercase;">Live Stats</span>
+          </h3>
+          <button onclick="loadReadReceipts()" class="btn" style="padding:7px 16px;font-size:0.78rem;font-weight:600;background:rgba(52,152,219,0.1);color:var(--sky);border:1px solid rgba(52,152,219,0.3);border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+        <div id="readReceiptsContainer">
+          <div style="text-align:center;padding:32px;color:var(--text-light);font-size:0.85rem;"><i class="fas fa-chart-bar" style="font-size:2rem;margin-bottom:8px;display:block;opacity:0.4;"></i>Click Refresh to load read receipt analytics</div>
+        </div>
+      </div>
+
+      <!-- ── ALERT HISTORY TABLE ─────────────────────────────────── -->
+      <div class="table-card">
+        <div class="table-card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;margin:0;">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--sky);"></i> Alerts Dispatch &amp; Audit History Log
+          </h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select id="alertHistoryFilter" onchange="renderAlertsManager()" class="form-control" style="padding:6px 10px;font-size:0.78rem;border-radius:8px;height:36px;">
+              <option value="">All Categories</option>
+              <option value="info">Info</option>
+              <option value="warning">Warning</option>
+              <option value="success">Success</option>
+              <option value="danger">Critical</option>
+            </select>
+            <select id="alertStatusFilter" onchange="renderAlertsManager()" class="form-control" style="padding:6px 10px;font-size:0.78rem;border-radius:8px;height:36px;">
+              <option value="">All Status</option>
+              <option value="simulated">Simulated</option>
+              <option value="sent">Sent</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="failed">Failed</option>
+            </select>
+            <select id="alertTargetFilter" onchange="renderAlertsManager()" class="form-control" style="padding:6px 10px;font-size:0.78rem;border-radius:8px;height:36px;">
+              <option value="">All Groups</option>
+              <option value="all">All Cadets</option>
+              <option value="army">Army Wing</option>
+              <option value="navy">Navy Wing</option>
+              <option value="air">Air Wing</option>
+              <option value="year_1">Year 1</option>
+              <option value="year_2">Year 2</option>
+              <option value="year_3">Year 3</option>
+              <option value="individual">Individual</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr style="color:var(--text-light);font-weight:600;">
+                <th>Sent Time</th>
+                <th>Cadet / Receiver</th>
+                <th>Channels</th>
+                <th>Title &amp; Message</th>
+                <th>Target</th>
+                <th>Status</th>
+                <th>Read / Ack</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="alertsHistoryTableBody">
+              <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-light);"><i class="fas fa-spinner fa-spin"></i> Loading alert history...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- Closes #tab-alerts-manager -->
+
+    
+  </div><!-- end .dashboard-content -->
+</div><!-- end main-wrap -->
+    <div style="display:flex;justify-content:flex-end;gap:12px;">
+      <button onclick="closeLeaveModal()" style="background:#e0e0e0;color:var(--navy);padding:8px 18px;border:none;border-radius:6px;cursor:pointer;">Cancel</button>
+      <button onclick="submitLeaveDecision()" id="btnSubmitLeaveDecision" class="btn btn-primary" style="padding:8px 24px;">Confirm Decision</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
@@ -991,7 +1513,8 @@ const tabTitles = {
   dashboard:'Dashboard Overview', cadets:'Manage Cadets', notices:'Manage Notices',
   events:'Manage Events', gallery:'Manage Gallery', enrollment:'Enrollment Data',
   attendance:'Attendance', achievements:'Achievements', settings:'Settings',
-  'module-tests':'Module Tests'
+  'module-tests':'Module Tests', 'camp-matrix':'Camp Selection Matrix',
+  'alerts-manager':'Alerts & Broadcast Manager',
 };
 /* ── Attach Sidebar Toggle Listener ────────────────────────────────── */
 const toggleBtn = document.getElementById('sidebarToggle');
@@ -1089,6 +1612,8 @@ function switchTab(name) {
   if (name === 'notices') renderNoticesTable();
   if (name === 'approvals') renderApprovalsTable();
   if (name === 'attendance') renderAttendance(currentAttendanceDate);
+  if (name === 'camp-matrix') renderCampMatrix();
+  if (name === 'alerts-manager') renderAlertsManager();
 }
 document.querySelectorAll('.sidebar-link[data-tab]').forEach(link => {
   link.addEventListener('click', () => switchTab(link.dataset.tab));
@@ -1114,6 +1639,7 @@ async function renderApprovalsTable() {
     
     tbody.innerHTML = data.cadets.map(c => `
       <tr>
+        <td><input type="checkbox" class="approval-row-select" value="${c.id}" onchange="updateApprovalsBulkBar()"/></td>
         <td><strong>${(c.first_name || c.last_name) ? `${c.first_name} ${c.last_name}`.trim() : c.username}</strong></td>
         <td>${c.roll_no}</td>
         <td>${c.branch} - ${c.year}</td>
@@ -1253,7 +1779,7 @@ window.openAddEventModal = function() {
     m.innerHTML = `<div style="background:#fff;border-radius:16px;padding:32px;width:520px;max-width:95%;max-height:90vh;overflow-y:auto;position:relative;">
       <button onclick="document.getElementById('addEventModal').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666;">&times;</button>
       <h3 style="color:var(--navy);margin-bottom:20px;"><i class="fas fa-calendar-plus"></i> Schedule New Event</h3>
-      <form id="addEventForm">
+      <form id="addEventForm" onsubmit="event.preventDefault();">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
           <div style="grid-column: 1 / -1;">
             <input class="form-control" id="ae-title" placeholder="Event Title" required style="width:100%;" />
@@ -1343,6 +1869,7 @@ async function renderCadetTable(search = '', wingFilter = '') {
     const dotColor = status === 'approved' || status === 'active' ? 'green' : status === 'pending' ? 'orange' : 'red';
     const wingClass = (wing === 'Naval' || wing === 'Air') ? ' sky' : '';
     return `<tr>
+      <td><input type="checkbox" class="cadet-row-select" value="${id}" onchange="updateCadetsBulkBar()"/></td>
       <td>${i+1}</td><td>${name}</td><td>${roll}</td><td>${year}</td>
       <td><span class="tag${wingClass}">${wing}</span></td>
       <td><span class="status-dot dot-${dotColor}"></span>${status}</td>
@@ -1481,6 +2008,38 @@ window.viewCadet = async function(id) {
     photoEl.src = fallbackImg;
   }
   photoEl.onerror = function() { this.src = fallbackImg; };
+
+  // Bind Certificate Approval Checkboxes
+  const checkboxA = document.getElementById('approveCertA');
+  const checkboxB = document.getElementById('approveCertB');
+  if (checkboxA) {
+    checkboxA.checked = !!c.cert_a_approved;
+    checkboxA.onchange = async function() {
+      const isChecked = checkboxA.checked;
+      const res = await NccAPI.approveCertificate(c.id, 'A', isChecked);
+      if (res.success || !res.error) {
+        showToast(`Certificate A ${isChecked ? 'approved' : 'revoked'} successfully`, 'success');
+        c.cert_a_approved = isChecked; // Update in-memory cache
+      } else {
+        showToast('Failed to update Certificate A approval', 'error');
+        checkboxA.checked = !isChecked; // Revert checkbox
+      }
+    };
+  }
+  if (checkboxB) {
+    checkboxB.checked = !!c.cert_b_approved;
+    checkboxB.onchange = async function() {
+      const isChecked = checkboxB.checked;
+      const res = await NccAPI.approveCertificate(c.id, 'B', isChecked);
+      if (res.success || !res.error) {
+        showToast(`Certificate B ${isChecked ? 'approved' : 'revoked'} successfully`, 'success');
+        c.cert_b_approved = isChecked; // Update in-memory cache
+      } else {
+        showToast('Failed to update Certificate B approval', 'error');
+        checkboxB.checked = !isChecked; // Revert checkbox
+      }
+    };
+  }
 
   document.getElementById('cadetDetailsModal').classList.add('active');
 };
@@ -1984,7 +2543,7 @@ window.openAddCadetModal = function() {
     m.innerHTML = `<div style="background:#fff;border-radius:16px;padding:32px;width:520px;max-width:95%;max-height:90vh;overflow-y:auto;position:relative;">
       <button onclick="document.getElementById('addCadetModal').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666;">&times;</button>
       <h3 style="color:var(--navy);margin-bottom:20px;"><i class="fas fa-user-plus"></i> Add New Cadet</h3>
-      <form id="addCadetForm">
+      <form id="addCadetForm" onsubmit="event.preventDefault();">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
           <input class="form-control" id="ac-fname" placeholder="First Name" required />
           <input class="form-control" id="ac-lname" placeholder="Last Name" required />
@@ -2261,82 +2820,114 @@ function viewTestResults(testId) {
 
 /* ── Achievements Management ─────────────────────────── */
 async function renderAchievementsTable() {
-  const tbody = document.getElementById('achievementsTableBody');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);"></i> Loading achievements...</td></tr>';
-  
-  const res = await NccAPI.getAchievements();
-  const achievements = res.achievements || MockDB.getAchievements();
-  
-  if (!achievements.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px;">No achievements found.</td></tr>';
-    return;
-  }
-  
-  tbody.innerHTML = achievements.map(a => {
-    const d = new Date(a.date);
-    const dateStr = isNaN(d) ? a.date : d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-    const catClass = a.type === 'Award' ? 'green' : a.type === 'Camp' ? 'sky' : '';
+  try {
+    const tbody = document.getElementById('achievementsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);"></i> Loading achievements...</td></tr>';
     
-    return `<tr>
-      <td><strong>${sanitizeHTML(a.cadet)}</strong></td>
-      <td>${sanitizeHTML(a.award)}</td>
-      <td>${dateStr}</td>
-      <td><span class="tag ${catClass}">${sanitizeHTML(a.type)}</span></td>
-      <td>
-        <button class="btn btn-danger" style="padding:4px 10px;font-size:.72rem;" onclick="deleteAchievement(${a.id})"><i class="fas fa-trash"></i> Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
+    const res = await NccAPI.getAchievements();
+    const achievements = (res && !res.offline && res.achievements) ? res.achievements : MockDB.getAchievements();
+    
+    if (!achievements || !achievements.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px;">No achievements found.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = achievements.map(a => {
+      const d = new Date(a.date);
+      const dateStr = isNaN(d) ? a.date : d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+      const catClass = a.type === 'Award' ? 'green' : a.type === 'Camp' ? 'sky' : '';
+      
+      return `<tr>
+        <td><strong>${sanitizeHTML(a.cadet)}</strong></td>
+        <td>${sanitizeHTML(a.award)}</td>
+        <td>${dateStr}</td>
+        <td><span class="tag ${catClass}">${sanitizeHTML(a.type)}</span></td>
+        <td>
+          <button class="btn btn-danger" style="padding:4px 10px;font-size:.72rem;" onclick="deleteAchievement(${a.id})"><i class="fas fa-trash"></i> Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    console.error('Error rendering achievements table:', err);
+    const tbody = document.getElementById('achievementsTableBody');
+    if (tbody) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#e74c3c;padding:20px;">Failed to load achievements list.</td></tr>';
+    }
+  }
 }
 
 window.deleteAchievement = async function(id) {
-  if (!confirm('Delete this achievement record?')) return;
-  await NccAPI.deleteAchievement(id);
-  renderAchievementsTable();
-  showToast('Achievement deleted.', 'success');
-  loadDashStats();
-};
-
-document.getElementById('addAchievementForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const cadet = document.getElementById('ach-cadet').value.trim();
-  const award = document.getElementById('ach-award').value.trim();
-  const type = document.getElementById('ach-type').value;
-  
-  if (!cadet || !award) {
-    showToast('Please fill in cadet name and achievement title.', 'warning');
-    return;
+  try {
+    if (!confirm('Delete this achievement record?')) return;
+    const res = await NccAPI.deleteAchievement(id);
+    if (res && res.error) {
+      showToast(res.message || 'Failed to delete achievement.', 'error');
+      return;
+    }
+    renderAchievementsTable();
+    showToast('Achievement deleted successfully.', 'success');
+    loadDashStats();
+  } catch (err) {
+    console.error('Error deleting achievement:', err);
+    showToast('Failed to delete achievement due to a browser error.', 'error');
   }
-  
-  const form = new FormData();
-  form.append('cadet', cadet);
-  form.append('award', award);
-  form.append('type', type);
-  
-  const btn = e.target.querySelector('button[type="submit"]');
-  const orgText = btn.innerHTML;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-  btn.disabled = true;
-  
-  await NccAPI.createAchievement(form);
-  
-  btn.innerHTML = orgText;
-  btn.disabled = false;
-  e.target.reset();
-  
-  renderAchievementsTable();
-  showToast('Achievement added successfully!', 'success');
-  loadDashStats();
-});
+};
 
 // Also pre-load once DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  loadTestsTable();
-  const badge = document.getElementById('testsBadge');
-  if (badge) badge.textContent = MockDB.getTests().filter(t => t.status === 'active').length;
-  renderAchievementsTable();
+  try {
+    loadTestsTable();
+    const badge = document.getElementById('testsBadge');
+    if (badge) badge.textContent = MockDB.getTests().filter(t => t.status === 'active').length;
+    renderAchievementsTable();
+  } catch (err) {
+    console.error('DOMContentLoaded initialization error:', err);
+  }
+
 });
+
+window.addNewAchievementRecord = async function() {
+  try {
+    const cadetEl = document.getElementById('ach-cadet');
+    const awardEl = document.getElementById('ach-award');
+    const typeEl = document.getElementById('ach-type');
+    const btn = document.querySelector('#addAchievementForm button');
+
+    const cadet = cadetEl ? cadetEl.value.trim() : '';
+    const award = awardEl ? awardEl.value.trim() : '';
+    const type = typeEl ? typeEl.value : 'Award';
+
+    if (!cadet) { showToast('Please enter cadet name.', 'warning'); if(cadetEl) cadetEl.focus(); return; }
+    if (!award) { showToast('Please enter achievement title.', 'warning'); if(awardEl) awardEl.focus(); return; }
+
+    const orgText = btn ? btn.innerHTML : '';
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...'; btn.disabled = true; }
+
+    const form = new FormData();
+    form.append('cadet', cadet);
+    form.append('award', award);
+    form.append('type', type);
+
+    const res = await NccAPI.createAchievement(form);
+
+    if (btn) { btn.innerHTML = orgText; btn.disabled = false; }
+
+    if (res && res.error && !res.offline) {
+      showToast(res.message || 'Failed to add achievement.', 'error');
+      return;
+    }
+
+    if (cadetEl) cadetEl.value = '';
+    if (awardEl) awardEl.value = '';
+    renderAchievementsTable();
+    showToast('Achievement added successfully!', 'success');
+    loadDashStats();
+  } catch (err) {
+    console.error('Error adding achievement:', err);
+    showToast('Failed to add achievement. Please try again.', 'error');
+  }
+};
 
 </script>
 <!-- Cadet Attendance History Modal -->
@@ -2446,6 +3037,7 @@ async function loadDailyAttendance() {
     stats.innerHTML = `
       <span class="att-stat-chip requests"><i class="fas fa-hand-paper"></i> ${data.requests_received} Requests</span>
       <span class="att-stat-chip present"><i class="fas fa-check"></i> ${Object.values(_dailyAttendanceMap).filter(s=>s==='present').length} Present</span>
+      <span class="att-stat-chip leave" style="background:rgba(243,156,18,0.1);color:#f39c12;border:1px solid rgba(243,156,18,0.2);padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-plane-departure"></i> ${Object.values(_dailyAttendanceMap).filter(s=>s==='leave').length} On Leave</span>
       <span class="att-stat-chip absent"><i class="fas fa-times"></i> ${Object.values(_dailyAttendanceMap).filter(s=>s==='absent').length} Absent</span>
       ${data.is_finalized ? '<span class="att-stat-chip finalized"><i class="fas fa-lock"></i> Finalized</span>' : ''}
     `;
@@ -2486,17 +3078,32 @@ function renderDailyTable(cadets) {
   }
   tbody.innerHTML = cadets.map(c => {
     const status = _dailyAttendanceMap[c.id] || 'absent';
-    const reqBadge = c.has_request
-      ? `<span class="att-req-badge yes"><i class="fas fa-check-circle"></i> Sent ${c.requested_at || ''}</span>`
-      : `<span class="att-req-badge no"><i class="fas fa-minus-circle"></i> No request</span>`;
-    return `<tr id="attRow-${c.id}" style="${c.has_request ? 'background:rgba(39,174,96,0.03);' : ''}">
-      <td style="font-weight:600;">${c.username}</td>
-      <td style="color:var(--text-mid);">${c.roll_no}</td>
-      <td style="color:var(--text-mid);">${c.branch}</td>
+    const reqBadge = c.on_leave
+      ? `<span class="att-req-badge" style="background:rgba(243,156,18,0.1);color:#f39c12;"><i class="fas fa-plane-departure"></i> Approved Leave</span>`
+      : (c.has_request
+          ? `<span class="att-req-badge yes"><i class="fas fa-check-circle"></i> Sent ${c.requested_at || ''}</span>`
+          : `<span class="att-req-badge no"><i class="fas fa-minus-circle"></i> No request</span>`);
+          
+    const leaveLabel = c.on_leave 
+      ? `<div style="font-size:0.72rem;color:#f39c12;font-weight:600;margin-top:2px;" title="${sanitizeHTML(c.leave_reason || '')}"><i class="fas fa-info-circle"></i> Reason: ${sanitizeHTML(c.leave_reason || 'Personal leave')}</div>`
+      : '';
+
+    let displayStatus = '✗ Absent';
+    if (status === 'present') displayStatus = '✓ Present';
+    else if (status === 'leave') displayStatus = 'ℹ On Leave';
+
+    return `<tr id="attRow-${c.id}" style="${c.on_leave ? 'background:rgba(243,156,18,0.03);' : (c.has_request ? 'background:rgba(39,174,96,0.03);' : '')}">
+      <td style="font-weight:600;">
+        ${sanitizeHTML(c.username)}
+        ${c.on_leave ? `<span style="display:inline-block;margin-left:6px;padding:1px 6px;border-radius:10px;font-size:0.62rem;font-weight:700;background:rgba(243,156,18,0.1);color:#f39c12;"><i class="fas fa-file-alt"></i> Leave</span>` : ''}
+        ${leaveLabel}
+      </td>
+      <td style="color:var(--text-mid);">${sanitizeHTML(c.roll_no)}</td>
+      <td style="color:var(--text-mid);">${sanitizeHTML(c.branch)}</td>
       <td>${reqBadge}</td>
       <td style="text-align:center;">
         <button class="att-toggle-btn ${status}" id="attToggle-${c.id}" onclick="toggleCadetStatus(${c.id})">
-          ${status === 'present' ? '✓ Present' : '✗ Absent'}
+          ${displayStatus}
         </button>
       </td>
     </tr>`;
@@ -2505,12 +3112,21 @@ function renderDailyTable(cadets) {
 
 function toggleCadetStatus(cadetId) {
   const current = _dailyAttendanceMap[cadetId] || 'absent';
-  const newStatus = current === 'present' ? 'absent' : 'present';
+  let newStatus = 'absent';
+  if (current === 'absent') newStatus = 'present';
+  else if (current === 'present') newStatus = 'leave';
+  else if (current === 'leave') newStatus = 'absent';
+  
   _dailyAttendanceMap[cadetId] = newStatus;
 
   const btn = document.getElementById(`attToggle-${cadetId}`);
   btn.className = `att-toggle-btn ${newStatus}`;
-  btn.textContent = newStatus === 'present' ? '✓ Present' : '✗ Absent';
+  
+  let displayStatus = '✗ Absent';
+  if (newStatus === 'present') displayStatus = '✓ Present';
+  else if (newStatus === 'leave') displayStatus = 'ℹ On Leave';
+  
+  btn.textContent = displayStatus;
 
   updateDailyStats();
 }
@@ -2522,7 +3138,12 @@ function markAllAs(status) {
     const btn = document.getElementById(`attToggle-${id}`);
     if (btn) {
       btn.className = `att-toggle-btn ${status}`;
-      btn.textContent = status === 'present' ? '✓ Present' : '✗ Absent';
+      
+      let displayStatus = '✗ Absent';
+      if (status === 'present') displayStatus = '✓ Present';
+      else if (status === 'leave') displayStatus = 'ℹ On Leave';
+      
+      btn.textContent = displayStatus;
     }
   });
   updateDailyStats();
@@ -2531,12 +3152,14 @@ function markAllAs(status) {
 function updateDailyStats() {
   const presentCount = Object.values(_dailyAttendanceMap).filter(s => s === 'present').length;
   const absentCount = Object.values(_dailyAttendanceMap).filter(s => s === 'absent').length;
+  const leaveCount = Object.values(_dailyAttendanceMap).filter(s => s === 'leave').length;
   const stats = document.getElementById('attDailyStats');
   if (!stats) return;
   const requestsChip = stats.querySelector('.requests');
   stats.innerHTML = `
     ${requestsChip ? requestsChip.outerHTML : ''}
     <span class="att-stat-chip present"><i class="fas fa-check"></i> ${presentCount} Present</span>
+    <span class="att-stat-chip leave" style="background:rgba(243,156,18,0.1);color:#f39c12;border:1px solid rgba(243,156,18,0.2);"><i class="fas fa-plane-departure"></i> ${leaveCount} On Leave</span>
     <span class="att-stat-chip absent"><i class="fas fa-times"></i> ${absentCount} Absent</span>
   `;
 }
@@ -2674,6 +3297,1268 @@ async function loadMonthlyReport() {
 function printMonthlyReport() {
   window.print();
 }
+
+// ════════════════════════════════════════════════════════
+// CAMP SELECTION MATRIX — Admin Side
+// ════════════════════════════════════════════════════════
+
+let _allCampApplications = [];
+let _allCampsMap = {};
+
+function showAdminToast(msg, type = 'success') {
+  let t = document.createElement('div');
+  const bg = type === 'success' ? '#27ae60' : type === 'error' ? '#c0392b' : '#2980b9';
+  t.style.cssText = `position:fixed;bottom:28px;right:28px;background:${bg};color:white;padding:12px 22px;
+    border-radius:10px;font-size:0.85rem;font-weight:600;box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    z-index:99999;opacity:0;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 3500);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }); }
+  catch(_) { return d; }
+}
+
+function attColor(pct) {
+  if (pct >= 75) return { bg: 'rgba(39,174,96,0.1)', color: '#27ae60' };
+  if (pct >= 50) return { bg: 'rgba(243,156,18,0.1)', color: '#e67e22' };
+  return { bg: 'rgba(192,57,43,0.1)', color: '#c0392b' };
+}
+
+
+
+async function renderCampMatrix() {
+  const tbody = document.getElementById('campMatrixTbody');
+  const campFilter = document.getElementById('cm-filter-camp');
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-light);"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;"></i></td></tr>`;
+
+  try {
+    // Fetch camps list
+    const campsResp = await fetch('/api/camps/');
+    const campsData = await campsResp.json();
+    const camps = (campsData && campsData.camps) ? campsData.camps : [];
+    _allCampsMap = {};
+    camps.forEach(c => { _allCampsMap[c.id] = c; });
+
+    // Render active camp registry list
+    renderAdminCampsList(camps);
+
+    // Update camp filter dropdown
+    if (campFilter) {
+      const currentVal = campFilter.value;
+      campFilter.innerHTML = '<option value="">All Camps</option>' +
+        camps.map(c => `<option value="${c.id}" ${currentVal == c.id ? 'selected' : ''}>${c.title}</option>`).join('');
+    }
+
+    // Update camp count stat
+    const cmTotalCamps = document.getElementById('cm-total-camps');
+    if (cmTotalCamps) cmTotalCamps.textContent = camps.length;
+
+    // Fetch applications
+    const token = (typeof Auth !== 'undefined' && Auth.getToken) ? Auth.getToken() : '';
+    const appResp = await fetch('/api/admin/camp-applications', {
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    const appData = await appResp.json();
+    _allCampApplications = (appData && appData.applications) ? appData.applications : [];
+
+    // Update stats
+    const totalEl = document.getElementById('cm-total-applicants');
+    const selEl   = document.getElementById('cm-selected');
+    const rejEl   = document.getElementById('cm-rejected');
+    if (totalEl) totalEl.textContent = _allCampApplications.length;
+    if (selEl)   selEl.textContent   = _allCampApplications.filter(a => a.status === 'selected').length;
+    if (rejEl)   rejEl.textContent   = _allCampApplications.filter(a => a.status === 'rejected').length;
+
+    applyCampMatrixFilter();
+
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#e74c3c;">
+      <i class="fas fa-exclamation-triangle"></i> ${err.message || 'Failed to load data. Please refresh.'}
+    </td></tr>`;
+  }
+}
+
+function renderAdminCampsList(camps) {
+  const tbody = document.getElementById('adminCampsListTbody');
+  if (!tbody) return;
+  
+  if (camps.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-light);">No camps registered yet. Create one on the left!</td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = camps.map(camp => {
+    const isClosed = camp.status === 'closed';
+    const statusText = isClosed ? '<i class="fas fa-lock"></i> Closed' : '<i class="fas fa-lock-open"></i> Open';
+    const statusColor = isClosed ? '#c0392b' : '#27ae60';
+    const statusBg = isClosed ? 'rgba(192,57,43,0.1)' : 'rgba(39,174,96,0.1)';
+    const nextStatus = isClosed ? 'open' : 'closed';
+    
+    return `<tr style="border-bottom:1px solid var(--mid-gray);transition:background 0.15s;" onmouseenter="this.style.background='var(--off-white)'" onmouseleave="this.style.background=''">
+      <td style="padding:10px 8px;line-height:1.4;">
+        <div style="font-weight:700;color:var(--navy);font-size:0.82rem;">${camp.title}</div>
+        <div style="font-size:0.72rem;color:var(--text-mid);">${camp.location || 'Not Specified'} &nbsp;•&nbsp; <span style="background:var(--off-white);padding:2px 6px;border-radius:4px;font-weight:600;font-size:0.65rem;">${camp.camp_type}</span></div>
+        <div style="font-size:0.7rem;color:var(--text-light);">${fmtDate(camp.start_date)} - ${fmtDate(camp.end_date)}</div>
+      </td>
+      <td style="padding:10px 8px;text-align:center;font-weight:600;font-size:0.8rem;">
+        <span style="color:${camp.selected_count >= camp.vacancies ? '#c0392b' : 'var(--navy)'};">${camp.selected_count}</span> / <span>${camp.vacancies}</span>
+      </td>
+      <td style="padding:10px 8px;text-align:center;">
+        <button onclick="toggleCampStatus(${camp.id}, '${nextStatus}')" 
+          style="background:${statusBg};color:${statusColor};border:1.5px solid ${statusColor};padding:4px 10px;font-size:0.7rem;font-weight:700;border-radius:20px;cursor:pointer;transition:all 0.2s;outline:none;"
+          onmouseenter="this.style.background='${statusColor}';this.style.color='white'"
+          onmouseleave="this.style.background='${statusBg}';this.style.color='${statusColor}'"
+          title="Click to toggle status to ${nextStatus}">
+          ${statusText}
+        </button>
+      </td>
+      <td style="padding:10px 8px;text-align:center;">
+        <button onclick="adminDeleteCamp(${camp.id}, '${camp.title.replace(/'/g, "\\'")}')" 
+          style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:0.9rem;padding:6px;transition:transform 0.2s;"
+          onmouseenter="this.style.transform='scale(1.25)'"
+          onmouseleave="this.style.transform='scale(1)'"
+          title="Delete Camp">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.toggleCampStatus = async function(campId, newStatus) {
+  try {
+    const token = (typeof Auth !== 'undefined' && Auth.getToken) ? Auth.getToken() : '';
+    const resp = await fetch(`/api/camps/${campId}/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+      },
+      body: JSON.stringify({ status: newStatus })
+    });
+    const data = await resp.json();
+    if (data && data.success) {
+      showAdminToast(`Camp status changed to ${newStatus}!`, 'success');
+      await renderCampMatrix();
+    } else {
+      showAdminToast(data.message || 'Failed to update camp status.', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error. Please try again.', 'error');
+  }
+}
+
+window.adminDeleteCamp = async function(campId, campTitle) {
+  if (!confirm(`Are you sure you want to permanently delete "${campTitle}" and all of its cadet applications?`)) return;
+  try {
+    const token = (typeof Auth !== 'undefined' && Auth.getToken) ? Auth.getToken() : '';
+    const resp = await fetch(`/api/camps/${campId}`, {
+      method: 'DELETE',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    const data = await resp.json();
+    if (data && data.success) {
+      showAdminToast(`Camp "${campTitle}" deleted.`, 'success');
+      await renderCampMatrix();
+    } else {
+      showAdminToast(data.message || 'Failed to delete camp.', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error. Please try again.', 'error');
+  }
+}
+
+function applyCampMatrixFilter() {
+  const tbody       = document.getElementById('campMatrixTbody');
+  const campFilter  = document.getElementById('cm-filter-camp');
+  const statFilter  = document.getElementById('cm-filter-status');
+  const attFilter   = document.getElementById('cm-filter-attendance');
+  const searchInput = document.getElementById('cm-search');
+  const sortSelect  = document.getElementById('cm-sort');
+  
+  if (!tbody) return;
+
+  const campId = campFilter ? campFilter.value : '';
+  const status = statFilter ? statFilter.value : '';
+  const attendance = attFilter ? attFilter.value : '';
+  const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const sortVal = sortSelect ? sortSelect.value : 'applied_newest';
+
+  let rows = _allCampApplications;
+
+  // Filter by Camp
+  if (campId) rows = rows.filter(a => String(a.camp_id) === String(campId));
+  
+  // Filter by Status
+  if (status) rows = rows.filter(a => a.status === status);
+  
+  // Filter by Attendance
+  if (attendance) {
+    rows = rows.filter(a => {
+      const att = a.cadet_attendance_pct !== undefined ? a.cadet_attendance_pct : 100;
+      if (attendance === 'high') return att >= 75;
+      if (attendance === 'mid') return att >= 50 && att < 75;
+      if (attendance === 'low') return att < 50;
+      return true;
+    });
+  }
+  
+  // Filter by Search Query
+  if (search) {
+    rows = rows.filter(a => {
+      const name = (a.cadet_name || '').toLowerCase();
+      const roll = (a.cadet_roll_no || '').toLowerCase();
+      const email = (a.cadet_email || '').toLowerCase();
+      const past = (a.past_camps || '').toLowerCase();
+      return name.includes(search) || roll.includes(search) || email.includes(search) || past.includes(search);
+    });
+  }
+
+  // Sort rows
+  rows = [...rows];
+  if (sortVal === 'applied_newest') {
+    rows.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at));
+  } else if (sortVal === 'applied_oldest') {
+    rows.sort((a, b) => new Date(a.applied_at) - new Date(b.applied_at));
+  } else if (sortVal === 'attendance_desc') {
+    rows.sort((a, b) => {
+      const attA = a.cadet_attendance_pct !== undefined ? a.cadet_attendance_pct : 100;
+      const attB = b.cadet_attendance_pct !== undefined ? b.cadet_attendance_pct : 100;
+      return attB - attA;
+    });
+  } else if (sortVal === 'attendance_asc') {
+    rows.sort((a, b) => {
+      const attA = a.cadet_attendance_pct !== undefined ? a.cadet_attendance_pct : 100;
+      const attB = b.cadet_attendance_pct !== undefined ? b.cadet_attendance_pct : 100;
+      return attA - attB;
+    });
+  }
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:48px;color:var(--text-light);">
+      <i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3;"></i>
+      No applications match the current filters.
+    </td></tr>`;
+    return;
+  }
+
+  const statusBadge = (s) => {
+    const map = {
+      pending:  ['rgba(243,156,18,0.1)',  '#e67e22', 'Pending'],
+      selected: ['rgba(39,174,96,0.1)',   '#27ae60', '🎖️ Selected'],
+      rejected: ['rgba(192,57,43,0.1)',   '#c0392b', 'Rejected'],
+    };
+    const [bg, col, lbl] = map[s] || map.pending;
+    return `<span style="background:${bg};color:${col};padding:4px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;">${lbl}</span>`;
+  };
+
+  tbody.innerHTML = rows.map((a, i) => {
+    const camp = _allCampsMap[a.camp_id];
+    const att  = a.cadet_attendance_pct !== undefined ? a.cadet_attendance_pct : 100;
+    const ac   = attColor(att);
+    const isSelected = a.status === 'selected';
+    const isRejected = a.status === 'rejected';
+    
+    return `<tr style="border-bottom:1px solid var(--mid-gray);transition:background 0.15s;" onmouseenter="this.style.background='var(--off-white)'" onmouseleave="this.style.background=''">
+      <td style="padding:14px 16px;color:var(--text-mid);font-size:0.78rem;">${i + 1}</td>
+      <td style="padding:14px 16px;">
+        <div style="font-weight:600;color:var(--navy);">${(a.cadet_first_name || a.cadet_name) ? ((a.cadet_first_name || '') + ' ' + (a.cadet_last_name || '')).trim() || a.cadet_name : ('Cadet #' + a.cadet_id)}</div>
+        <div style="font-size:0.72rem;color:var(--text-mid);">Roll: ${a.cadet_roll_no || '—'} &nbsp;|&nbsp; Branch: ${a.cadet_branch || '—'} (${a.cadet_year || '—'})</div>
+      </td>
+      <td style="padding:14px 16px;">
+        <div style="font-weight:600;color:var(--navy);font-size:0.85rem;">${camp ? camp.title : ('Camp #' + a.camp_id)}</div>
+        <div style="font-size:0.72rem;color:var(--text-mid);">Applied: ${fmtDate(a.applied_at)}</div>
+      </td>
+      <td style="padding:14px 16px;text-align:center;">
+        <span style="background:${ac.bg};color:${ac.color};padding:5px 14px;border-radius:20px;font-size:0.8rem;font-weight:700;">${att}%</span>
+      </td>
+      <td style="padding:14px 16px;text-align:center;font-size:0.82rem;color:var(--text-mid);">
+        ${a.height ? a.height + ' cm' : '—'} / ${a.weight ? a.weight + ' kg' : '—'}
+      </td>
+      <td style="padding:14px 16px;text-align:center;">
+        <span style="background:${a.medical_status === 'Fit' ? 'rgba(39,174,96,0.1)' : 'rgba(192,57,43,0.1)'};
+          color:${a.medical_status === 'Fit' ? '#27ae60' : '#c0392b'};
+          padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">
+          ${a.medical_status || '—'}
+        </span>
+      </td>
+      <td style="padding:14px 16px;font-size:0.78rem;color:var(--text-mid);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${a.past_camps || ''}">
+        ${a.past_camps || '<em style="opacity:0.5;">None</em>'}
+      </td>
+      <td style="padding:14px 16px;text-align:center;">
+        ${statusBadge(a.status)}
+        ${a.note ? `<div style="font-size:0.68rem;color:var(--text-light);margin-top:4px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${a.note}">Rem: ${a.note}</div>` : ''}
+      </td>
+      <td style="padding:14px 16px;text-align:center;">
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button onclick="openCampStatusModal(${a.id}, 'selected')"
+            style="background:${isSelected ? '#27ae60' : 'rgba(39,174,96,0.12)'};color:${isSelected ? 'white' : '#27ae60'};border:1.5px solid #27ae60;border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;"
+            onmouseenter="if(!${isSelected}){this.style.background='#27ae60';this.style.color='white'}"
+            onmouseleave="if(!${isSelected}){this.style.background='rgba(39,174,96,0.12)';this.style.color='#27ae60'}"
+            title="Select this cadet">
+            <i class="fas fa-check"></i> ${isSelected ? 'Selected' : 'Select'}
+          </button>
+          <button onclick="openCampStatusModal(${a.id}, 'rejected')"
+            style="background:${isRejected ? '#c0392b' : 'rgba(192,57,43,0.1)'};color:${isRejected ? 'white' : '#c0392b'};border:1.5px solid #c0392b;border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;"
+            onmouseenter="if(!${isRejected}){this.style.background='#c0392b';this.style.color='white'}"
+            onmouseleave="if(!${isRejected}){this.style.background='rgba(192,57,43,0.1)';this.style.color='#c0392b'}"
+            title="Reject this cadet">
+            <i class="fas fa-times"></i> ${isRejected ? 'Rejected' : 'Reject'}
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.openCampStatusModal = function(appId, status) {
+  let m = document.getElementById('campStatusNoteModal');
+  if (m) m.remove();
+  
+  m = document.createElement('div');
+  m.id = 'campStatusNoteModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  
+  const statusLabel = status === 'selected' ? 'Select Cadet' : 'Reject Application';
+  const headerColor = status === 'selected' ? '#27ae60' : '#c0392b';
+  const icon = status === 'selected' ? 'fa-check-circle' : 'fa-times-circle';
+  
+  // Quick remarks templates
+  const quickRemarks = status === 'selected' 
+    ? ['Physical fitness verified', 'Outstanding parade attendance', 'Meets all eligibility criteria', 'Approved by ANO']
+    : ['Parade attendance too low (< 75%)', 'Physical requirements not met', 'Unfit/Medical reasons', 'Duplicate application'];
+  
+  m.innerHTML = `<div style="background:#fff;border-radius:16px;padding:28px;width:450px;max-width:95%;box-shadow:0 12px 30px rgba(0,0,0,0.25);position:relative;animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+    <button onclick="document.getElementById('campStatusNoteModal').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666;">&times;</button>
+    <h3 style="color:${headerColor};margin-bottom:14px;display:flex;align-items:center;gap:8px;"><i class="fas ${icon}"></i> ${statusLabel}</h3>
+    <p style="font-size:0.8rem;color:var(--text-mid);margin-bottom:16px;">Add an optional recommendation or reason note for this action. This will be visible to the cadet.</p>
+    
+    <label class="form-label" style="font-size:0.75rem;font-weight:600;color:var(--text-mid);display:block;margin-bottom:6px;">Add Remark</label>
+    <textarea id="csm-note" class="form-control" rows="3" placeholder="Write a note... (optional)" style="width:100%;margin-bottom:12px;font-family:inherit;font-size:0.85rem;resize:vertical;"></textarea>
+    
+    <div style="margin-bottom:18px;">
+      <span style="font-size:0.7rem;font-weight:700;color:var(--text-light);text-transform:uppercase;display:block;margin-bottom:6px;">Quick Remarks:</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${quickRemarks.map(qr => `<button type="button" class="btn" style="background:#f1f2f6;color:var(--navy);border:1px solid #dfe4ea;font-size:0.72rem;padding:4px 8px;border-radius:6px;cursor:pointer;" onclick="document.getElementById('csm-note').value='${qr.replace(/'/g, "\\'")}'">${qr}</button>`).join('')}
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:12px;">
+      <button onclick="submitCampStatus(${appId}, '${status}')" class="btn btn-primary" style="flex:1;background:${headerColor};border-color:${headerColor};"><i class="fas fa-check"></i> Confirm</button>
+      <button onclick="document.getElementById('campStatusNoteModal').remove()" class="btn btn-outline" style="flex:1;">Cancel</button>
+    </div>
+  </div>`;
+  
+  document.body.appendChild(m);
+}
+
+window.submitCampStatus = async function(appId, status) {
+  const note = document.getElementById('csm-note')?.value.trim() || '';
+  document.getElementById('campStatusNoteModal')?.remove();
+  await setCampAppStatus(appId, status, note);
+}
+
+async function setCampAppStatus(appId, status, note = '') {
+  try {
+    const token = (typeof Auth !== 'undefined' && Auth.getToken) ? Auth.getToken() : '';
+    const resp = await fetch('/api/admin/camp-applications/status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+      },
+      body: JSON.stringify({ application_id: appId, status, note })
+    });
+    const data = await resp.json();
+    if (data && data.success) {
+      // Update local data without full re-fetch
+      const app = _allCampApplications.find(a => a.id === appId);
+      if (app) {
+        app.status = status;
+        app.note = note;
+      }
+
+      // Update stats
+      const selEl = document.getElementById('cm-selected');
+      const rejEl = document.getElementById('cm-rejected');
+      if (selEl) selEl.textContent = _allCampApplications.filter(a => a.status === 'selected').length;
+      if (rejEl) rejEl.textContent = _allCampApplications.filter(a => a.status === 'rejected').length;
+
+      // Update matrix table & registry
+      await renderCampMatrix();
+      
+      showAdminToast(status === 'selected' ? '🎖️ Cadet selected for camp!' : 'Cadet application rejected.', status === 'selected' ? 'success' : 'error');
+    } else {
+      showAdminToast(data.message || 'Failed to update status.', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error. Please try again.', 'error');
+  }
+}
+
+async function adminCreateCamp() {
+  const title    = document.getElementById('cc-title')?.value.trim();
+  const location = document.getElementById('cc-location')?.value.trim();
+  const type     = document.getElementById('cc-type')?.value;
+  const vacancies= parseInt(document.getElementById('cc-vacancies')?.value || 50);
+  const start    = document.getElementById('cc-start')?.value;
+  const end      = document.getElementById('cc-end')?.value;
+  const desc     = document.getElementById('cc-desc')?.value.trim();
+
+  if (!title || !start || !end) {
+    showAdminToast('Camp Title, Start Date and End Date are required.', 'error');
+    return;
+  }
+  if (new Date(end) < new Date(start)) {
+    showAdminToast('End date cannot be before start date.', 'error');
+    return;
+  }
+
+  try {
+    const token = (typeof Auth !== 'undefined' && Auth.getToken) ? Auth.getToken() : '';
+    const resp = await fetch('/api/camps/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+      },
+      body: JSON.stringify({ title, location, camp_type: type, vacancies, start_date: start, end_date: end, description: desc })
+    });
+    const data = await resp.json();
+    if (data && data.success) {
+      showAdminToast('Camp "' + title + '" created successfully! ⛺', 'success');
+      // Clear form
+      ['cc-title','cc-location','cc-start','cc-end','cc-desc'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('cc-vacancies').value = 50;
+      // Refresh matrix
+      await renderCampMatrix();
+    } else {
+      showAdminToast(data.message || 'Failed to create camp.', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error. Please try again.', 'error');
+  }
+}
+
+function printNominationList() {
+  const campFilter = document.getElementById('cm-filter-camp');
+  const selectedCampId = campFilter ? campFilter.value : '';
+  const selectedCamp   = selectedCampId ? _allCampsMap[selectedCampId] : null;
+
+  const selected = _allCampApplications.filter(a =>
+    a.status === 'selected' && (!selectedCampId || String(a.camp_id) === String(selectedCampId))
+  );
+
+  if (selected.length === 0) {
+    showAdminToast('No selected cadets to export. Select cadets first.', 'error');
+    return;
+  }
+
+  const now = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const campTitle = selectedCamp ? selectedCamp.title : 'NCC Camp';
+  const campDates = selectedCamp
+    ? `${fmtDate(selectedCamp.start_date)} to ${fmtDate(selectedCamp.end_date)}`
+    : '—';
+
+  const rows = selected.map((a, i) => {
+    const camp = _allCampsMap[a.camp_id];
+    return `<tr>
+      <td style="padding:10px 14px;border:1px solid #ccc;text-align:center;">${i + 1}</td>
+      <td style="padding:10px 14px;border:1px solid #ccc;font-weight:600;">${a.cadet_name || ('Cadet #' + a.cadet_id)}</td>
+      <td style="padding:10px 14px;border:1px solid #ccc;">${a.cadet_email || '—'}</td>
+      <td style="padding:10px 14px;border:1px solid #ccc;text-align:center;">${a.cadet_attendance_pct !== undefined ? a.cadet_attendance_pct + '%' : '—'}</td>
+      <td style="padding:10px 14px;border:1px solid #ccc;text-align:center;">${a.medical_status || '—'}</td>
+      <td style="padding:10px 14px;border:1px solid #ccc;">${camp ? camp.title : ('Camp #' + a.camp_id)}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NCC Nomination List — ${campTitle}</title>
+  <style>
+    * { margin:0;padding:0;box-sizing:border-box; }
+    body { font-family:'Times New Roman',serif;color:#000;background:#fff;padding:40px; }
+    .header { text-align:center;border-bottom:3px double #000;padding-bottom:16px;margin-bottom:24px; }
+    .header h1 { font-size:1.4rem;font-weight:700;letter-spacing:1px;text-transform:uppercase; }
+    .header h2 { font-size:1.1rem;font-weight:600;margin-top:4px; }
+    .header p  { font-size:0.88rem;margin-top:6px; }
+    .meta { margin-bottom:20px;font-size:0.9rem; }
+    .meta strong { display:inline-block;min-width:140px; }
+    table { width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:16px; }
+    thead tr { background:#1a2f5a;color:white; }
+    thead th { padding:10px 14px;border:1px solid #1a2f5a;text-align:left; }
+    tbody tr:nth-child(even) { background:#f5f7fa; }
+    .footer { margin-top:48px;display:flex;justify-content:space-between;align-items:flex-end; }
+    .sign-block { text-align:center; }
+    .sign-line { width:200px;border-top:1px solid #000;margin:8px auto 4px; }
+    .sign-block p { font-size:0.82rem; }
+    @media print { body{padding:20px;} }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Government Polytechnic Hamirpur (HP)</h1>
+    <h2>National Cadet Corps — 3 HP BN NCC</h2>
+    <p>Nomination List for <strong>${campTitle}</strong></p>
+  </div>
+
+  <div class="meta">
+    <p><strong>Camp:</strong> ${campTitle}</p>
+    <p><strong>Dates:</strong> ${campDates}</p>
+    <p><strong>Total Selected:</strong> ${selected.length} Cadet(s)</p>
+    <p><strong>Date of Issue:</strong> ${now}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:40px;">S.No</th>
+        <th>Cadet Name</th>
+        <th>Email / Roll No</th>
+        <th style="width:100px;">Attendance %</th>
+        <th style="width:80px;">Medical</th>
+        <th>Camp</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+
+  <div class="footer">
+    <div class="sign-block">
+      <div class="sign-line"></div>
+      <p><strong>Commanding Officer</strong></p>
+      <p>3 HP BN NCC</p>
+    </div>
+    <div class="sign-block">
+      <div class="sign-line"></div>
+      <p><strong>ANO Signature</strong></p>
+      <p>Govt. Polytechnic Hamirpur</p>
+    </div>
+    <div class="sign-block">
+      <div class="sign-line"></div>
+      <p><strong>Principal</strong></p>
+      <p>Govt. Polytechnic Hamirpur</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 500);
+}
+
+/* ── Alerts & Broadcast Manager Logic ───────────────────── */
+window.handleBroadcastTargetChange = function() {
+  const target = document.getElementById('broadcastTarget').value;
+  const selector = document.getElementById('individualCadetSelector');
+  if (target === 'individual') {
+    selector.style.display = 'block';
+    loadCadetDropdown();
+  } else {
+    selector.style.display = 'none';
+  }
+}
+
+window.toggleBroadcastScheduleInput = function() {
+  const toggle = document.getElementById('broadcastScheduleToggle').checked;
+  const wrap = document.getElementById('broadcastScheduleInputWrap');
+  if (wrap) wrap.style.display = toggle ? 'block' : 'none';
+  if (toggle) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const minVal = now.toISOString().slice(0, 16);
+    document.getElementById('broadcastScheduledAt').min = minVal;
+    document.getElementById('broadcastScheduledAt').value = minVal;
+  }
+}
+
+window.applyBroadcastTemplate = function() {
+  const template = document.getElementById('broadcastTemplate').value;
+  const titleInput = document.getElementById('broadcastTitle');
+  const messageInput = document.getElementById('broadcastMessage');
+  if (!template) return;
+  
+  if (template === 'weekly_parade') {
+    titleInput.value = "Weekly Parade timings";
+    messageInput.value = "Weekly training parade is scheduled for this coming Saturday at 0700 hrs on the college ground. Attendance is strictly compulsory. Come in full inspection dress.";
+    document.querySelector('input[name="alertCategory"][value="info"]').checked = true;
+  } else if (template === 'uniform_inspection') {
+    titleInput.value = "Urgent Dress Inspection";
+    messageInput.value = "Urgent: Full Uniform inspection scheduled for tomorrow morning during parade. Clean boots, proper ironed uniform, clean shave, and beret are mandatory.";
+    document.querySelector('input[name="alertCategory"][value="warning"]').checked = true;
+  } else if (template === 'urgent_meeting') {
+    titleInput.value = "Urgent Meeting with ANO";
+    messageInput.value = "Attention Cadets: All platoon members must assemble in the NCC office today at 1400 hrs for an urgent planning briefing with the ANO regarding camp documentation.";
+    document.querySelector('input[name="alertCategory"][value="warning"]').checked = true;
+  } else if (template === 'exam_announcement') {
+    titleInput.value = "NCC Exam Dates Published";
+    messageInput.value = "ANO Notice: The final dates for the NCC Certificate 'B' and 'C' examinations have been officially published. Check the Certificates tab for schedules and registration.";
+    document.querySelector('input[name="alertCategory"][value="success"]').checked = true;
+  } else if (template === 'camp_selection') {
+    titleInput.value = "Camp Selection Results";
+    messageInput.value = "Congratulations to the cadets selected for the upcoming National Integration Camp. Please report to the ANO office tomorrow with all original certificates.";
+    document.querySelector('input[name="alertCategory"][value="success"]').checked = true;
+  }
+  showAdminToast("Template applied successfully! 📝", "info");
+}
+
+window.cancelScheduledAlert = async function(alertId) {
+  if (!confirm('Are you sure you want to cancel and remove this scheduled broadcast?')) return;
+  try {
+    const res = await fetch(`/api/admin/alerts/cancel/${alertId}`, {
+      method: 'POST'
+    });
+    const data = await res.json();
+    if (!data.error) {
+      showAdminToast('Scheduled broadcast successfully cancelled! 🗑️', 'success');
+      renderAlertsManager();
+    } else {
+      showAdminToast(data.message || 'Failed to cancel scheduled alert.', 'error');
+    }
+  } catch (err) {
+    console.error("Error cancelling scheduled alert:", err);
+    showAdminToast('Network error while cancelling scheduled alert.', 'error');
+  }
+}
+
+window.deleteNotification = async function(alertId) {
+  if (!confirm('Are you sure you want to permanently delete this notification record from log history?')) return;
+  try {
+    const res = await fetch(`/api/admin/alerts/delete/${alertId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if (!data.error) {
+      showAdminToast('Notification successfully deleted from logs! 🗑️', 'success');
+      renderAlertsManager();
+      if (typeof loadReadReceipts === 'function') loadReadReceipts();
+    } else {
+      showAdminToast(data.message || 'Failed to delete notification.', 'error');
+    }
+  } catch (err) {
+    console.error("Error deleting notification:", err);
+    showAdminToast('Network error while deleting notification.', 'error');
+  }
+}
+
+async function loadCadetDropdown() {
+  const select = document.getElementById('broadcastCadetId');
+  select.innerHTML = '<option value="">Loading cadets...</option>';
+  try {
+    const res = await fetch('/api/students/');
+    if (!res.ok) throw new Error('Failed to fetch cadets');
+    const data = await res.json();
+    if (data.students && data.students.length > 0) {
+      // API returns status as string: 'approved' or 'pending'
+      const approved = data.students.filter(c => c.status === 'approved' || c.is_approved === true || c.is_approved === 'true');
+      if (approved.length === 0) {
+        select.innerHTML = '<option value="">No approved cadets found</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">-- Select a Cadet --</option>' + approved.map(c => {
+        const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || c.username;
+        const phone = c.phone_number ? ' | 📱 ' + c.phone_number : '';
+        const roll = c.roll_no && c.roll_no !== '—' ? ' | #' + c.roll_no : '';
+        return `<option value="${c.id}">${name} (${c.username})${roll}${phone}</option>`;
+      }).join('');
+    } else {
+      select.innerHTML = '<option value="">No cadets found in database</option>';
+    }
+  } catch (err) {
+    console.error("Error loading cadet dropdown:", err);
+    select.innerHTML = '<option value="">Error loading cadets - check console</option>';
+  }
+}
+
+async function renderAlertsManager() {
+  const tableBody = document.getElementById('alertsHistoryTableBody');
+  try {
+    const catFilter = (document.getElementById('alertHistoryFilter') || {}).value || '';
+    const statusFilter = (document.getElementById('alertStatusFilter') || {}).value || '';
+    let url = '/api/admin/alerts/history';
+    const params = [];
+    if (catFilter) params.push('category=' + catFilter);
+    if (statusFilter) params.push('status=' + statusFilter);
+    if (params.length) url += '?' + params.join('&');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch alert history');
+    const data = await res.json();
+    
+    // Update Stats & Analytics Chart
+    if (data.stats) {
+      document.getElementById('alerts-stats-sent').textContent = data.stats.sent_alerts_count;
+      document.getElementById('alerts-stats-subscribers').textContent = data.stats.push_subscribers;
+      
+      const simulatedCount = data.alerts ? data.alerts.filter(a => a.status === 'simulated').length : 0;
+      document.getElementById('alerts-stats-simulated').textContent = simulatedCount;
+      
+      const twilioEl = document.getElementById('alerts-stats-twilio');
+      twilioEl.textContent = data.stats.twilio_status;
+      if (data.stats.twilio_status === 'Active') {
+        twilioEl.style.color = '#27ae60';
+      } else {
+        twilioEl.style.color = '#d35400';
+      }
+
+      // Update Delivery SVG Bars
+      const sentVal = data.alerts ? data.alerts.filter(a => a.status === 'sent').length : 0;
+      const simVal = simulatedCount;
+      const schedVal = data.alerts ? data.alerts.filter(a => a.status === 'scheduled').length : 0;
+      const failVal = data.alerts ? data.alerts.filter(a => a.status === 'failed').length : 0;
+      
+      const maxVal = Math.max(sentVal, simVal, schedVal, failVal, 1);
+      document.getElementById('chart-bar-sent').style.height = `${(sentVal / maxVal) * 100}%`;
+      document.getElementById('chart-bar-simulated').style.height = `${(simVal / maxVal) * 100}%`;
+      document.getElementById('chart-bar-scheduled').style.height = `${(schedVal / maxVal) * 100}%`;
+      document.getElementById('chart-bar-failed').style.height = `${(failVal / maxVal) * 100}%`;
+    }
+
+    // Populate Table
+    if (data.alerts && data.alerts.length > 0) {
+      tableBody.innerHTML = data.alerts.map(alert => {
+        const sentDate = new Date(alert.sent_at);
+        const dateStr = sentDate.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + sentDate.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+        
+        let statusBadge = '';
+        let actionBtn = '';
+        if (alert.status === 'sent') {
+          statusBadge = `<span style="background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#27ae60;display:inline-block;"></span>Sent</span>`;
+        } else if (alert.status === 'simulated') {
+          statusBadge = `<span style="background:rgba(243,156,18,0.1);color:#d35400;border:1px solid rgba(243,156,18,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#d35400;display:inline-block;"></span>Simulated</span>`;
+        } else if (alert.status === 'scheduled') {
+          statusBadge = `<span style="background:rgba(155,89,182,0.1);color:#9b59b6;border:1px solid rgba(155,89,182,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b59b6;display:inline-block;"></span>Scheduled</span>`;
+          actionBtn = `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="cancelScheduledAlert(${alert.id})" title="Cancel Scheduled Broadcast"><i class="fa-solid fa-trash-can"></i> Cancel</button>`;
+        } else {
+          statusBadge = `<span style="background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#c0392b;display:inline-block;"></span>Failed</span>`;
+        }
+
+        let channelsHTML = '';
+        if (alert.receiver_phone === 'PWA Push') {
+          channelsHTML = `<i class="fa-solid fa-bell" style="color:var(--sky);margin-right:4px;" title="Web Push"></i> Push`;
+        } else if (alert.receiver_phone === 'In-App' || !alert.receiver_phone) {
+          channelsHTML = `<i class="fa-solid fa-inbox" style="color:#9b59b6;margin-right:4px;" title="In-App Only"></i> In-App`;
+        } else {
+          channelsHTML = `<i class="fa-solid fa-message" style="color:#27ae60;margin-right:4px;" title="SMS"></i> SMS`;
+        }
+        if (alert.email_channel) channelsHTML += `<br><i class="fas fa-envelope" style="color:#9b59b6;margin-right:4px;" title="Email"></i> Email`;
+        if (alert.whatsapp_channel) channelsHTML += `<br><i class="fab fa-whatsapp" style="color:#25d366;margin-right:4px;" title="WhatsApp"></i> WA`;
+
+        const catColors = { info: 'sky', warning: 'warning', success: 'success', danger: 'red' };
+        const catBadge = alert.category ? `<span class="tag ${catColors[alert.category] || 'sky'}" style="font-size:0.65rem;text-transform:uppercase;margin-left:8px;">${alert.category}</span>` : '';
+
+        // Read and Ack
+        let readAckHTML = '';
+        if (alert.is_read) {
+          readAckHTML += `<span style="color:#27ae60;font-size:0.72rem;font-weight:600;"><i class="fas fa-check-double"></i> Read</span>`;
+        } else {
+          readAckHTML += `<span style="color:var(--text-light);font-size:0.72rem;"><i class="fas fa-eye-slash"></i> Unread</span>`;
+        }
+        if (alert.requires_acknowledgement) {
+          if (alert.is_acknowledged) {
+            const ackDt = alert.acknowledged_at ? new Date(alert.acknowledged_at).toLocaleDateString('en-IN', {day:'2-digit', month:'short'}) : '';
+            readAckHTML += `<br><span style="color:#27ae60;font-size:0.72rem;font-weight:700;" title="Acknowledged at ${alert.acknowledged_at}"><i class="fas fa-check-circle"></i> Ack (${ackDt})</span>`;
+          } else {
+            readAckHTML += `<br><span style="color:#e74c3c;font-size:0.72rem;font-weight:700;"><i class="fas fa-exclamation-circle"></i> Pending Ack</span>`;
+          }
+        }
+
+        // Target Label
+        const targetLabel = (alert.target_group || 'all').replace('_', ' ');
+
+        // Action Column Remind & Delete
+        let customActions = actionBtn;
+        if (!alert.is_read && alert.status !== 'scheduled' && alert.user_id) {
+          customActions += `<button class="btn" style="background:rgba(231,76,60,0.08);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="resendIndividualReminder(${alert.id})" title="Send individual reminder"><i class="fa-solid fa-bell"></i> Remind</button>`;
+        }
+        customActions += `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="deleteNotification(${alert.id})" title="Delete notification completely"><i class="fa-solid fa-trash-can"></i> Delete</button>`;
+
+        return `
+          <tr style="border-bottom:1px solid var(--mid-gray);color:var(--navy);transition:background 0.2s;" onmouseover="this.style.background='var(--off-white)'" onmouseout="this.style.background='none'">
+            <td style="padding:12px 8px;white-space:nowrap;">${dateStr}</td>
+            <td style="padding:12px 8px;"><strong>${alert.cadet_name}</strong><br><span style="font-size:0.75rem;color:var(--text-light);">${alert.receiver_phone}</span></td>
+            <td style="padding:12px 8px;white-space:nowrap;">${channelsHTML}</td>
+            <td style="padding:12px 8px;max-width:260px;word-wrap:break-word;">
+              <strong style="font-size:0.8rem;display:block;">${alert.message_title || 'NCC Announcement'}</strong>
+              <span style="font-size:0.75rem;color:var(--text-mid);">${alert.message_body}</span> ${catBadge}
+              ${alert.is_emergency ? '<span style="font-size:0.65rem;background:rgba(231,76,60,0.12);color:#e74c3c;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">SOS</span>' : ''}
+              ${alert.is_recurring ? '<span style="font-size:0.65rem;background:rgba(155,89,182,0.12);color:#9b59b6;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">Recurring</span>' : ''}
+              ${alert.scheduled_at ? `<br><span style="font-size:0.7rem;color:#9b59b6;font-weight:600;"><i class="fa-solid fa-clock"></i> Deliver at: ${new Date(alert.scheduled_at).toLocaleString('en-IN')}</span>` : ''}
+            </td>
+            <td style="padding:12px 8px;white-space:nowrap;text-transform:capitalize;font-weight:600;font-size:0.75rem;">${targetLabel}</td>
+            <td style="padding:12px 8px;white-space:nowrap;">${statusBadge}</td>
+            <td style="padding:12px 8px;white-space:nowrap;">${readAckHTML}</td>
+            <td style="padding:12px 8px;white-space:nowrap;">${customActions}</td>
+          </tr>
+        `;
+      }).join('');
+    } else {
+      tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-light);">No alerts sent yet. Try creating a broadcast!</td></tr>';
+    }
+  } catch (err) {
+    console.error("Error loading alert history:", err);
+    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--red);"><i class="fa-solid fa-triangle-exclamation"></i> Error loading history: ${err.message}</td></tr>`;
+  }
+}
+
+// Form Submission Event Listener
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('broadcastComposerForm');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const target = document.getElementById('broadcastTarget').value;
+      const cadetId = document.getElementById('broadcastCadetId').value;
+      const title = document.getElementById('broadcastTitle').value || 'NCC Announcement';
+      const message = document.getElementById('broadcastMessage').value;
+      const category = document.querySelector('input[name="alertCategory"]:checked')?.value || 'info';
+
+      const scheduledToggle = document.getElementById('broadcastScheduleToggle').checked;
+      const scheduledAt = scheduledToggle ? document.getElementById('broadcastScheduledAt').value : null;
+
+      const channels = [];
+      if (document.getElementById('channelPush').checked) channels.push('push');
+      if (document.getElementById('channelSms').checked) channels.push('sms');
+
+      // Tier 1 & 2 new fields
+      const requiresAck = document.getElementById('broadcastRequiresAck')?.checked || false;
+      const emailCh = document.getElementById('channelEmail')?.checked || false;
+      const whatsappCh = document.getElementById('channelWhatsapp')?.checked || false;
+      const isRecurring = document.getElementById('broadcastIsRecurring')?.checked || false;
+      const recurrenceType = document.getElementById('recurrenceType')?.value || 'weekly';
+      const recurrenceInterval = parseInt(document.getElementById('recurrenceInterval')?.value || '1');
+      const reminderHours = document.getElementById('broadcastReminderHours')?.value || null;
+
+      if (channels.length === 0 && !emailCh && !whatsappCh) {
+        showAdminToast('Please select at least one broadcast channel.', 'error');
+        return;
+      }
+
+      if (target === 'individual' && !cadetId) {
+        showAdminToast('Please select a cadet.', 'error');
+        return;
+      }
+
+      try {
+        const payload = {
+          target,
+          title,
+          message,
+          channels,
+          category,
+          scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
+          requires_acknowledgement: requiresAck,
+          email_channel: emailCh,
+          whatsapp_channel: whatsappCh,
+          is_recurring: isRecurring,
+          recurrence_type: recurrenceType,
+          recurrence_interval: recurrenceInterval,
+          reminder_hours: reminderHours ? parseInt(reminderHours) : null
+        };
+        if (target === 'individual') {
+          payload.cadet_id = parseInt(cadetId);
+        }
+
+        const res = await fetch('/api/admin/alerts/send-broadcast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!data.error) {
+          const actionText = scheduledToggle ? 'scheduled' : 'dispatched';
+          const count = data.count || '';
+          showAdminToast(`✅ Broadcast ${actionText} to ${count} cadet(s)! 📢`, 'success');
+          document.getElementById('broadcastMessage').value = '';
+          document.getElementById('broadcastTemplate').value = '';
+          document.getElementById('broadcastScheduleToggle').checked = false;
+          if (document.getElementById('broadcastRequiresAck')) document.getElementById('broadcastRequiresAck').checked = false;
+          if (document.getElementById('broadcastIsRecurring')) document.getElementById('broadcastIsRecurring').checked = false;
+          if (document.getElementById('recurringOptions')) document.getElementById('recurringOptions').style.display = 'none';
+          toggleBroadcastScheduleInput();
+          renderAlertsManager();
+        } else {
+          showAdminToast(data.message || 'Failed to dispatch broadcast', 'error');
+        }
+      } catch (err) {
+        console.error("Error dispatching broadcast:", err);
+        showAdminToast('Network error while dispatching broadcast.', 'error');
+      }
+    });
+  }
+});
+
+// ── Toggle Recurring Options ──────────────────────────────────────────
+window.toggleRecurringOptions = function() {
+  const box = document.getElementById('recurringOptions');
+  const chk = document.getElementById('broadcastIsRecurring');
+  if (box) box.style.display = (chk && chk.checked) ? 'block' : 'none';
+};
+
+// ── Emergency SOS Functions ───────────────────────────────────────────
+window.openEmergencyModal = function() {
+  const modal = document.getElementById('emergencyModal');
+  if (modal) { modal.style.display = 'flex'; }
+};
+
+window.closeEmergencyModal = function() {
+  const modal = document.getElementById('emergencyModal');
+  if (modal) { modal.style.display = 'none'; }
+};
+
+window.sendEmergencySOS = async function() {
+  const title = (document.getElementById('sosTitle')?.value || '🚨 EMERGENCY ALERT').trim();
+  const message = (document.getElementById('sosMessage')?.value || '').trim();
+  const btn = document.getElementById('sosSendBtn');
+  if (!message) { showAdminToast('Emergency message cannot be empty!', 'error'); return; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...'; }
+  try {
+    const res = await fetch('/api/admin/alerts/send-emergency', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, message })
+    });
+    const data = await res.json();
+    closeEmergencyModal();
+    if (!data.error) {
+      showAdminToast(`🚨 ${data.message}`, 'success');
+      renderAlertsManager();
+      loadReadReceipts();
+    } else {
+      showAdminToast(data.message || 'Emergency SOS failed!', 'error');
+    }
+  } catch(err) {
+    closeEmergencyModal();
+    showAdminToast('Network error: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM SEND'; }
+  }
+};
+
+// ── Read Receipt Analytics ─────────────────────────────────────────────
+window.loadReadReceipts = async function() {
+  const container = document.getElementById('readReceiptsContainer');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:24px;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:1.5rem;"></i></div>';
+  try {
+    const res = await fetch('/api/admin/alerts/read-receipts');
+    const data = await res.json();
+    if (data.error) throw new Error(data.message);
+    const receipts = data.receipts || [];
+    if (receipts.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);">No broadcast data yet. Send some alerts first!</div>';
+      return;
+    }
+    container.innerHTML = receipts.map(r => {
+      const readRate = r.read_rate || 0;
+      const barColor = readRate >= 80 ? '#27ae60' : readRate >= 50 ? '#f39c12' : '#e74c3c';
+      const catColors = { info: '#3498db', warning: '#f39c12', success: '#27ae60', danger: '#e74c3c' };
+      const catColor = catColors[r.category] || '#3498db';
+      const dt = r.sent_at ? new Date(r.sent_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+      const ackBadge = r.requires_ack > 0 ? `<span style="font-size:0.62rem;padding:2px 6px;background:rgba(231,76,60,0.1);color:#e74c3c;border-radius:8px;font-weight:700;">✅ ACK REQUIRED (${r.ack_count}/${r.requires_ack})</span>` : '';
+      return `<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--mid-gray);">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span style="font-size:0.85rem;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${r.title}</span>
+            <span style="font-size:0.62rem;font-weight:700;padding:2px 6px;background:${catColor}22;color:${catColor};border-radius:8px;text-transform:uppercase;">${r.category}</span>
+            ${ackBadge}
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-light);">📅 ${dt} &nbsp;·&nbsp; 👥 ${r.total_recipients} recipients</div>
+          <div style="margin-top:8px;height:6px;background:var(--mid-gray);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;background:${barColor};border-radius:3px;width:${readRate}%;transition:width 0.8s;"></div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;min-width:90px;">
+          <div style="font-size:1.3rem;font-weight:800;color:${barColor};">${readRate}%</div>
+          <div style="font-size:0.68rem;color:var(--text-light);">${r.read_count} read</div>
+          <div style="font-size:0.68rem;color:#e74c3c;">${r.unread_count} unread</div>
+          ${r.unread_count > 0 ? `<button onclick="resendToUnread('${r.title.replace(/'/g, "\\'")}', '${r.category}')" style="margin-top:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);border-radius:6px;cursor:pointer;">🔁 Resend to Unread</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    container.innerHTML = `<div style="color:#e74c3c;padding:16px;text-align:center;"><i class="fas fa-exclamation-triangle"></i> ${err.message}</div>`;
+  }
+};
+
+// ── Resend to Unread ──────────────────────────────────────────────────
+window.resendToUnread = async function(title, category) {
+  const message = prompt(`Reminder message for "${title}" (leave empty to use original):`);
+  if (message === null) return; // cancelled
+  try {
+    const res = await fetch('/api/admin/alerts/resend-unread', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, message: message || title, category })
+    });
+    const data = await res.json();
+    if (!data.error) {
+      showAdminToast(`🔁 ${data.message}`, 'success');
+      loadReadReceipts();
+      renderAlertsManager();
+    } else {
+      showAdminToast(data.message || 'Failed to resend', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error: ' + err.message, 'error');
+  }
+};
+
+window.resendIndividualReminder = async function(alertId) {
+  if (!confirm('Send a follow-up reminder notification to this cadet?')) return;
+  try {
+    const res = await fetch('/api/admin/alerts/remind-individual/' + alertId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    if (!data.error) {
+      showAdminToast('🔔 Reminder sent successfully!', 'success');
+      loadReadReceipts();
+      renderAlertsManager();
+    } else {
+      showAdminToast(data.message || 'Failed to send reminder', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error: ' + err.message, 'error');
+  }
+};
+
+window.sendTestBroadcastToAll = async function() {
+  if (!confirm('Send a test notification to ALL approved cadets now?')) return;
+  try {
+    const res = await fetch('/api/admin/alerts/send-broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        target: 'all',
+        title: 'Test Notification',
+        message: 'This is a test broadcast from your ANO/Admin. Your notifications inbox is working correctly!',
+        channels: ['sms', 'push'],
+        category: 'info'
+      })
+    });
+    const data = await res.json();
+    if (!data.error) {
+      showAdminToast('Test broadcast sent to all cadets! They can check My Notifications in the cadet portal. 📢', 'success');
+      renderAlertsManager();
+    } else {
+      showAdminToast(data.message || 'Failed to send test broadcast', 'error');
+    }
+  } catch(err) {
+    showAdminToast('Network error: ' + err.message, 'error');
+  }
+};
+
+
+// ════════════════════════════════════════════════════════
+// BULK CADET ACTIONS MANAGEMENT
+// ════════════════════════════════════════════════════════
+function toggleBulkSelectApprovals(master) {
+  document.querySelectorAll('.approval-row-select').forEach(el => el.checked = master.checked);
+  updateApprovalsBulkBar();
+}
+
+function updateApprovalsBulkBar() {
+  const selected = Array.from(document.querySelectorAll('.approval-row-select')).filter(el => el.checked);
+  const bar = document.getElementById('approvalsBulkBar');
+  const countLabel = document.getElementById('approvalsBulkCount');
+  if (!bar || !countLabel) return;
+  
+  if (selected.length > 0) {
+    countLabel.textContent = `${selected.length} cadet${selected.length > 1 ? 's' : ''} selected`;
+    bar.style.display = 'flex';
+  } else {
+    bar.style.display = 'none';
+    const master = document.getElementById('bulkSelectAllApprovals');
+    if (master) master.checked = false;
+  }
+}
+
+async function submitBulkApprovals(action) {
+  const selected = Array.from(document.querySelectorAll('.approval-row-select')).filter(el => el.checked);
+  const userIds = selected.map(el => parseInt(el.value));
+  if (userIds.length === 0) return;
+  
+  const cnf = confirm(`Are you sure you want to bulk ${action} these ${userIds.length} selected registration applications?`);
+  if (!cnf) return;
+  
+  const endpoint = action === 'approve' ? '/api/admin/cadets/bulk-approve' : '/api/admin/cadets/bulk-delete';
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ user_ids: userIds })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message);
+    
+    showAdminToast(data.message || `Bulk ${action} successful!`, 'success');
+    renderApprovalsTable();
+    updateApprovalsBulkBar();
+    loadDashStats();
+  } catch (err) {
+    showAdminToast(err.message || `Failed to bulk ${action}`, 'error');
+  }
+}
+
+function toggleBulkSelectCadets(master) {
+  document.querySelectorAll('.cadet-row-select').forEach(el => el.checked = master.checked);
+  updateCadetsBulkBar();
+}
+
+function updateCadetsBulkBar() {
+  const selected = Array.from(document.querySelectorAll('.cadet-row-select')).filter(el => el.checked);
+  const bar = document.getElementById('cadetsBulkBar');
+  const countLabel = document.getElementById('cadetsBulkCount');
+  if (!bar || !countLabel) return;
+  
+  if (selected.length > 0) {
+    countLabel.textContent = `${selected.length} cadet${selected.length > 1 ? 's' : ''} selected`;
+    bar.style.display = 'flex';
+  } else {
+    bar.style.display = 'none';
+    const master = document.getElementById('bulkSelectAllCadets');
+    if (master) master.checked = false;
+  }
+}
+
+async function submitBulkCadets(action) {
+  const selected = Array.from(document.querySelectorAll('.cadet-row-select')).filter(el => el.checked);
+  const userIds = selected.map(el => parseInt(el.value));
+  if (userIds.length === 0) return;
+  
+  const cnf = confirm(`Are you sure you want to bulk permanently delete these ${userIds.length} selected cadet records from database?`);
+  if (!cnf) return;
+  
+  try {
+    const res = await fetch('/api/admin/cadets/bulk-delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ user_ids: userIds })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message);
+    
+    showAdminToast(data.message || 'Bulk deletion successful!', 'success');
+    renderCadetTable();
+    updateCadetsBulkBar();
+    loadDashStats();
+  } catch (err) {
+    showAdminToast(err.message || 'Failed to bulk delete', 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// PRINTABLE ATTENDANCE REGISTER
+// ════════════════════════════════════════════════════════
+window.printAttendanceRegister = async function() {
+  try {
+    const studentsRes = await NccAPI.getStudents();
+    const activeStudents = (studentsRes.students || MockDB.getCadets()).filter(c => c.status === 'approved' || c.status === 'active');
+    
+    if (activeStudents.length === 0) {
+      showAdminToast('No active cadets to print a register for.', 'warning');
+      return;
+    }
+    
+    const w = window.open('', '_blank');
+    w.document.write(`
+      <html>
+      <head>
+        <title>NCC Attendance Register – Government Polytechnic Hamirpur</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Poppins', sans-serif; padding: 30px; color: #333; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px; }
+          .header h1 { font-size: 1.5rem; margin: 0; text-transform: uppercase; color: #0d2b5e; }
+          .header p { margin: 5px 0 0; font-size: 0.85rem; color: #555; }
+          .register-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.85rem; }
+          .register-table th, .register-table td { border: 1px solid #333; padding: 8px 10px; }
+          .register-table th { background: #f2f2f2; text-align: left; }
+          .blank-col { width: 45px; text-align: center; }
+          @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>National Cadet Corps (HP) Platoon</h1>
+          <p><strong>Government Polytechnic Hamirpur (HP) — Parade Attendance Register</strong></p>
+          <p>Date of Parade: ___________________ | Time: ___________________ | ANO/Instructor Signature: ___________________</p>
+        </div>
+        <button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 8px 18px; font-size: 0.9rem; font-weight: 600; background: #0d2b5e; color: white; border: none; border-radius: 4px; cursor: pointer;">Print / Save PDF</button>
+        
+        <table class="register-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">S.No</th>
+              <th>Cadet Name</th>
+              <th>Roll Number</th>
+              <th>Branch / Year</th>
+              <th>NCC Wing</th>
+              <th class="blank-col">P / A</th>
+              <th>Cadet Signature</th>
+            </tr>
+          </thead>
+          <tbody>
+            \${activeStudents.map((c, i) => {
+              let rawName = c.full_name || c.name;
+              if (!rawName) {
+                const firstLast = \`\${c.first_name || ''} \${c.last_name || ''}\`.trim();
+                rawName = firstLast || c.username || 'Unknown Cadet';
+              }
+              const name = sanitizeHTML(rawName);
+              const roll = sanitizeHTML(c.roll_no || c.roll || '—');
+              const year = sanitizeHTML(c.year || '—');
+              const branch = sanitizeHTML(c.branch || '—');
+              const wing = sanitizeHTML(c.ncc_wing || c.wing || 'Army');
+              
+              return \`
+                <tr>
+                  <td>\${i+1}</td>
+                  <td><strong>\${name}</strong></td>
+                  <td>\${roll}</td>
+                  <td>\${branch} (\${year})</td>
+                  <td>\${wing}</td>
+                  <td class="blank-col"></td>
+                  <td style="width: 150px;"></td>
+                </tr>
+              \`;
+            }).join('')}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `);
+    w.document.close();
+  } catch(e) {
+    showAdminToast('Error generating print register: ' + e.message, 'error');
+  }
+}
+
 </script>
+</html>
+
 </html>
 

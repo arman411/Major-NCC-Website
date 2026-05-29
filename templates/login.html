@@ -281,9 +281,14 @@ function showToast(msg, type='info', dur=3500){
 
 // ── Redirect if already logged in ─────────────────────────────────────────────
 (function(){
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      for(let r of regs) { r.unregister(); }
+    });
+  }
   if(Auth.isLoggedIn()){
     const u=Auth.getUser();
-    window.location.href = u&&u.role==='admin'?'admin-dashboard.html':'cadet-portal.html';
+    window.location.href = u&&u.role==='admin'?'admin-dashboard.html?v=' + Date.now():'cadet-portal.html?v=' + Date.now();
   }
   // Show last login
   const ll=localStorage.getItem('ncc_last_login');
@@ -363,7 +368,7 @@ document.getElementById('pwdEye').addEventListener('click',function(){
 // ── Forgot Password ────────────────────────────────────────────────────────────
 document.getElementById('forgotLink').addEventListener('click',function(e){
   e.preventDefault();
-  showToast('Please contact the ANO office at ncc@gph.edu.in to reset your password.','info',6000);
+  window.location.href = 'forgot-password.html';
 });
 
 // ── OTP State ─────────────────────────────────────────────────────────────────
@@ -438,15 +443,9 @@ function finishLogin(){
   showToast('Welcome back! Redirecting...','success');
   setTimeout(()=>{
     if(user&&user.role==='admin'){
-      window.location.href='admin-dashboard.html';
+      window.location.href='admin-dashboard.html?v=' + Date.now();
     } else {
-      const cadets=MockDB.getCadets()||[];
-      // Match by email (reliable) or roll/username
-      const enrolled=cadets.some(c=>
-        (user?.email && c.email && c.email.toLowerCase()===user.email.toLowerCase()) ||
-        (user?.username && (c.roll_no===user.username || c.roll===user.username))
-      );
-      window.location.href=enrolled?'cadet-portal.html':'enrollment.html';
+      window.location.href='cadet-portal.html?v=' + Date.now();
     }
   },1000);
 }

@@ -1,5 +1,5 @@
-/* NCC GPH Service Worker v4 — Network-first for pages & scripts */
-const CACHE_NAME = 'ncc-gph-v4';
+/* NCC GPH Service Worker v5 — Network-first for pages & scripts */
+const CACHE_NAME = 'ncc-gph-v5';
 
 // Only cache external fonts & icons (truly static)
 const IMMUTABLE_ASSETS = [
@@ -61,3 +61,62 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(event.request))
   );
 });
+
+// PWA Push Notifications Listener
+self.addEventListener('push', (event) => {
+  let data = {
+    title: 'NCC Portal Update',
+    body: 'You have a new alert from ANO Office.',
+    url: '/pages/cadet-portal.html'
+  };
+
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = {
+        title: 'NCC Portal Update',
+        body: event.data.text(),
+        url: '/pages/cadet-portal.html'
+      };
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || '/images/logo.png',
+    badge: data.badge || '/images/logo.png',
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/pages/cadet-portal.html'
+    }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// PWA Notification Click Actions
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const clickUrl = event.notification.data.url || '/pages/cadet-portal.html';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // Check if there is already a window open with this URL and focus it
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        if (client.url.includes(clickUrl) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // Otherwise, open a new window
+      if (clients.openWindow) {
+        return clients.openWindow(clickUrl);
+      }
+    })
+  );
+});
+

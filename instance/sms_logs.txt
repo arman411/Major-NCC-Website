@@ -1,0 +1,20 @@
+[2026-05-28T14:02:46.599876] TO: +919876543210 | MSG: [Diagnostic Check] Alert system verification triggered at 19:32:46
+[2026-05-28T14:03:33.783672] TO: +919876543210 | MSG: [Diagnostic Check] Alert system verification triggered at 19:33:33
+[2026-05-28T15:53:54.135519] TO: +919876543210 | MSG: [NCC Announcement] ftujhbu gukhmn
+[2026-05-28T15:53:54.407500] TO: +917876801659 | MSG: [NCC Announcement] ftujhbu gukhmn
+[2026-05-28T17:48:05.410999] TO: +919876543210 | MSG: [Weekly Parade timings] Weekly training parade is scheduled for this coming Saturday at 0700 hrs on the college ground. Attendance is strictly compulsory. Come in full inspection dress.
+[2026-05-28T18:14:51.143611] [DIRECT] TO: +917018017732 | MSG: [NCC Announcement] are you planning on
+[2026-05-28T18:15:37.530184] [DIRECT] TO: +917018017732 | MSG: [NCC Announcement] jvhtygb
+[2026-05-28T18:20:45.754314] TO: +919876543210 | MSG: [Urgent Meeting with ANO] Attention Cadets: All platoon members must assemble in the NCC office today at 1400 hrs for an urgent planning briefing with the ANO regarding camp documentation.
+[2026-05-28T18:20:45.970804] TO: +917876801659 | MSG: [Urgent Meeting with ANO] Attention Cadets: All platoon members must assemble in the NCC office today at 1400 hrs for an urgent planning briefing with the ANO regarding camp documentation.
+[2026-05-28T18:29:11.166178] [DIRECT] TO: +917018017732 | MSG: [NCC Announcement] QSDAWSFGHJ
+[2026-05-29T05:01:38.340493] TO: +919876543210 | MSG: [Urgent Dress Inspection] Urgent: Full Uniform inspection scheduled for tomorrow morning during parade. Clean boots, proper ironed uniform, clean shave, and beret are mandatory.
+[2026-05-29T05:01:38.769478] TO: +917876801659 | MSG: [Urgent Dress Inspection] Urgent: Full Uniform inspection scheduled for tomorrow morning during parade. Clean boots, proper ironed uniform, clean shave, and beret are mandatory.
+[2026-05-29T05:07:11.026420] TO: +917876801659 | MSG: [Urgent Meeting with ANO] Attention Cadets: All platoon members must assemble in the NCC office today at 1400 hrs for an urgent planning briefing with the ANO regarding camp documentation.
+[2026-05-29T05:08:16.748909] TO: +919876543210 | MSG: [Camp Selection Results] Congratulations to the cadets selected for the upcoming National Integration Camp. Please report to the ANO office tomorrow with all original certificates.
+[2026-05-29T05:08:21.104723] TO: +917876801659 | MSG: [Camp Selection Results] Congratulations to the cadets selected for the upcoming National Integration Camp. Please report to the ANO office tomorrow with all original certificates.
+[2026-05-29T05:30:32.516642] TO: +919876543210 | MSG: [Diagnostic Check] Alert system verification triggered at 11:00:32
+[2026-05-29T06:30:08.637622] TO: +919876543210 | MSG: [Information] New Notice: srydyfth
+[2026-05-29T06:30:10.195672] TO: +917876801659 | MSG: [Information] New Notice: srydyfth
+[2026-05-29T06:30:32.871405] TO: +917876801659 | MSG: [Camp Nomination Update] Your application for 'trek camp' has been selected. Congratulations! Please check the details in the cadet portal.
+[2026-05-29T07:13:09.880055] TO: +919876543210 | MSG: [Diagnostic Check] Alert system verification triggered at 12:43:09

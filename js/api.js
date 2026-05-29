@@ -272,8 +272,11 @@ const Auth = {
 
 // ── Core Fetch Wrapper ────────────────────────────────────────────────────────
 async function apiFetch(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
   const token = Auth.getToken();
+  if (token && token.startsWith('mock_')) {
+    return { offline: true, error: true, message: 'Using mock database (bypass active).' };
+  }
+  const url = `${API_BASE}${endpoint}`;
 
   const headers = { ...options.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -393,33 +396,49 @@ const NccAPI = {
   // Achievements
   getAchievements: async (params = {}) => {
     const r = await api.get('/api/achievements/', params);
-    if (r.error) return { success: true, achievements: MockDB.getAchievements() };
+    if (r.error) {
+      if (r.offline) return { success: true, achievements: MockDB.getAchievements(), offline: true };
+      return r;
+    }
     return r;
   },
   createAchievement: async (form) => {
     const r = await api.postForm('/api/achievements/', form);
     if (r.error) {
-      const ach = {
-        cadet: form.get('cadet') || form.get('ach-cadet'),
-        award: form.get('award') || form.get('ach-award'),
-        type: form.get('type') || form.get('ach-type'),
-      };
-      const added = MockDB.addAchievement(ach);
-      return { success: true, achievement: added };
+      if (r.offline) {
+        const ach = {
+          cadet: form.get('cadet') || form.get('ach-cadet'),
+          award: form.get('award') || form.get('ach-award'),
+          type: form.get('type') || form.get('ach-type'),
+        };
+        const added = MockDB.addAchievement(ach);
+        return { success: true, achievement: added, offline: true };
+      }
+      return r;
     }
     return r;
   },
   deleteAchievement: async (id) => {
     const r = await api.delete(`/api/achievements/${id}`);
     if (r.error) {
-      MockDB.deleteAchievement(id);
-      return { success: true };
+      if (r.offline) {
+        MockDB.deleteAchievement(id);
+        return { success: true, offline: true };
+      }
+      return r;
     }
     return r;
   },
 
   // Camps
   getCamps: () => api.get('/api/camps/'),
+  applyForCamp: (json) => api.post('/api/camps/apply', json),
+  getMyCampApplications: () => api.get('/api/camps/applications/mine'),
+  createCamp: (json) => api.post('/api/camps/', json),
+  deleteCamp: (id) => api.delete(`/api/camps/${id}`),
+  updateCampStatus: (id, status) => api.post(`/api/camps/${id}/status`, { status }),
+  getCampApplications: () => api.get('/api/admin/camp-applications'),
+  updateCampApplicationStatus: (json) => api.post('/api/admin/camp-applications/status', json),
 
   // Contact
   submitContact: async (json) => {

@@ -92,7 +92,7 @@
     const darkBtn = `<button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>`;
 
     if (user) {
-      const portalLink = (user.role === 'admin' ? `${prefix}admin-dashboard.html` : `${prefix}cadet-portal.html`);
+      const portalLink = (user.role === 'admin' ? `${prefix}admin-dashboard.html?v=${Date.now()}` : `${prefix}cadet-portal.html?v=${Date.now()}`);
       actionsEl.innerHTML = `
         ${darkBtn}
         <a href="${portalLink}" class="btn-nav-login" style="display:flex;align-items:center;gap:6px;">

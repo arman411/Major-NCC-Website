@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event Calendar – NCC Govt. Polytechnic Hamirpur (HP)</title>
-  <script src="../js/dark-mode.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="/js/dark-mode.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
   <script>if (!Auth.isLoggedIn()) { window.location.href = 'login.html'; }</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="/css/style.css" />
   <style>
     .calendar-wrapper { max-width: 900px; margin: 0 auto; }
     /* Modal Styles */
@@ -43,7 +43,7 @@
 <div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Calendar</p></div>
 
 <nav id="navbar"><div class="navbar-inner">
-  <a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <a href="../index.html" class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
   <div class="navbar-links">
     <a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About NCC</a><a href="activities.html" class="nav-link">Activities</a><a href="notices.html" class="nav-link">Notices</a><a href="events-calendar.html" class="nav-link active">Calendar</a><a href="contact.html" class="nav-link">Contact</a>
   </div>
@@ -112,13 +112,13 @@
   </div>
 </div>
 
-<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="../images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="notices.html">Notices</a><a href="achievements.html">Achievements</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p></div></div></footer>
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="../index.html">Home</a><a href="notices.html">Notices</a><a href="achievements.html">Achievements</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p></div></div></footer>
 <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="../js/api.js"></script>
-<script src="../js/auth.js"></script>
-<script src="../js/main.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/main.js"></script>
 <script>
 let allEvents = [];
 let currentYear = new Date().getFullYear();
@@ -132,7 +132,7 @@ function closePopup() {
 
 function showPopup(ev) {
   const sd = new Date(ev.start_date);
-  const ed = new Date(ev.end_date);
+  const ed = ev.end_date ? new Date(ev.end_date) : new Date(ev.start_date);
   document.getElementById('popTitle').innerText = ev.title;
   
   document.getElementById('popMeta').innerHTML = `
@@ -179,7 +179,7 @@ function renderCalendar() {
   const evByDate = {};
   allEvents.forEach(ev => {
     const sd = new Date(ev.start_date);
-    const ed = new Date(ev.end_date);
+    const ed = ev.end_date ? new Date(ev.end_date) : new Date(ev.start_date);
     // Mark all days from start to end
     const cur = new Date(sd);
     while (cur <= ed) {

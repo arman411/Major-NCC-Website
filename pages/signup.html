@@ -160,7 +160,7 @@
       <a href="login.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
 
       <div class="logo-row">
-        <img src="../images/ncc_badge.png" alt="NCC"/>
+        <img src="/images/ncc_badge.png" alt="NCC"/>
         <div class="logo-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
       </div>
       <h1>Create Account</h1>
@@ -298,8 +298,8 @@
   </div>
 </div>
 
-<script src="../js/api.js"></script>
-<script src="../js/main.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/main.js"></script>
 <script>
 // ── Canvas Background ──────────────────────────────────────────────────────────
 (function(){
@@ -458,6 +458,9 @@ async function doSignup(){
       password:document.getElementById('suPwd').value,
       first_name:document.getElementById('suFirst').value.trim(),
       last_name:document.getElementById('suLast').value.trim(),
+      roll_no:document.getElementById('suRoll').value.trim(),
+      branch:document.getElementById('suBranch').value,
+      year:document.getElementById('suYear').value
     };
     const res=await NccAPI.signup(payload);
     if(res.error){showToast(res.message||'Signup failed. Account may exist.','error');return;}
