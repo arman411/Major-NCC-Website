@@ -1773,7 +1773,7 @@ def api_dashboard_stats():
     for i in range(5, -1, -1):
         import calendar
         m = (today.month - i - 1) % 12 + 1
-        y = today.year - ((today.month - i - 1) // 12)
+        y = today.year + ((today.month - i - 1) // 12)
         count = User.query.filter(
             db.extract('month', User.created_at) == m,
             db.extract('year',  User.created_at) == y,

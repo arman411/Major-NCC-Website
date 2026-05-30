@@ -1959,18 +1959,23 @@ async function loadDashStats() {
   const notices = MockDB.getNotices();
   const counterEls = document.querySelectorAll('[data-count]');
   if (counterEls.length) {
-    const totalCadets = stats.total_cadets || MockDB.getCadets().length;
-    const totalEvents = stats.total_camps || MockDB.getEvents().length || 48;
-    const activeNotices = stats.total_notices || notices.length;
-    const totalAch = stats.total_achievements || 32;
+    const totalCadets = stats.total_cadets !== undefined ? stats.total_cadets : MockDB.getCadets().length;
+    const totalEvents = stats.total_events !== undefined ? stats.total_events : (stats.total_camps !== undefined ? stats.total_camps : (MockDB.getEvents().length || 48));
+    const activeNotices = stats.active_notices !== undefined ? stats.active_notices : (stats.total_notices !== undefined ? stats.total_notices : notices.length);
+    const totalAch = stats.total_achievements !== undefined ? stats.total_achievements : 32;
     const vals = [totalCadets, totalEvents, activeNotices, totalAch];
     counterEls.forEach((el, i) => { if (vals[i] !== undefined) el.setAttribute('data-count', vals[i]); });
   }
+  
+  // Re-invoke count animations for new database values
+  runCountUps();
+
   // Update sidebar badge
   const cadetBadge = document.querySelector('[data-tab="cadets"] .sl-badge');
-  if (cadetBadge && stats.total_cadets) cadetBadge.textContent = stats.total_cadets;
+  if (cadetBadge && stats.total_cadets !== undefined) cadetBadge.textContent = stats.total_cadets;
   const noticeBadge = document.querySelector('[data-tab="notices"] .sl-badge');
-  if (noticeBadge && stats.total_notices) noticeBadge.textContent = stats.total_notices;
+  if (noticeBadge && stats.active_notices !== undefined) noticeBadge.textContent = stats.active_notices;
+  else if (noticeBadge && stats.total_notices !== undefined) noticeBadge.textContent = stats.total_notices;
 }
 loadDashStats();
 
@@ -2658,7 +2663,8 @@ document.getElementById('galleryFileInput').addEventListener('change', async fun
 
 /* ── Attendance ──────────────────────────────────────── */
 let currentAttendanceDate = new Date().toISOString().split('T')[0];
-document.getElementById('attendanceDate').value = currentAttendanceDate;
+const attDateEl = document.getElementById('attendanceDate') || document.getElementById('attDailyDate');
+if (attDateEl) attDateEl.value = currentAttendanceDate;
 
 async function renderAttendance(dateStr) {
   const tbody = document.getElementById('attendanceTableBody');
@@ -2713,10 +2719,12 @@ window.adminToggleAtt = async function(cadetId, newStatus) {
   }
 };
 
-document.getElementById('attendanceDate').addEventListener('change', function(e) {
-  currentAttendanceDate = e.target.value;
-  renderAttendance(currentAttendanceDate);
-});
+if (attDateEl) {
+  attDateEl.addEventListener('change', function(e) {
+    currentAttendanceDate = e.target.value;
+    renderAttendance(currentAttendanceDate);
+  });
+}
 
 window.markAllPresent = async function() {
   if(!confirm("Mark all cadets as present for " + currentAttendanceDate + "?")) return;
@@ -2849,30 +2857,54 @@ window.initCharts = async function() {
     cadets = MockDB.getCadets() || [];
   }
   
-  // Fallback to placeholder data if the unit is just starting out, so the charts look beautiful
-  const usePlaceholder = cadets.length < 20;
+  // Force disable placeholder data to show real data as requested
+  const usePlaceholder = false;
 
-  // 1. Calculate Wing counts (with placeholder text/data fallback)
-  const armyCount = usePlaceholder ? 180 : cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('army')).length;
-  const navalCount = usePlaceholder ? 40 : cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('navy') || String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('naval')).length;
-  const airCount = usePlaceholder ? 30 : cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('air')).length;
+  // Fetch real-time dashboard stats for trend lines
+  let stats = null;
+  try {
+    const res = await NccAPI.getDashboardStats();
+    stats = res.stats || res;
+  } catch (err) {
+    console.error('Failed to fetch stats for charts:', err);
+  }
+
+  // 1. Calculate Wing counts from real data
+  const armyCount = cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('army')).length;
+  const navalCount = cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('navy') || String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('naval')).length;
+  const airCount = cadets.filter(c => String(c.ncc_wing || c.wing || 'Army').toLowerCase().includes('air')).length;
   
   // 2. Calculate Enrollment by Wing and Year
-  const armyYears = usePlaceholder ? [80, 60, 40] : [0, 0, 0];
-  const navalYears = usePlaceholder ? [18, 14, 8] : [0, 0, 0];
-  const airYears = usePlaceholder ? [12, 10, 8] : [0, 0, 0];
+  const armyYears = [0, 0, 0];
+  const navalYears = [0, 0, 0];
+  const airYears = [0, 0, 0];
   
-  if (!usePlaceholder) {
-    cadets.forEach(c => {
-      const w = String(c.ncc_wing || c.wing || 'Army').toLowerCase();
-      const y = String(c.year || '1st').toLowerCase(); 
-      const yIdx = y.includes('1') || y.includes('first') ? 0 : y.includes('2') || y.includes('second') ? 1 : y.includes('3') || y.includes('third') ? 2 : 0;
-      if (yIdx !== -1) {
-        if (w.includes('army')) armyYears[yIdx]++;
-        else if (w.includes('navy') || w.includes('naval')) navalYears[yIdx]++;
-        else if (w.includes('air')) airYears[yIdx]++;
-      }
-    });
+  cadets.forEach(c => {
+    const w = String(c.ncc_wing || c.wing || 'Army').toLowerCase();
+    const y = String(c.year || '1st').toLowerCase(); 
+    const yIdx = y.includes('1') || y.includes('first') ? 0 : y.includes('2') || y.includes('second') ? 1 : y.includes('3') || y.includes('third') ? 2 : 0;
+    if (yIdx !== -1) {
+      if (w.includes('army')) armyYears[yIdx]++;
+      else if (w.includes('navy') || w.includes('naval')) navalYears[yIdx]++;
+      else if (w.includes('air')) airYears[yIdx]++;
+    }
+  });
+
+  // Calculate dynamic enrollment trends
+  const trend = (stats && stats.enrollment_trend) || [];
+  const trendLabels = trend.length ? trend.map(t => t.month) : ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
+  const newCadetsData = trend.length ? trend.map(t => t.count) : [0, 0, 0, 0, 0, cadets.length];
+  
+  // Calculate running cumulative total active cadets backwards
+  let totalActiveData = [];
+  if (trend.length) {
+    let runningTotal = (stats && stats.total_cadets) !== undefined ? stats.total_cadets : cadets.length;
+    for (let idx = trend.length - 1; idx >= 0; idx--) {
+      totalActiveData[idx] = runningTotal;
+      runningTotal -= trend[idx].count;
+    }
+  } else {
+    totalActiveData = [0, 0, 0, 0, 0, cadets.length];
   }
 
   // Enrollment Line Chart
@@ -2882,17 +2914,17 @@ window.initCharts = async function() {
     enrollChartInstance = new Chart(enrollCtx, {
       type:'line',
       data:{
-        labels:['Oct','Nov','Dec','Jan','Feb','Mar'],
+        labels: trendLabels,
         datasets:[{
           label:'New Cadets',
-          data: usePlaceholder ? [18,24,15,30,22,45] : [0,0,0,0,0,cadets.length],
+          data: newCadetsData,
           borderColor:'#0D2B5E',
           backgroundColor:'rgba(13,43,94,0.08)',
           borderWidth:3, fill:true, tension:0.4,
           pointBackgroundColor:'#0D2B5E', pointRadius:5, pointHoverRadius:7
         },{
           label:'Total Active',
-          data: usePlaceholder ? [210,218,222,235,240,250] : [0,0,0,0,0,cadets.length],
+          data: totalActiveData,
           borderColor:'#3498db',
           backgroundColor:'rgba(52,152,219,0.06)',
           borderWidth:2, fill:false, tension:0.4,
@@ -2900,29 +2932,29 @@ window.initCharts = async function() {
         }]
       },
       options:{ ...chartDefaults, scales:{
-        y:{ beginAtZero:false, grid:{ color:'rgba(0,0,0,0.06)' }, ticks:{font:{size:11,family:'Poppins'}} },
+        y:{ beginAtZero:true, grid:{ color:'rgba(0,0,0,0.06)' }, ticks:{font:{size:11,family:'Poppins'}} },
         x:{ grid:{ display:false }, ticks:{font:{size:11,family:'Poppins'}} }
       }}
     });
   }
 
-  // Wing Doughnut Chart
+  // Wing Pie Chart (Updated from doughnut to pie as requested)
   const wingCtx = document.getElementById('wingChart')?.getContext('2d');
   if (wingCtx) {
     if (wingChartInstance) wingChartInstance.destroy();
     wingChartInstance = new Chart(wingCtx, {
-      type:'doughnut',
+      type:'pie',
       data:{
         labels:['Army Wing','Naval Wing','Air Wing'],
         datasets:[{
-          data: cadets.length ? [armyCount, navalCount, airCount] : [180, 40, 30],
+          data: [armyCount, navalCount, airCount],
           backgroundColor:['#0D2B5E','#3498db','#C0392B'],
           borderWidth:2,
           borderColor:'white',
           hoverBorderWidth:3
         }]
       },
-      options:{ ...chartDefaults, cutout:'65%' }
+      options: chartDefaults
     });
   }
 
