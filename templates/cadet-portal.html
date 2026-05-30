@@ -178,8 +178,6 @@
         <!-- Overview -->
         <div class="portal-section active" id="sec-overview">
           
-
-
           <!-- Hero Banner -->
           <div class="hero-banner">
             <div class="hero-text" style="flex:1;">
@@ -1799,8 +1797,6 @@ function showSection(name, clickedBtn) {
   document.querySelectorAll('.portal-nav-link').forEach(b => b.classList.remove('active'));
   document.getElementById('sec-' + name)?.classList.add('active');
   clickedBtn?.classList.add('active');
-
-
   // Lazy-load notifications when tab is opened
   if (name === 'notifications') {
     loadMyNotifications();
@@ -1964,6 +1960,7 @@ async function initPortal() {
       document.getElementById('ov-year').textContent = myCadet.year || '—';
       document.getElementById('ov-enrolled').textContent = myCadet.enrolled_on || '—';
     }
+  }
 }
 
 
@@ -2964,7 +2961,7 @@ function playDrillWave(commandId) {
   }, 2400);
 }
 
-
+// Expose functions to window for onclick handlers
 window.showHubTab = showHubTab;
 window.translatePledge = translatePledge;
 window.toggleChecklistItem = toggleChecklistItem;
