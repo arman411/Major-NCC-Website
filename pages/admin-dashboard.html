@@ -1571,6 +1571,50 @@
               <input type="datetime-local" id="broadcastScheduledAt" class="form-control" />
             </div>
 
+            <!-- Advanced Delivery Policies Checkbox Group -->
+            <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-bottom:16px;align-items:center;">
+              <div class="form-group">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-mid);font-size:0.8rem;font-weight:600;user-select:none;">
+                  <input type="checkbox" id="broadcastRequiresAck" style="width:16px;height:16px;cursor:pointer;accent-color:var(--sky);" /> Requires RSVP / Acknowledgement
+                </label>
+              </div>
+              <div class="form-group">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-mid);font-size:0.8rem;font-weight:600;user-select:none;">
+                  <input type="checkbox" id="broadcastIsRecurring" onchange="toggleRecurringOptions()" style="width:16px;height:16px;cursor:pointer;accent-color:var(--sky);" /> Is Recurring Alert
+                </label>
+              </div>
+            </div>
+
+            <!-- Hidden Recurrence Policy Box -->
+            <div id="recurringOptions" style="display:none;background:rgba(155,89,182,0.04);border:1px solid rgba(155,89,182,0.15);padding:14px;border-radius:10px;margin-bottom:16px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                  <label style="display:block;margin-bottom:6px;font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Recurrence Type</label>
+                  <select id="recurrenceType" class="form-control">
+                    <option value="daily">Daily</option>
+                    <option value="weekly" selected>Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label style="display:block;margin-bottom:6px;font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Interval (Every N units)</label>
+                  <input type="number" id="recurrenceInterval" class="form-control" min="1" value="1" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Follow-up Nudges Dropdown -->
+            <div class="form-group" style="margin-bottom:16px;">
+              <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Smart Reminder Follow-up / Nudge</label>
+              <select id="broadcastReminderHours" class="form-control">
+                <option value="">No Follow-up Reminder</option>
+                <option value="2">Nudge after 2 hours if unread</option>
+                <option value="6">Nudge after 6 hours if unread</option>
+                <option value="12">Nudge after 12 hours if unread</option>
+                <option value="24">Nudge after 24 hours (1 day) if unread</option>
+              </select>
+            </div>
+
             <div class="form-group" style="margin-bottom:20px;">
               <label style="display:block;margin-bottom:6px;font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;">Message Body</label>
               <textarea id="broadcastMessage" class="form-control" rows="3" placeholder="Type your broadcast message here..." style="resize:vertical;" required></textarea>
@@ -1582,32 +1626,60 @@
           </form>
         </div>
 
-        <!-- Help Info & Analytics Card -->
-        <div class="chart-card">
-          <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
-            <i class="fa-solid fa-chart-simple" style="color:var(--sky);"></i> Delivery Analytics Monitor
-          </h3>
-          <div style="height:120px;display:flex;align-items:flex-end;gap:12px;border-bottom:1px solid var(--mid-gray);padding-bottom:10px;margin-bottom:16px;justify-content:space-around;">
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
-              <div id="chart-bar-sent" style="width:24px;background:#2ecc71;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
-              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Sent</span>
+        <!-- Live Delivery Analytics HUD & Lockscreen Preview Mockup -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <!-- 1. Delivery Analytics Monitor -->
+          <div class="chart-card" style="margin:0;">
+            <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+              <i class="fa-solid fa-chart-simple" style="color:var(--sky);"></i> Delivery Analytics Monitor
+            </h3>
+            
+            <!-- Modern Stat Grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div style="background:rgba(39,174,96,0.05);border:1px solid rgba(39,174,96,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform=''">
+                <div>
+                  <span style="font-size:0.68rem;font-weight:700;color:#27ae60;text-transform:uppercase;letter-spacing:0.5px;">Sent Live</span>
+                  <h4 style="font-size:1.2rem;font-weight:800;color:#27ae60;margin:4px 0 0;" id="analytics-sent-val">0</h4>
+                </div>
+                <div style="width:34px;height:34px;border-radius:50%;background:rgba(39,174,96,0.1);display:flex;align-items:center;justify-content:center;color:#27ae60;font-size:0.95rem;"><i class="fas fa-check"></i></div>
+              </div>
+              <div style="background:rgba(243,156,18,0.05);border:1px solid rgba(243,156,18,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform=''">
+                <div>
+                  <span style="font-size:0.68rem;font-weight:700;color:#d35400;text-transform:uppercase;letter-spacing:0.5px;">Simulated</span>
+                  <h4 style="font-size:1.2rem;font-weight:800;color:#d35400;margin:4px 0 0;" id="analytics-sim-val">0</h4>
+                </div>
+                <div style="width:34px;height:34px;border-radius:50%;background:rgba(243,156,18,0.1);display:flex;align-items:center;justify-content:center;color:#d35400;font-size:0.95rem;"><i class="fas fa-desktop"></i></div>
+              </div>
+              <div style="background:rgba(155,89,182,0.05);border:1px solid rgba(155,89,182,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform=''">
+                <div>
+                  <span style="font-size:0.68rem;font-weight:700;color:#9b59b6;text-transform:uppercase;letter-spacing:0.5px;">Scheduled</span>
+                  <h4 style="font-size:1.2rem;font-weight:800;color:#9b59b6;margin:4px 0 0;" id="analytics-sched-val">0</h4>
+                </div>
+                <div style="width:34px;height:34px;border-radius:50%;background:rgba(155,89,182,0.1);display:flex;align-items:center;justify-content:center;color:#9b59b6;font-size:0.95rem;"><i class="fas fa-clock"></i></div>
+              </div>
+              <div style="background:rgba(192,57,43,0.05);border:1px solid rgba(192,57,43,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform=''">
+                <div>
+                  <span style="font-size:0.68rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.5px;">Failed</span>
+                  <h4 style="font-size:1.2rem;font-weight:800;color:var(--red);margin:4px 0 0;" id="analytics-fail-val">0</h4>
+                </div>
+                <div style="width:34px;height:34px;border-radius:50%;background:rgba(192,57,43,0.1);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:0.95rem;"><i class="fas fa-exclamation-triangle"></i></div>
+              </div>
             </div>
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
-              <div id="chart-bar-simulated" style="width:24px;background:#f39c12;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
-              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Simulated</span>
+
+            <!-- Legacy Support for Javascript variable assignments (remains hidden but keeps script safe) -->
+            <div style="display:none;">
+              <div id="chart-bar-sent" style="height:0px;"></div>
+              <div id="chart-bar-simulated" style="height:0px;"></div>
+              <div id="chart-bar-scheduled" style="height:0px;"></div>
+              <div id="chart-bar-failed" style="height:0px;"></div>
             </div>
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
-              <div id="chart-bar-scheduled" style="width:24px;background:#9b59b6;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
-              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Scheduled</span>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
-              <div id="chart-bar-failed" style="width:24px;background:#e74c3c;border-radius:4px 4px 0 0;height:8px;transition:height 0.8s;"></div>
-              <span style="font-size:0.65rem;color:var(--text-light);margin-top:6px;font-weight:600;">Failed</span>
+
+            <div style="background:rgba(52,152,219,0.06);border-left:3px solid var(--sky);padding:12px;border-radius:6px;font-size:0.78rem;color:var(--navy);line-height:1.4;">
+              <strong>Advanced Dispatch Engine:</strong> Handles multi-channel deliveries. New channels: Email &amp; WhatsApp (simulated). Scheduled entries polled every 10 seconds.
             </div>
           </div>
-          <div style="background:rgba(52,152,219,0.06);border-left:3px solid var(--sky);padding:12px;border-radius:6px;font-size:0.78rem;color:var(--navy);line-height:1.4;">
-            <strong>Advanced Dispatch Engine:</strong> Handles multi-channel deliveries. New channels: Email &amp; WhatsApp (simulated). Scheduled entries polled every 10 seconds.
-          </div>
+
+
         </div>
 
       <!-- ── EMERGENCY SOS BROADCAST ─────────────────────────────── -->
@@ -4370,6 +4442,72 @@ window.toggleBroadcastScheduleInput = function() {
   }
 }
 
+// ── Live Notification Preview Engine ───────────────────────────────────
+window.updateNotificationPreview = function() {
+  const title = (document.getElementById('broadcastTitle')?.value || '').trim() || 'NCC Announcement';
+  const message = (document.getElementById('broadcastMessage')?.value || '').trim() || 'Type your message body to preview here...';
+  const category = document.querySelector('input[name="alertCategory"]:checked')?.value || 'info';
+  const requiresAck = document.getElementById('broadcastRequiresAck')?.checked || false;
+
+  // Title and message
+  const titleEl = document.getElementById('previewAlertTitle');
+  const msgEl = document.getElementById('previewAlertMessage');
+  if (titleEl) titleEl.textContent = title;
+  if (msgEl) msgEl.textContent = message;
+
+  // Category Icon & Glowing Styles
+  const iconEl = document.getElementById('previewAlertIcon');
+  const cardEl = document.getElementById('previewNotificationCard');
+  if (iconEl && cardEl) {
+    let icon = 'ℹ️';
+    let border = '1px solid rgba(52, 152, 219, 0.5)';
+    let glow = '0 8px 32px rgba(52, 152, 219, 0.3)';
+    
+    if (category === 'warning') {
+      icon = '⚠️';
+      border = '1px solid rgba(243, 156, 18, 0.5)';
+      glow = '0 8px 32px rgba(243, 156, 18, 0.3)';
+    } else if (category === 'success') {
+      icon = '✅';
+      border = '1px solid rgba(39, 174, 96, 0.5)';
+      glow = '0 8px 32px rgba(39, 174, 96, 0.3)';
+    } else if (category === 'danger') {
+      icon = '🚨';
+      border = '1px solid rgba(192, 57, 43, 0.7)';
+      glow = '0 8px 32px rgba(192, 57, 43, 0.5)';
+    }
+    
+    iconEl.textContent = icon;
+    cardEl.style.border = border;
+    cardEl.style.boxShadow = glow;
+  }
+
+  // Channels HTML list
+  const channelsEl = document.getElementById('previewChannelsList');
+  if (channelsEl) {
+    let channelsHTML = '';
+    if (document.getElementById('channelPush')?.checked) {
+      channelsHTML += `<span style="padding:2px 6px;background:rgba(52,152,219,0.15);color:var(--sky);border-radius:4px;"><i class="fas fa-bell"></i> Push</span>`;
+    }
+    if (document.getElementById('channelSms')?.checked) {
+      channelsHTML += `<span style="padding:2px 6px;background:rgba(39,174,96,0.15);color:#27ae60;border-radius:4px;"><i class="fas fa-sms"></i> SMS</span>`;
+    }
+    if (document.getElementById('channelEmail')?.checked) {
+      channelsHTML += `<span style="padding:2px 6px;background:rgba(155,89,182,0.15);color:#9b59b6;border-radius:4px;"><i class="fas fa-envelope"></i> Email</span>`;
+    }
+    if (document.getElementById('channelWhatsapp')?.checked) {
+      channelsHTML += `<span style="padding:2px 6px;background:rgba(37,211,102,0.15);color:#25d366;border-radius:4px;"><i class="fab fa-whatsapp"></i> WA</span>`;
+    }
+    channelsEl.innerHTML = channelsHTML;
+  }
+
+  // RSVP / Ack Badge
+  const ackBadgeEl = document.getElementById('previewAckNotice');
+  if (ackBadgeEl) {
+    ackBadgeEl.style.display = requiresAck ? 'flex' : 'none';
+  }
+};
+
 window.applyBroadcastTemplate = function() {
   const template = document.getElementById('broadcastTemplate').value;
   const titleInput = document.getElementById('broadcastTitle');
@@ -4398,6 +4536,7 @@ window.applyBroadcastTemplate = function() {
     document.querySelector('input[name="alertCategory"][value="success"]').checked = true;
   }
   showAdminToast("Template applied successfully! 📝", "info");
+  window.updateNotificationPreview();
 }
 
 window.cancelScheduledAlert = async function(alertId) {
@@ -4510,84 +4649,166 @@ async function renderAlertsManager() {
       document.getElementById('chart-bar-simulated').style.height = `${(simVal / maxVal) * 100}%`;
       document.getElementById('chart-bar-scheduled').style.height = `${(schedVal / maxVal) * 100}%`;
       document.getElementById('chart-bar-failed').style.height = `${(failVal / maxVal) * 100}%`;
+
+      // Update modern metric cards text contents
+      if (document.getElementById('analytics-sent-val')) document.getElementById('analytics-sent-val').textContent = sentVal;
+      if (document.getElementById('analytics-sim-val')) document.getElementById('analytics-sim-val').textContent = simVal;
+      if (document.getElementById('analytics-sched-val')) document.getElementById('analytics-sched-val').textContent = schedVal;
+      if (document.getElementById('analytics-fail-val')) document.getElementById('analytics-fail-val').textContent = failVal;
     }
 
+    // Group alerts by unique broadcast
+    const groupedMap = new Map();
+    (data.alerts || []).forEach(alert => {
+      // Create a unique key based on sent_at, title, and body
+      const timeKey = alert.sent_at ? new Date(alert.sent_at).getTime() : 0;
+      // Round to nearest 5000ms to handle loop clock skew
+      const roundedTime = Math.round(timeKey / 5000) * 5000;
+      const key = `${roundedTime}_${alert.message_title}_${alert.message_body}`;
+      
+      if (!groupedMap.has(key)) {
+        groupedMap.set(key, {
+          ...alert,
+          recipients: []
+        });
+      }
+      
+      groupedMap.get(key).recipients.push(alert);
+    });
+    
+    const groupedAlerts = Array.from(groupedMap.values());
+
     // Populate Table
-    if (data.alerts && data.alerts.length > 0) {
-      tableBody.innerHTML = data.alerts.map(alert => {
-        const sentDate = new Date(alert.sent_at);
+    if (groupedAlerts.length > 0) {
+      tableBody.innerHTML = groupedAlerts.map((group, groupIdx) => {
+        const sentDate = new Date(group.sent_at);
         const dateStr = sentDate.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + sentDate.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
         
         let statusBadge = '';
         let actionBtn = '';
-        if (alert.status === 'sent') {
+        if (group.status === 'sent') {
           statusBadge = `<span style="background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#27ae60;display:inline-block;"></span>Sent</span>`;
-        } else if (alert.status === 'simulated') {
+        } else if (group.status === 'simulated') {
           statusBadge = `<span style="background:rgba(243,156,18,0.1);color:#d35400;border:1px solid rgba(243,156,18,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#d35400;display:inline-block;"></span>Simulated</span>`;
-        } else if (alert.status === 'scheduled') {
+        } else if (group.status === 'scheduled') {
           statusBadge = `<span style="background:rgba(155,89,182,0.1);color:#9b59b6;border:1px solid rgba(155,89,182,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b59b6;display:inline-block;"></span>Scheduled</span>`;
-          actionBtn = `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="cancelScheduledAlert(${alert.id})" title="Cancel Scheduled Broadcast"><i class="fa-solid fa-trash-can"></i> Cancel</button>`;
+          actionBtn = `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="cancelScheduledAlert(${group.id})" title="Cancel Scheduled Broadcast"><i class="fa-solid fa-trash-can"></i> Cancel</button>`;
         } else {
           statusBadge = `<span style="background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.2);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#c0392b;display:inline-block;"></span>Failed</span>`;
         }
 
         let channelsHTML = '';
-        if (alert.receiver_phone === 'PWA Push') {
+        if (group.receiver_phone === 'PWA Push') {
           channelsHTML = `<i class="fa-solid fa-bell" style="color:var(--sky);margin-right:4px;" title="Web Push"></i> Push`;
-        } else if (alert.receiver_phone === 'In-App' || !alert.receiver_phone) {
+        } else if (group.receiver_phone === 'In-App' || !group.receiver_phone) {
           channelsHTML = `<i class="fa-solid fa-inbox" style="color:#9b59b6;margin-right:4px;" title="In-App Only"></i> In-App`;
         } else {
           channelsHTML = `<i class="fa-solid fa-message" style="color:#27ae60;margin-right:4px;" title="SMS"></i> SMS`;
         }
-        if (alert.email_channel) channelsHTML += `<br><i class="fas fa-envelope" style="color:#9b59b6;margin-right:4px;" title="Email"></i> Email`;
-        if (alert.whatsapp_channel) channelsHTML += `<br><i class="fab fa-whatsapp" style="color:#25d366;margin-right:4px;" title="WhatsApp"></i> WA`;
+        if (group.email_channel) channelsHTML += `<br><i class="fas fa-envelope" style="color:#9b59b6;margin-right:4px;" title="Email"></i> Email`;
+        if (group.whatsapp_channel) channelsHTML += `<br><i class="fab fa-whatsapp" style="color:#25d366;margin-right:4px;" title="WhatsApp"></i> WA`;
 
         const catColors = { info: 'sky', warning: 'warning', success: 'success', danger: 'red' };
-        const catBadge = alert.category ? `<span class="tag ${catColors[alert.category] || 'sky'}" style="font-size:0.65rem;text-transform:uppercase;margin-left:8px;">${alert.category}</span>` : '';
+        const catBadge = group.category ? `<span class="tag ${catColors[group.category] || 'sky'}" style="font-size:0.65rem;text-transform:uppercase;margin-left:8px;">${group.category}</span>` : '';
 
-        // Read and Ack
-        let readAckHTML = '';
-        if (alert.is_read) {
-          readAckHTML += `<span style="color:#27ae60;font-size:0.72rem;font-weight:600;"><i class="fas fa-check-double"></i> Read</span>`;
+        // Target group representation
+        let targetLabel = (group.target_group || 'all').replace('_', ' ');
+        let receiverHTML = '';
+        if (group.target_group === 'individual') {
+          receiverHTML = `<strong>${group.cadet_name}</strong><br><span style="font-size:0.75rem;color:var(--text-light);">${group.receiver_phone}</span>`;
         } else {
-          readAckHTML += `<span style="color:var(--text-light);font-size:0.72rem;"><i class="fas fa-eye-slash"></i> Unread</span>`;
-        }
-        if (alert.requires_acknowledgement) {
-          if (alert.is_acknowledged) {
-            const ackDt = alert.acknowledged_at ? new Date(alert.acknowledged_at).toLocaleDateString('en-IN', {day:'2-digit', month:'short'}) : '';
-            readAckHTML += `<br><span style="color:#27ae60;font-size:0.72rem;font-weight:700;" title="Acknowledged at ${alert.acknowledged_at}"><i class="fas fa-check-circle"></i> Ack (${ackDt})</span>`;
-          } else {
-            readAckHTML += `<br><span style="color:#e74c3c;font-size:0.72rem;font-weight:700;"><i class="fas fa-exclamation-circle"></i> Pending Ack</span>`;
-          }
+          receiverHTML = `<strong style="text-transform:capitalize;">${targetLabel}</strong><br><span style="font-size:0.72rem;color:var(--text-light);"><i class="fas fa-users"></i> ${group.recipients.length} Cadets</span>`;
         }
 
-        // Target Label
-        const targetLabel = (alert.target_group || 'all').replace('_', ' ');
+        // Recipients list breakdown (which cadet read it and which not)
+        const readList = group.recipients.filter(r => r.is_read);
+        const unreadList = group.recipients.filter(r => !r.is_read);
+        
+        let readAckHTML = `
+          <div style="font-size:0.75rem;line-height:1.4;">
+            <span style="color:#27ae60;font-weight:700;"><i class="fas fa-check-double"></i> ${readList.length} Read</span><br>
+            <span style="color:var(--text-light);"><i class="fas fa-eye-slash"></i> ${unreadList.length} Unread</span>
+          </div>
+        `;
+        
+        if (group.requires_acknowledgement) {
+          const ackList = group.recipients.filter(r => r.is_acknowledged);
+          const pendingAckList = group.recipients.filter(r => !r.is_acknowledged);
+          readAckHTML += `
+            <div style="font-size:0.72rem;font-weight:700;margin-top:4px;color:#9b59b6;">
+              <i class="fas fa-check-circle"></i> ${ackList.length} RSVP'd<br>
+              <span style="color:#e74c3c;"><i class="fas fa-exclamation-circle"></i> ${pendingAckList.length} Pending</span>
+            </div>
+          `;
+        }
+
+        // Collapse toggle button
+        const detailsBtn = `<button class="btn" style="background:rgba(52,152,219,0.08);color:var(--sky);border:1px solid rgba(52,152,219,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="toggleBroadcastDetails(${groupIdx})" id="details-btn-${groupIdx}"><i class="fas fa-users"></i> Recipients</button>`;
 
         // Action Column Remind & Delete
-        let customActions = actionBtn;
-        if (!alert.is_read && alert.status !== 'scheduled' && alert.user_id) {
-          customActions += `<button class="btn" style="background:rgba(231,76,60,0.08);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onclick="resendIndividualReminder(${alert.id})" title="Send individual reminder"><i class="fa-solid fa-bell"></i> Remind</button>`;
+        const alertIds = group.recipients.map(r => r.id).join(',');
+        let customActions = actionBtn + ' ' + detailsBtn;
+        if (unreadList.length > 0 && group.status !== 'scheduled') {
+          customActions += `<button class="btn" style="background:rgba(231,76,60,0.08);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="resendToUnread('${group.message_title.replace(/'/g, "\\'")}', '${group.category}')" title="Send follow-up nudge to unread"><i class="fa-solid fa-bell"></i> Remind</button>`;
         }
-        customActions += `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="deleteNotification(${alert.id})" title="Delete notification completely"><i class="fa-solid fa-trash-can"></i> Delete</button>`;
+        customActions += `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="deleteGroupNotifications('${alertIds}')" title="Delete notification completely"><i class="fa-solid fa-trash-can"></i> Delete</button>`;
+
+        // Construct recipients details sub-row HTML
+        const buildStatusList = (list, prefix, color, icon) => {
+          if (list.length === 0) return `<span style="color:var(--text-light);font-style:italic;">None</span>`;
+          return list.map(r => `<span style="padding:3px 8px;background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.06);border-radius:6px;font-size:0.7rem;color:var(--navy);font-weight:600;display:inline-flex;align-items:center;gap:4px;" title="${prefix}"><span style="color:${color}">${icon}</span> ${r.cadet_name}</span>`).join(' ');
+        };
+
+        const recipientsSubRow = `
+          <tr id="broadcast-details-row-${groupIdx}" style="display:none;background:rgba(52,152,219,0.01);border-bottom:1px solid var(--mid-gray);">
+            <td colspan="8" style="padding:14px 20px;">
+              <div style="border-left:3px solid var(--sky);padding-left:14px;">
+                <h5 style="margin:0 0 10px;font-size:0.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">Recipient Read Audit Receipt</h5>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div>
+                    <span style="font-size:0.72rem;font-weight:700;color:#27ae60;text-transform:uppercase;display:block;margin-bottom:6px;">🟢 Read (${readList.length})</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                      ${buildStatusList(readList, 'Read notification', '#27ae60', '👁️')}
+                    </div>
+                  </div>
+                  <div>
+                    <span style="font-size:0.72rem;font-weight:700;color:var(--text-mid);text-transform:uppercase;display:block;margin-bottom:6px;">🔴 Unread (${unreadList.length})</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                      ${buildStatusList(unreadList, 'Not read yet', '#7f8c8d', '👁️‍🗨️')}
+                    </div>
+                  </div>
+                  ${group.requires_acknowledgement ? `
+                  <div>
+                    <span style="font-size:0.72rem;font-weight:700;color:#9b59b6;text-transform:uppercase;display:block;margin-bottom:6px;">💜 RSVP Acknowledged</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                      ${buildStatusList(group.recipients.filter(r => r.is_acknowledged), 'Acknowledged', '#9b59b6', '✓')}
+                    </div>
+                  </div>
+                  ` : ''}
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
 
         return `
           <tr style="border-bottom:1px solid var(--mid-gray);color:var(--navy);transition:background 0.2s;" onmouseover="this.style.background='var(--off-white)'" onmouseout="this.style.background='none'">
             <td style="padding:12px 8px;white-space:nowrap;">${dateStr}</td>
-            <td style="padding:12px 8px;"><strong>${alert.cadet_name}</strong><br><span style="font-size:0.75rem;color:var(--text-light);">${alert.receiver_phone}</span></td>
+            <td style="padding:12px 8px;">${receiverHTML}</td>
             <td style="padding:12px 8px;white-space:nowrap;">${channelsHTML}</td>
             <td style="padding:12px 8px;max-width:260px;word-wrap:break-word;">
-              <strong style="font-size:0.8rem;display:block;">${alert.message_title || 'NCC Announcement'}</strong>
-              <span style="font-size:0.75rem;color:var(--text-mid);">${alert.message_body}</span> ${catBadge}
-              ${alert.is_emergency ? '<span style="font-size:0.65rem;background:rgba(231,76,60,0.12);color:#e74c3c;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">SOS</span>' : ''}
-              ${alert.is_recurring ? '<span style="font-size:0.65rem;background:rgba(155,89,182,0.12);color:#9b59b6;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">Recurring</span>' : ''}
-              ${alert.scheduled_at ? `<br><span style="font-size:0.7rem;color:#9b59b6;font-weight:600;"><i class="fa-solid fa-clock"></i> Deliver at: ${new Date(alert.scheduled_at).toLocaleString('en-IN')}</span>` : ''}
+              <strong style="font-size:0.8rem;display:block;">${group.message_title || 'NCC Announcement'}</strong>
+              <span style="font-size:0.75rem;color:var(--text-mid);">${group.message_body}</span> ${catBadge}
+              ${group.is_emergency ? '<span style="font-size:0.65rem;background:rgba(231,76,60,0.12);color:#e74c3c;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">SOS</span>' : ''}
+              ${group.is_recurring ? '<span style="font-size:0.65rem;background:rgba(155,89,182,0.12);color:#9b59b6;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;">Recurring</span>' : ''}
+              ${group.scheduled_at ? `<br><span style="font-size:0.7rem;color:#9b59b6;font-weight:600;"><i class="fa-solid fa-clock"></i> Deliver at: ${new Date(group.scheduled_at).toLocaleString('en-IN')}</span>` : ''}
             </td>
             <td style="padding:12px 8px;white-space:nowrap;text-transform:capitalize;font-weight:600;font-size:0.75rem;">${targetLabel}</td>
             <td style="padding:12px 8px;white-space:nowrap;">${statusBadge}</td>
             <td style="padding:12px 8px;white-space:nowrap;">${readAckHTML}</td>
             <td style="padding:12px 8px;white-space:nowrap;">${customActions}</td>
           </tr>
+          ${recipientsSubRow}
         `;
       }).join('');
     } else {
@@ -4677,6 +4898,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (document.getElementById('recurringOptions')) document.getElementById('recurringOptions').style.display = 'none';
           toggleBroadcastScheduleInput();
           renderAlertsManager();
+          window.updateNotificationPreview();
         } else {
           showAdminToast(data.message || 'Failed to dispatch broadcast', 'error');
         }
@@ -4686,6 +4908,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Set up listeners for Live Notification Preview HUD
+  const watchInputs = [
+    'broadcastTitle',
+    'broadcastMessage',
+    'channelPush',
+    'channelSms',
+    'channelEmail',
+    'channelWhatsapp',
+    'broadcastRequiresAck'
+  ];
+  watchInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', () => window.updateNotificationPreview());
+      el.addEventListener('change', () => window.updateNotificationPreview());
+    }
+  });
+
+  document.querySelectorAll('input[name="alertCategory"]').forEach(radio => {
+    radio.addEventListener('change', () => window.updateNotificationPreview());
+  });
+
+  // Initial preview sync
+  window.updateNotificationPreview();
 });
 
 // ── Toggle Recurring Options ──────────────────────────────────────────
@@ -4693,6 +4940,55 @@ window.toggleRecurringOptions = function() {
   const box = document.getElementById('recurringOptions');
   const chk = document.getElementById('broadcastIsRecurring');
   if (box) box.style.display = (chk && chk.checked) ? 'block' : 'none';
+};
+
+// ── Toggle Group Broadcast Details ────────────────────────────────────
+window.toggleBroadcastDetails = function(groupIdx) {
+  const row = document.getElementById(`broadcast-details-row-${groupIdx}`);
+  const btn = document.getElementById(`details-btn-${groupIdx}`);
+  if (row) {
+    const isHidden = row.style.display === 'none';
+    row.style.display = isHidden ? 'table-row' : 'none';
+    if (btn) {
+      btn.innerHTML = isHidden ? '<i class="fas fa-times"></i> Close' : '<i class="fas fa-users"></i> Recipients';
+      btn.style.background = isHidden ? 'rgba(192,57,43,0.08)' : 'rgba(52,152,219,0.08)';
+      btn.style.color = isHidden ? 'var(--red)' : 'var(--sky)';
+    }
+  }
+};
+
+window.toggleReceiptDetails = function(idx) {
+  const el = document.getElementById(`receipt-details-${idx}`);
+  const btn = document.getElementById(`receipt-btn-${idx}`);
+  if (el) {
+    const isHidden = el.style.display === 'none';
+    el.style.display = isHidden ? 'block' : 'none';
+    if (btn) {
+      btn.innerHTML = isHidden ? '<i class="fas fa-times"></i> Close' : '👥 Cadets';
+    }
+  }
+};
+
+window.deleteGroupNotifications = async function(alertIds) {
+  if (!confirm('Are you sure you want to permanently delete this entire broadcast history for all recipients?')) return;
+  try {
+    const ids = alertIds.split(',');
+    let successCount = 0;
+    for (const id of ids) {
+      const res = await fetch(`/api/admin/alerts/delete/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!data.error) successCount++;
+    }
+    showAdminToast(`🗑️ Broadcast successfully deleted (${successCount} records removed)!`, 'success');
+    renderAlertsManager();
+    if (typeof loadReadReceipts === 'function') loadReadReceipts();
+  } catch (err) {
+    console.error("Error deleting broadcast group:", err);
+    showAdminToast('Network error while deleting broadcast entries.', 'error');
+  }
 };
 
 // ── Emergency SOS Functions ───────────────────────────────────────────
@@ -4749,31 +5045,79 @@ window.loadReadReceipts = async function() {
       container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);">No broadcast data yet. Send some alerts first!</div>';
       return;
     }
-    container.innerHTML = receipts.map(r => {
+    container.innerHTML = receipts.map((r, idx) => {
       const readRate = r.read_rate || 0;
       const barColor = readRate >= 80 ? '#27ae60' : readRate >= 50 ? '#f39c12' : '#e74c3c';
       const catColors = { info: '#3498db', warning: '#f39c12', success: '#27ae60', danger: '#e74c3c' };
       const catColor = catColors[r.category] || '#3498db';
       const dt = r.sent_at ? new Date(r.sent_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
       const ackBadge = r.requires_ack > 0 ? `<span style="font-size:0.62rem;padding:2px 6px;background:rgba(231,76,60,0.1);color:#e74c3c;border-radius:8px;font-weight:700;">✅ ACK REQUIRED (${r.ack_count}/${r.requires_ack})</span>` : '';
-      return `<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--mid-gray);">
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-            <span style="font-size:0.85rem;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${r.title}</span>
-            <span style="font-size:0.62rem;font-weight:700;padding:2px 6px;background:${catColor}22;color:${catColor};border-radius:8px;text-transform:uppercase;">${r.category}</span>
-            ${ackBadge}
+      
+      const recs = r.recipients || [];
+      const readCadets = recs.filter(c => c.is_read).map(c => c.cadet_name);
+      const unreadCadets = recs.filter(c => !c.is_read).map(c => c.cadet_name);
+      const ackCadets = recs.filter(c => c.is_acknowledged).map(c => c.cadet_name);
+      const pendingAckCadets = recs.filter(c => !c.is_acknowledged).map(c => c.cadet_name);
+      
+      const buildRecListHTML = (list, color) => {
+        if (list.length === 0) return `<span style="color:var(--text-light);font-style:italic;font-size:0.65rem;">None</span>`;
+        return list.map(name => `<span style="padding:2px 5px;background:var(--off-white);border:1px solid var(--mid-gray);border-radius:4px;color:var(--navy);font-size:0.65rem;font-weight:600;display:inline-block;" title="Cadet"><span style="color:${color};">●</span> ${name}</span>`).join(' ');
+      };
+      
+      const detailsHTML = `
+        <div id="receipt-details-${idx}" style="display:none;margin-top:10px;padding:10px;background:rgba(52,152,219,0.02);border:1px solid rgba(52,152,219,0.1);border-radius:8px;text-align:left;">
+          <div style="margin-bottom:8px;">
+            <span style="font-size:0.68rem;font-weight:700;color:#27ae60;text-transform:uppercase;display:block;margin-bottom:4px;">🟢 Read (${readCadets.length})</span>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${buildRecListHTML(readCadets, '#27ae60')}</div>
           </div>
-          <div style="font-size:0.72rem;color:var(--text-light);">📅 ${dt} &nbsp;·&nbsp; 👥 ${r.total_recipients} recipients</div>
-          <div style="margin-top:8px;height:6px;background:var(--mid-gray);border-radius:3px;overflow:hidden;">
-            <div style="height:100%;background:${barColor};border-radius:3px;width:${readRate}%;transition:width 0.8s;"></div>
+          <div style="margin-bottom:8px;">
+            <span style="font-size:0.68rem;font-weight:700;color:var(--text-mid);text-transform:uppercase;display:block;margin-bottom:4px;">🔴 Unread (${unreadCadets.length})</span>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${buildRecListHTML(unreadCadets, '#7f8c8d')}</div>
+          </div>
+          ${r.requires_ack > 0 ? `
+          <div style="margin-bottom:8px;">
+            <span style="font-size:0.68rem;font-weight:700;color:#9b59b6;text-transform:uppercase;display:block;margin-bottom:4px;">💜 RSVP Acknowledged (${ackCadets.length})</span>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${buildRecListHTML(ackCadets, '#9b59b6')}</div>
+          </div>
+          <div>
+            <span style="font-size:0.68rem;font-weight:700;color:#e74c3c;text-transform:uppercase;display:block;margin-bottom:4px;">🧡 RSVP Pending (${pendingAckCadets.length})</span>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${buildRecListHTML(pendingAckCadets, '#e74c3c')}</div>
+          </div>
+          ` : ''}
+        </div>
+      `;
+
+      const deleteIds = (r.alert_ids || []).join(',');
+
+      return `<div style="padding:14px 0;border-bottom:1px solid var(--mid-gray);">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+              <span style="font-size:0.85rem;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${r.title}</span>
+              <span style="font-size:0.62rem;font-weight:700;padding:2px 6px;background:${catColor}22;color:${catColor};border-radius:8px;text-transform:uppercase;">${r.category}</span>
+              ${ackBadge}
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-light);">📅 ${dt} &nbsp;·&nbsp; 👥 ${r.total_recipients} recipients</div>
+            <div style="margin-top:8px;height:6px;background:var(--mid-gray);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;background:${barColor};border-radius:3px;width:${readRate}%;transition:width 0.8s;"></div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;min-width:110px;">
+            <div style="font-size:1.3rem;font-weight:800;color:${barColor};">${readRate}%</div>
+            <div style="font-size:0.68rem;color:var(--text-mid);font-weight:600;"><i class="fas fa-check-double" style="color:#27ae60;font-size:0.65rem;"></i> ${r.read_count} read</div>
+            <div style="font-size:0.68rem;color:var(--text-light);"><i class="fas fa-eye-slash" style="font-size:0.65rem;"></i> ${r.unread_count} unread</div>
+            ${r.requires_ack > 0 ? `
+            <div style="font-size:0.68rem;color:#9b59b6;font-weight:700;"><i class="fas fa-check-circle" style="font-size:0.65rem;"></i> ${r.ack_count} RSVP'd</div>
+            <div style="font-size:0.68rem;color:#e74c3c;font-weight:700;"><i class="fas fa-exclamation-circle" style="font-size:0.65rem;"></i> ${r.requires_ack - r.ack_count} Pending</div>
+            ` : ''}
+            <div style="margin-top:6px;display:flex;gap:4px;justify-content:flex-end;">
+              <button onclick="toggleReceiptDetails(${idx})" id="receipt-btn-${idx}" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(52,152,219,0.1);color:var(--sky);border:1px solid rgba(52,152,219,0.2);border-radius:6px;cursor:pointer;">👥 Cadets</button>
+              ${r.unread_count > 0 ? `<button onclick="resendToUnread('${r.title.replace(/'/g, "\\'")}', '${r.category}')" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);border-radius:6px;cursor:pointer;">🔁 Nudge</button>` : ''}
+              <button onclick="deleteGroupNotifications('${deleteIds}')" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(192,57,43,0.1);color:var(--red);border:1px solid rgba(192,57,43,0.2);border-radius:6px;cursor:pointer;" title="Permanently delete broadcast group history"><i class="fas fa-trash-can"></i> Delete</button>
+            </div>
           </div>
         </div>
-        <div style="text-align:right;flex-shrink:0;min-width:90px;">
-          <div style="font-size:1.3rem;font-weight:800;color:${barColor};">${readRate}%</div>
-          <div style="font-size:0.68rem;color:var(--text-light);">${r.read_count} read</div>
-          <div style="font-size:0.68rem;color:#e74c3c;">${r.unread_count} unread</div>
-          ${r.unread_count > 0 ? `<button onclick="resendToUnread('${r.title.replace(/'/g, "\\'")}', '${r.category}')" style="margin-top:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);border-radius:6px;cursor:pointer;">🔁 Resend to Unread</button>` : ''}
-        </div>
+        ${detailsHTML}
       </div>`;
     }).join('');
   } catch(err) {

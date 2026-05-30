@@ -2383,38 +2383,60 @@ def api_admin_alert_read_receipts():
             })
         return jsonify({'error': False, 'receipts': receipts})
 
-    # Aggregate stats per message_title
-    from sqlalchemy import func
-    stats = db.session.query(
-        SmsAlert.message_title,
-        SmsAlert.category,
-        SmsAlert.sent_at,
-        func.count(SmsAlert.id).label('total'),
-        func.sum(db.cast(SmsAlert.is_read, db.Integer)).label('read_count'),
-        func.sum(db.cast(SmsAlert.is_acknowledged, db.Integer)).label('ack_count'),
-        func.sum(db.case((SmsAlert.requires_acknowledgement == True, 1), else_=0)).label('requires_ack')
-    ).filter(
-        SmsAlert.user_id.isnot(None)
-    ).group_by(
-        SmsAlert.message_title, SmsAlert.category, SmsAlert.sent_at
-    ).order_by(SmsAlert.sent_at.desc()).limit(20).all()
-
-    result = []
-    for row in stats:
-        total = row.total or 1
-        read = int(row.read_count or 0)
-        ack = int(row.ack_count or 0)
-        result.append({
-            'title': row.message_title or 'NCC Announcement',
-            'category': row.category or 'info',
-            'sent_at': row.sent_at.isoformat() if row.sent_at else None,
-            'total_recipients': total,
-            'read_count': read,
-            'unread_count': total - read,
-            'read_rate': round((read / total) * 100),
-            'ack_count': ack,
-            'requires_ack': int(row.requires_ack or 0)
+    # Aggregate stats per message_title using Python-based rounded timestamp grouping
+    raw_alerts = SmsAlert.query.filter(SmsAlert.user_id.isnot(None)).order_by(SmsAlert.sent_at.desc()).limit(1000).all()
+    
+    grouped = {}
+    for a in raw_alerts:
+        dt = a.sent_at
+        if dt:
+            # Round timestamp to nearest 10 seconds to handle commit skews in loop
+            rounded_epoch = round(dt.timestamp() / 10) * 10
+            rounded_str = datetime.fromtimestamp(rounded_epoch).isoformat()
+        else:
+            rounded_str = 'None'
+            
+        key = (a.message_title or 'NCC Announcement', a.category or 'info', rounded_str)
+        if key not in grouped:
+            grouped[key] = {
+                'title': a.message_title or 'NCC Announcement',
+                'category': a.category or 'info',
+                'sent_at': dt.isoformat() if dt else None,
+                'total_recipients': 0,
+                'read_count': 0,
+                'ack_count': 0,
+                'requires_ack': 0,
+                'recipients': [],
+                'alert_ids': []
+            }
+            
+        g = grouped[key]
+        g['total_recipients'] += 1
+        if a.is_read:
+            g['read_count'] += 1
+        if a.is_acknowledged:
+            g['ack_count'] += 1
+        if a.requires_acknowledgement:
+            g['requires_ack'] += 1
+        g['alert_ids'].append(a.id)
+        g['recipients'].append({
+            'cadet_name': a.user.username if a.user else 'Unknown',
+            'is_read': a.is_read,
+            'is_acknowledged': a.is_acknowledged or False,
+            'acknowledged_at': a.acknowledged_at.isoformat() if a.acknowledged_at else None
         })
+        
+    result = []
+    for g in grouped.values():
+        total = g['total_recipients'] or 1
+        read = g['read_count']
+        g['unread_count'] = total - read
+        g['read_rate'] = round((read / total) * 100)
+        result.append(g)
+
+    # Sort grouped results by sent_at desc and limit to top 20
+    result.sort(key=lambda x: x['sent_at'] or '', reverse=True)
+    result = result[:20]
 
     return jsonify({'error': False, 'receipts': result})
 
