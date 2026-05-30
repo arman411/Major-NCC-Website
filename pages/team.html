@@ -56,7 +56,7 @@
     }
     @keyframes ldSpin { to { transform: rotate(360deg); } }
     .ld-logo { position: absolute; width: 36px; height: 36px; }
-    .ld-logo img { width: 100%; filter: brightness(0) invert(1); }
+    .ld-logo img { width: 100%; }
     .ld-text { font-size: 0.78rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
     .ld-progress { width: 200px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
     .ld-bar { height: 100%; background: linear-gradient(90deg, var(--sky), var(--gold-l)); animation: ldBar 1.5s ease forwards; }
@@ -72,7 +72,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .nav-brand img { width: 38px; height: 38px; object-fit: contain; filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(249,196,15,0.4)); }
+    .nav-brand img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(249,196,15,0.4)); }
     .nav-brand-t strong { display: block; font-size: 0.9rem; font-weight: 700; color: white; }
     .nav-brand-t span { font-size: 0.7rem; color: rgba(255,255,255,0.45); }
     .nav-back {
@@ -489,7 +489,8 @@
       position: relative; z-index: 1;
     }
     .footer-logos { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 20px; }
-    .footer-logos img { width: 44px; filter: brightness(0) invert(1); opacity: 0.5; }
+    .footer-logos img { width: 44px; opacity: 0.85; transition: opacity 0.3s ease; }
+    .footer-logos img:hover { opacity: 1; }
     .footer-logos-text strong { display: block; font-size: 0.95rem; color: rgba(255,255,255,0.7); font-weight: 700; }
     .footer-logos-text span { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     .footer-rule { width: 60px; height: 1px; background: rgba(255,255,255,0.08); margin: 22px auto; }
