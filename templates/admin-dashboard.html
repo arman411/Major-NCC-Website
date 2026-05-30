@@ -1056,55 +1056,272 @@
 .id-close { position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666; }
 .id-close:hover { color:#e74c3c; }
 
-/* Printable ID Card Design */
-.id-card-wrapper {
-  width: 320px;
-  height: 500px;
+/* ── 3D Flip ID Card ───────────────────────────────────── */
+/* Scene / perspective wrapper */
+.id-card-scene {
+  width: 340px; height: 540px;
+  perspective: 1200px;
   margin: 0 auto;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+/* Flip container */
+.id-card-flip {
+  width: 100%; height: 100%;
   position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+}
+.id-card-scene.flipped .id-card-flip { transform: rotateY(180deg); }
+
+/* Both faces share this */
+.id-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 18px;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
+  box-shadow: 0 25px 60px rgba(13,43,94,0.35), 0 8px 20px rgba(0,0,0,0.2);
 }
-.id-card-wrapper::before {
-  content: '';
-  position: absolute; top:0; left:0; width:100%; height:100%;
-  background: radial-gradient(circle at center, rgba(52,152,219,0.05) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
+.id-face-back { transform: rotateY(180deg); }
+
+/* ── HOLOGRAPHIC shimmer overlay ── */
+.id-holo {
+  position: absolute; inset: 0; z-index: 20; pointer-events: none;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.06) 25%,
+    rgba(52,152,219,0.12) 40%,
+    rgba(192,57,43,0.10) 55%,
+    rgba(255,215,0,0.08) 70%,
+    rgba(255,255,255,0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
 }
-.id-header {
-  background: var(--navy);
-  color: white;
-  text-align: center;
-  padding: 12px 10px;
-  border-bottom: 4px solid var(--red);
-  position: relative; z-index: 2;
+.id-card-scene:hover .id-holo { opacity: 1; }
+
+/* Tilt effect on hover via JS */
+.id-card-scene { transition: transform 0.1s ease; }
+
+/* ── FRONT face ── */
+.id-face-front {
+  background: linear-gradient(160deg, #0d2b5e 0%, #1a3f7a 50%, #0d2b5e 100%);
+  display: flex; flex-direction: column;
 }
-.id-header img { width: 45px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-.id-header h4 { font-size: 0.9rem; font-weight: 700; margin:0; line-height:1.2; text-transform: uppercase; letter-spacing: 0.5px;}
-.id-header p { font-size: 0.6rem; margin:0; opacity: 0.9; letter-spacing: 0.5px;}
 
-.id-body { padding: 20px; text-align: center; position:relative; z-index:2; }
-.id-photo { width: 100px; height: 120px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); object-fit: cover; border-radius: 6px; margin: 0 auto 15px; display:block; background:#eee; }
-.id-name { font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 2px; text-transform: uppercase; }
-.id-rank { font-size: 0.8rem; font-weight: 600; color: var(--red); margin-bottom: 15px; letter-spacing: 1px;}
-
-.id-details { text-align: left; font-size: 0.75rem; color: #333; line-height: 1.6; }
-.id-details div { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 4px; display:flex; justify-content:space-between; }
-.id-details strong { color: var(--navy); }
-
-.id-footer {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: var(--sky); color: white;
-  padding: 10px; text-align: center; font-size: 0.7rem; font-weight: 600;
+/* Front – top stripe */
+.idf-top-stripe {
+  height: 6px;
+  background: linear-gradient(90deg, #c0392b 0%, #e74c3c 50%, #c0392b 100%);
+  flex-shrink: 0;
+}
+/* Front – header */
+.idf-header {
+  background: linear-gradient(135deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.03) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.idf-header img { width: 46px; height: 46px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); flex-shrink:0; }
+.idf-header-text h4 {
+  font-size: 0.72rem; font-weight: 800; color: white; margin:0; text-transform: uppercase;
+  letter-spacing: 1.5px; line-height: 1.3;
+}
+.idf-header-text p {
+  font-size: 0.6rem; color: rgba(255,255,255,0.65); margin:2px 0 0; letter-spacing: 0.5px;
+}
+/* Front – photo area */
+.idf-photo-wrap {
+  display: flex; justify-content: center; padding: 20px 20px 12px;
+  position: relative;
+}
+.idf-photo-ring {
+  width: 114px; height: 114px; border-radius: 50%;
+  background: linear-gradient(135deg,#e74c3c,#3498db,#f1c40f,#e74c3c);
+  padding: 3px;
+  box-shadow: 0 0 24px rgba(52,152,219,0.5);
+  animation: holoRing 4s linear infinite;
+}
+@keyframes holoRing { to { filter: hue-rotate(360deg); } }
+.idf-photo {
+  width: 108px; height: 108px; border-radius: 50%; border: 3px solid #0d2b5e;
+  object-fit: cover; display: block; background: #1a3f7a;
+}
+/* Front – name block */
+.idf-name-block { text-align: center; padding: 0 20px 14px; }
+.idf-name {
+  font-size: 1.15rem; font-weight: 900; color: white; text-transform: uppercase;
+  letter-spacing: 1.5px; line-height: 1.2; margin-bottom: 4px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.idf-rank {
+  display: inline-block;
+  font-size: 0.65rem; font-weight: 700; color: white;
+  background: linear-gradient(90deg,#c0392b,#e74c3c);
+  padding: 3px 14px; border-radius: 20px; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+/* Front – details grid */
+.idf-details {
+  margin: 0 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.idf-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.72rem;
+}
+.idf-row:last-child { border-bottom: none; }
+.idf-row .lbl { color: rgba(255,255,255,0.5); font-weight: 500; }
+.idf-row .val { color: white; font-weight: 700; letter-spacing: 0.5px; }
+/* Front – bottom strip */
+.idf-bottom {
+  margin-top: auto;
+  background: rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.1);
   display: flex; justify-content: space-between; align-items: flex-end;
-  z-index: 2;
+  padding: 12px 20px;
 }
-.id-sign { width: 60px; border-bottom: 1px solid rgba(255,255,255,0.7); display: inline-block; margin-bottom: 4px; }
-.id-watermark { position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);opacity:0.04;width:200px;z-index:1;pointer-events:none;}
+.idf-sign-box { text-align: center; }
+.idf-sign-line { width: 70px; height: 1px; background: rgba(255,255,255,0.3); margin: 0 auto 4px; }
+.idf-sign-lbl { font-size: 0.58rem; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.idf-year-chip {
+  background: rgba(192,57,43,0.3); border: 1px solid rgba(192,57,43,0.5);
+  color: white; font-size: 0.65rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 1px;
+}
+/* Front – chip tag */
+.idf-chip-tag {
+  position: absolute; top: 12px; right: 14px;
+  background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.4);
+  color: #ffd700; font-size: 0.58rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px; letter-spacing: 1px;
+}
+
+/* Magnetic stripe on front */
+.idf-mag-stripe {
+  height: 3px; margin: 0 20px 10px;
+  background: linear-gradient(90deg,transparent,rgba(52,152,219,0.4),rgba(192,57,43,0.4),rgba(255,215,0,0.3),transparent);
+  border-radius: 2px;
+}
+
+/* ── BACK face ── */
+.id-face-back {
+  background: linear-gradient(160deg, #0a2040 0%, #112d5c 60%, #0a2040 100%);
+  display: flex; flex-direction: column;
+}
+.idb-mag-bar {
+  height: 48px; margin-top: 28px;
+  background: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.idb-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.idb-qr-wrap {
+  display: flex; justify-content: center; margin-bottom: 16px;
+}
+.idb-qr-frame {
+  background: white; padding: 10px; border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  position: relative;
+}
+.idb-qr-frame canvas, .idb-qr-frame img { width: 130px; height: 130px; display: block; }
+.idb-qr-label {
+  position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+  font-size: 0.58rem; color: rgba(255,255,255,0.5); white-space: nowrap; letter-spacing: 0.5px;
+}
+.idb-info {
+  margin-top: 28px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 14px; font-size: 0.68rem; color: rgba(255,255,255,0.7);
+  line-height: 1.8;
+}
+.idb-info strong { color: white; }
+.idb-barcode {
+  margin-top: auto; padding-top: 16px; text-align: center;
+}
+.idb-barcode-img { width: 240px; height: 50px; }
+.idb-barcode-num {
+  font-size: 0.6rem; color: rgba(255,255,255,0.35); letter-spacing: 2px; margin-top: 4px;
+  font-family: monospace;
+}
+.idb-logo-row {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px;
+}
+.idb-logo-row img { width: 26px; height: 26px; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5)); }
+.idb-logo-row span { font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+
+/* ── Modal redesign ── */
+.id-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(5,15,35,0.85);
+  backdrop-filter: blur(12px);
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  padding: 20px;
+}
+.id-modal-overlay.active { display: flex; }
+.id-modal-top {
+  color: white; text-align: center;
+}
+.id-modal-top h3 {
+  font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; letter-spacing: 0.5px;
+}
+.id-modal-top p { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.id-modal-actions {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.id-action-btn {
+  padding: 10px 22px; border-radius: 50px; border: none; cursor: pointer;
+  font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s ease; letter-spacing: 0.3px;
+}
+.id-action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+.id-btn-flip {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+}
+.id-btn-pdf { background: linear-gradient(135deg,#e74c3c,#c0392b); color: white; }
+.id-btn-print { background: linear-gradient(135deg,#2980b9,#1a5276); color: white; }
+.id-btn-close { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+
+/* Hint text */
+.id-flip-hint {
+  font-size: 0.7rem; color: rgba(255,255,255,0.35); text-align: center;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+@keyframes hintPulse { 0%,100%{opacity:0.35} 50%{opacity:0.7} }
+
+/* ── QR canvas shimmer on back ── */
+.idb-qr-frame::after {
+  content:'';
+  position:absolute;inset:0;border-radius:8px;
+  background:linear-gradient(135deg,transparent 40%,rgba(52,152,219,0.15) 50%,transparent 60%);
+  background-size:200% 200%;
+  animation:qrShimmer 3s linear infinite;
+}
+@keyframes qrShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Print */
+@media print {
+  body * { visibility: hidden; }
+  .id-face-front, .id-face-front * { visibility: visible; }
+  .id-face-front {
+    position: fixed; inset: 0; width: 340px; height: 540px;
+    margin: auto; transform: none !important;
+    box-shadow: none; border: 1px solid #ddd;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+}
 
 /* Print specific */
 @media print {
@@ -1115,42 +1332,111 @@
 </style>
 
 <div class="id-modal-overlay" id="idModal">
-  <div class="id-modal-content">
-    <button class="id-close" onclick="closeIDModal()"><i class="fas fa-times"></i></button>
-    <h3 style="margin-bottom:20px;text-align:center;color:var(--navy);">Cadet ID Card Preview</h3>
-    
-    <div class="id-card-wrapper" id="printableIDCard">
-      <img src="/images/ncc_badge.png" class="id-watermark" alt="watermark">
-      <div class="id-header">
-        <img src="/images/ncc_badge.png" alt="NCC Logo">
-        <h4>National Cadet Corps</h4>
-        <p>Govt. Polytechnic Hamirpur (HP)</p>
-      </div>
-      <div class="id-body">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5Ij5QaG90bzwvdGV4dD48L3N2Zz4=" class="id-photo" id="idPhoto" alt="Cadet Photo">
-        <div class="id-name" id="idName">CADET NAME</div>
-        <div class="id-rank" id="idRank">CADET</div>
-        
-        <div class="id-details">
-          <div><strong>Roll No:</strong> <span id="idRoll">---</span></div>
-          <div><strong>Wing:</strong> <span id="idWing">Army</span></div>
-          <div><strong>Blood Group:</strong> <span id="idBlood">O+</span></div>
-          <div><strong>DOB:</strong> <span id="idDob">---</span></div>
+
+  <!-- Title -->
+  <div class="id-modal-top">
+    <h3>🪖 Cadet Identity Card</h3>
+    <p>Click card to flip &bull; Hover to see holographic shimmer</p>
+  </div>
+
+  <!-- 3D Card Scene -->
+  <div class="id-card-scene" id="idCardScene" onclick="flipIDCard()">
+    <div class="id-card-flip" id="idCardFlip">
+
+      <!-- ═══════ FRONT FACE ═══════ -->
+      <div class="id-face id-face-front" id="idCardFront">
+        <div class="id-holo"></div>
+        <div class="idf-top-stripe"></div>
+        <div class="idf-header">
+          <img src="/images/ncc_badge.png" alt="NCC">
+          <div class="idf-header-text">
+            <h4>National Cadet Corps</h4>
+            <p>Govt. Polytechnic Hamirpur (HP)<br>Unity &bull; Discipline &bull; Leadership</p>
+          </div>
+        </div>
+        <div class="idf-photo-wrap">
+          <div class="idf-photo-ring">
+            <img src="" class="idf-photo" id="idPhoto3D" alt="Cadet Photo">
+          </div>
+          <div class="idf-chip-tag">NCC ID</div>
+        </div>
+        <div class="idf-name-block">
+          <div class="idf-name" id="idName3D">CADET NAME</div>
+          <div class="idf-rank" id="idRank3D">NCC CADET</div>
+        </div>
+        <div class="idf-details">
+          <div class="idf-row"><span class="lbl">Roll No.</span><span class="val" id="idRoll3D">—</span></div>
+          <div class="idf-row"><span class="lbl">Wing</span><span class="val" id="idWing3D">—</span></div>
+          <div class="idf-row"><span class="lbl">Blood Group</span><span class="val" id="idBlood3D">—</span></div>
+          <div class="idf-row"><span class="lbl">Date of Birth</span><span class="val" id="idDob3D">—</span></div>
+          <div class="idf-row"><span class="lbl">Branch</span><span class="val" id="idBranch3D">—</span></div>
+        </div>
+        <div class="idf-mag-stripe"></div>
+        <div class="idf-bottom">
+          <div class="idf-sign-box">
+            <div class="idf-sign-line"></div>
+            <div class="idf-sign-lbl">CADET SIGNATURE</div>
+          </div>
+          <div class="idf-year-chip" id="idYear3D">2025</div>
+          <div class="idf-sign-box">
+            <div class="idf-sign-line"></div>
+            <div class="idf-sign-lbl">ANO SIGNATURE</div>
+          </div>
         </div>
       </div>
-      <div class="id-footer">
-        <div><div class="id-sign"></div><br>Cadet Sign</div>
-        <div><div class="id-sign"></div><br>ANO Sign</div>
-      </div>
-    </div>
-    
-    <div style="text-align:center;margin-top:24px;">
-      <button class="btn btn-primary" onclick="window.print()" style="padding:10px 24px;font-size:0.9rem;"><i class="fas fa-print"></i> Print / Save as PDF</button>
-    </div>
-  </div>
-</div>
 
-    <!-- ── ALERTS MANAGER TAB ────────────────────────── -->
+      <!-- ═══════ BACK FACE ═══════ -->
+      <div class="id-face id-face-back" id="idCardBack">
+        <div class="id-holo"></div>
+        <div class="idb-mag-bar"></div>
+        <div class="idb-body">
+          <div class="idb-qr-wrap">
+            <div class="idb-qr-frame">
+              <canvas id="idQRCanvas" width="130" height="130"></canvas>
+              <div class="idb-qr-label">Scan to verify cadet identity</div>
+            </div>
+          </div>
+          <div class="idb-info">
+            <strong>NCC Unit</strong> — Govt. Polytechnic Hamirpur (HP)<br>
+            <strong>District:</strong> Hamirpur &bull; <strong>State:</strong> Himachal Pradesh<br>
+            <strong>Directorate:</strong> HP & Chandigarh NCC Directorate<br>
+            <strong>Contact:</strong> ano.ncc.gph@hp.gov.in
+          </div>
+          <div class="idb-barcode">
+            <canvas id="idBarcodeCanvas" class="idb-barcode-img"></canvas>
+            <div class="idb-barcode-num" id="idBarcodeNum">NCC-GPH-000000</div>
+          </div>
+          <div class="idb-logo-row">
+            <img src="/images/ncc_badge.png" alt="NCC">
+            <span>National Cadet Corps — Est. 1948</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end .id-card-flip -->
+  </div><!-- end .id-card-scene -->
+
+  <div class="id-flip-hint">👆 Click card to flip &nbsp;|&nbsp; Hover for holographic effect</div>
+
+  <!-- Action buttons -->
+  <div class="id-modal-actions">
+    <button class="id-action-btn id-btn-flip" onclick="flipIDCard()">
+      <i class="fas fa-sync-alt"></i> Flip Card
+    </button>
+    <button class="id-action-btn id-btn-pdf" onclick="downloadIDCardPDF()" id="btnDownloadPDF">
+      <i class="fas fa-file-pdf"></i> Download PDF
+    </button>
+    <button class="id-action-btn id-btn-print" onclick="window.print()">
+      <i class="fas fa-print"></i> Print
+    </button>
+    <button class="id-action-btn id-btn-close" onclick="closeIDModal()">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+
+</div><!-- end #idModal -->
+
+    <!-- ── ALERTS MANAGER TAB    <!-- ── ALERTS MANAGER TAB ────────────────────────── -->
     <div class="admin-tab-content" id="tab-alerts-manager">
       <h1 class="page-title">Alerts & Broadcast Manager</h1>
       <p class="page-sub">Send dual-channel PWA push notifications and simulated/Twilio SMS alerts to cadets.</p>
@@ -1927,45 +2213,222 @@ window.rejectCadet = async function(id) {
   if (typeof initCharts === 'function') initCharts();
 };
 
+// ── 3D ID Card System ──────────────────────────────────────────────
 window.generateIDCard = async function(id) {
   const res = await NccAPI.getStudents();
   const allStudents = res.students || MockDB.getCadets();
   const c = allStudents.find(x => x.id == id);
-  if (!c) { showToast('Cadet details not found', 'error'); return; }
-  
-  const name = c.full_name || c.name || `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'CADET';
-  document.getElementById('idName').textContent = name;
-  document.getElementById('idRoll').textContent = c.roll_no || c.roll || 'N/A';
-  document.getElementById('idWing').textContent = c.ncc_wing || c.wing || 'Army';
-  document.getElementById('idBlood').textContent = c.blood_group || 'N/A';
-  
+  if (!c) { showAdminToast('Cadet details not found', 'error'); return; }
+
+  const name = c.full_name || c.name || `${c.first_name||''} ${c.last_name||''}`.trim() || 'CADET';
+  const roll = c.roll_no || c.roll || 'N/A';
+  const wing = c.ncc_wing || c.wing || 'Army';
+  const blood = c.blood_group || 'N/A';
+  const branch = c.branch || c.course || 'N/A';
   let dobStr = 'N/A';
-  if (c.dob) {
-    const d = new Date(c.dob);
-    if (!isNaN(d.getTime())) dobStr = d.toLocaleDateString('en-IN');
-  }
-  document.getElementById('idDob').textContent = dobStr;
-  
-  const photoEl = document.getElementById('idPhoto');
-  const fallbackImg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5Ij5QaG90bzwvdGV4dD48L3N2Zz4=';
-  
-  if (c.photo_url) {
-    if (c.photo_url.startsWith('data:')) {
-      photoEl.src = c.photo_url;
-    } else {
-      photoEl.src = API_BASE + c.photo_url;
-    }
-  } else {
-    photoEl.src = fallbackImg;
-  }
-  photoEl.onerror = function() { this.src = fallbackImg; };
-  
+  if (c.dob) { const d = new Date(c.dob); if (!isNaN(d.getTime())) dobStr = d.toLocaleDateString('en-IN'); }
+
+  // Populate FRONT
+  document.getElementById('idName3D').textContent   = name;
+  document.getElementById('idRoll3D').textContent   = roll;
+  document.getElementById('idWing3D').textContent   = wing;
+  document.getElementById('idBlood3D').textContent  = blood;
+  document.getElementById('idDob3D').textContent    = dobStr;
+  document.getElementById('idBranch3D').textContent = branch;
+  document.getElementById('idRank3D').textContent   = 'NCC CADET · ' + wing.toUpperCase() + ' WING';
+  document.getElementById('idYear3D').textContent   = new Date().getFullYear();
+
+  // Photo
+  const fallback = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDgiIGhlaWdodD0iMTA4Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWEzZjdhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY4OGFhIj5QaG90bzwvdGV4dD48L3N2Zz4=';
+  const photoEl = document.getElementById('idPhoto3D');
+  photoEl.src = (c.photo_url ? (c.photo_url.startsWith('data:') ? c.photo_url : API_BASE + c.photo_url) : fallback);
+  photoEl.onerror = () => { photoEl.src = fallback; };
+
+  // Populate BACK — draw QR code
+  _drawIDCardQR(roll, name);
+  _drawIDBarcode(roll);
+
+  // Reset flip state
+  document.getElementById('idCardScene').classList.remove('flipped');
+
+  // Show modal
   document.getElementById('idModal').classList.add('active');
+
+  // Start 3D tilt effect
+  _startIDCardTilt();
+};
+
+function _drawIDCardQR(roll, name) {
+  const canvas = document.getElementById('idQRCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const size = 130;
+  canvas.width = size; canvas.height = size;
+
+  // Simple QR-like visual (real QR needs library; we draw a convincing pattern)
+  ctx.fillStyle = 'white'; ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = '#0d2b5e';
+
+  // Corner squares
+  function corner(x, y) {
+    ctx.fillRect(x, y, 30, 30);
+    ctx.fillStyle = 'white'; ctx.fillRect(x+5, y+5, 20, 20);
+    ctx.fillStyle = '#0d2b5e'; ctx.fillRect(x+9, y+9, 12, 12);
+    ctx.fillStyle = '#0d2b5e';
+  }
+  corner(6, 6); corner(size-36, 6); corner(6, size-36);
+
+  // Random data modules (seeded by roll)
+  let seed = 0;
+  for (let i = 0; i < roll.length; i++) seed = (seed * 31 + roll.charCodeAt(i)) >>> 0;
+  function rand() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; }
+  for (let row = 0; row < 12; row++) {
+    for (let col = 0; col < 12; col++) {
+      if ((row < 4 && col < 4) || (row < 4 && col > 7) || (row > 7 && col < 4)) continue;
+      if (rand() > 0.45) {
+        ctx.fillStyle = '#0d2b5e';
+        ctx.fillRect(38 + col * 7, 10 + row * 9, 6, 8);
+      }
+    }
+  }
+  // small NCC text in center
+  ctx.fillStyle = '#c0392b'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('NCC', size/2, size - 8);
+}
+
+function _drawIDBarcode(roll) {
+  const canvas = document.getElementById('idBarcodeCanvas');
+  if (!canvas) return;
+  canvas.width = 240; canvas.height = 50;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0a2040'; ctx.fillRect(0, 0, 240, 50);
+
+  // Draw barcode bars
+  let seed = 0;
+  const code = 'NCC' + (roll || '000000');
+  for (let i = 0; i < code.length; i++) seed = (seed * 31 + code.charCodeAt(i)) >>> 0;
+  function rand() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; }
+
+  let x = 8;
+  while (x < 232) {
+    const w = Math.floor(rand() * 3) + 1;
+    ctx.fillStyle = rand() > 0.4 ? 'white' : 'rgba(255,255,255,0.15)';
+    ctx.fillRect(x, 6, w, 32);
+    x += w + 1;
+  }
+
+  document.getElementById('idBarcodeNum').textContent = 'NCC-GPH-' + roll.padStart(6, '0');
+}
+
+let _tiltAnimId = null;
+function _startIDCardTilt() {
+  const scene = document.getElementById('idCardScene');
+  if (!scene) return;
+  const onMove = (e) => {
+    const rect = scene.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    const tiltX = dy * -12;
+    const tiltY = dx * 12;
+    const isFlipped = scene.classList.contains('flipped');
+    scene.style.transform = `perspective(1200px) rotateX(${tiltX}deg) rotateY(${isFlipped ? 180+tiltY : tiltY}deg)`;
+  };
+  const onLeave = () => {
+    const isFlipped = scene.classList.contains('flipped');
+    scene.style.transform = isFlipped ? 'perspective(1200px) rotateY(180deg)' : 'perspective(1200px) rotateY(0deg)';
+    scene.style.transition = 'transform 0.5s ease';
+  };
+  scene.addEventListener('mousemove', onMove);
+  scene.addEventListener('mouseleave', onLeave);
+  scene._tiltCleanup = () => { scene.removeEventListener('mousemove', onMove); scene.removeEventListener('mouseleave', onLeave); };
+}
+
+window.flipIDCard = function() {
+  const scene = document.getElementById('idCardScene');
+  if (!scene) return;
+  scene.classList.toggle('flipped');
 };
 
 window.closeIDModal = function() {
   document.getElementById('idModal').classList.remove('active');
+  const scene = document.getElementById('idCardScene');
+  if (scene && scene._tiltCleanup) { scene._tiltCleanup(); scene.style.transform = ''; }
+  scene && scene.classList.remove('flipped');
 };
+
+window.downloadIDCardPDF = async function() {
+  const btn = document.getElementById('btnDownloadPDF');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+  btn.disabled = true;
+
+  try {
+    // Ensure html2canvas is loaded
+    if (typeof html2canvas === 'undefined') {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    // Capture front face
+    const scene = document.getElementById('idCardScene');
+    const wasFlipped = scene.classList.contains('flipped');
+    scene.classList.remove('flipped');
+    scene.style.transform = 'perspective(1200px) rotateY(0deg)';
+    await new Promise(r => setTimeout(r, 400));
+
+    const front = document.getElementById('idCardFront');
+    const frontCanvas = await html2canvas(front, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
+
+    // Capture back face
+    scene.classList.add('flipped');
+    scene.style.transform = 'perspective(1200px) rotateY(180deg)';
+    await new Promise(r => setTimeout(r, 400));
+
+    const back = document.getElementById('idCardBack');
+    const backCanvas = await html2canvas(back, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
+
+    // Restore state
+    if (!wasFlipped) { scene.classList.remove('flipped'); scene.style.transform = ''; }
+
+    const PDF = window.jspdf?.jsPDF || window.jsPDF;
+    const pdf = new PDF({ orientation: 'portrait', unit: 'mm', format: [90, 145] });
+
+    const pW = 90, pH = 145;
+    pdf.addImage(frontCanvas.toDataURL('image/png'), 'PNG', 0, 0, pW, pH);
+    pdf.addPage();
+    pdf.addImage(backCanvas.toDataURL('image/png'), 'PNG', 0, 0, pW, pH);
+
+    const name = document.getElementById('idName3D').textContent.replace(/\s+/g, '_');
+    pdf.save(`NCC_ID_${name}.pdf`);
+
+    showAdminToast('ID Card PDF downloaded!', 'success');
+  } catch(err) {
+    console.error(err);
+    showAdminToast('PDF generation failed: ' + err.message, 'error');
+  } finally {
+    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+    btn.disabled = false;
+  }
+};
+
+// Also keep backward-compat references
+window.idPhoto    = document.getElementById('idPhoto3D');
+window.idName     = document.getElementById('idName3D');
+
+window.viewCadet = async function(id) {
 window.viewCadet = async function(id) {
   const res = await NccAPI.getStudents();
   const students = res.students || MockDB.getCadets();
