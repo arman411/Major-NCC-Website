@@ -1050,11 +1050,10 @@
 
 <!-- ID Card Modal -->
 <style>
-.id-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:none;align-items:center;justify-content:center; }
-.id-modal-overlay.active { display:flex; }
-.id-modal-content { background:#fff;border-radius:12px;padding:24px;max-width:450px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.3);position:relative; }
-.id-close { position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666; }
-.id-close:hover { color:#e74c3c; }
+
+.id-modal-overlay.active { display:flex !important; }
+/* old id-modal-content removed */
+/* old id-close removed */
 
 /* ── 3D Flip ID Card ───────────────────────────────────── */
 /* Scene / perspective wrapper */
@@ -1324,11 +1323,7 @@
 }
 
 /* Print specific */
-@media print {
-  body * { visibility: hidden; }
-  #printableIDCard, #printableIDCard * { visibility: visible; }
-  #printableIDCard { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); box-shadow: none; border:1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-}
+/* Old print CSS removed */
 </style>
 
 <div class="id-modal-overlay" id="idModal">
@@ -2428,7 +2423,6 @@ window.downloadIDCardPDF = async function() {
 window.idPhoto    = document.getElementById('idPhoto3D');
 window.idName     = document.getElementById('idName3D');
 
-window.viewCadet = async function(id) {
 window.viewCadet = async function(id) {
   const res = await NccAPI.getStudents();
   const students = res.students || MockDB.getCadets();
