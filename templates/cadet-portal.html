@@ -114,27 +114,19 @@
     .fab-item-btn { width:44px; height:44px; border-radius:50%; background:white; color:var(--navy); display:flex; align-items:center; justify-content:center; font-size:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:transform 0.2s; }
     .fab-item:hover .fab-item-btn { transform:scale(1.1); color:var(--sky); }
 
-    /* ── Cyberpunk Hologram Mode ── */
     .hologram-hud-overlay {
-      display: none;
-      position: absolute;
-      inset: 0;
+      display: flex;
+      position: relative;
+      width: 100%;
+      margin-bottom: 32px;
       background: #030814;
       border-radius: var(--radius-xl);
-      border: 2px dashed rgba(0, 255, 102, 0.25);
-      z-index: 1000;
+      border: 2px solid rgba(0, 255, 102, 0.25);
+      z-index: 10;
       flex-direction: column;
       font-family: 'Space Grotesk', 'Outfit', sans-serif;
       box-shadow: 0 0 50px rgba(0, 255, 102, 0.08), inset 0 0 40px rgba(0, 255, 102, 0.04);
       overflow: hidden;
-      animation: holoFadeIn 0.5s ease-out forwards;
-    }
-    .hologram-hud-overlay.active {
-      display: flex;
-    }
-    @keyframes holoFadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
     }
     .hologram-hud-header {
       background: rgba(3, 8, 20, 0.85);
@@ -490,9 +482,6 @@
                 <div class="hologram-hud-status-light"></div>
                 <span class="hologram-hud-title">🛡️ COGNITIVE TACTICAL HUD v2.5</span>
               </div>
-              <button onclick="toggleHologramHUD(false)" class="hologram-close-btn">
-                <i class="fas fa-times-circle"></i> DISENGAGE HUD
-              </button>
             </div>
             
             <div class="hologram-hud-body">
@@ -572,10 +561,6 @@
             <div class="hero-text" style="flex:1;">
               <h2>Good <span id="timeOfDay">Day</span>, <span id="welcomeName">Cadet</span>! <span class="wing-glow" id="heroWingGlow">ARMY WING</span></h2>
               <p>Welcome to your NCC Command Portal. Track your progress, attendance, and upcoming events.</p>
-              
-              <button onclick="toggleHologramHUD(true)" class="btn" style="margin-top: 18px; background: linear-gradient(135deg, #00ff66, #00e5ff); color: #030814; border: none; font-weight: 800; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0,255,102,0.5); padding: 10px 22px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-family: inherit; font-size: 0.85rem;">
-                <i class="fas fa-shield-halved" style="color:#030814;"></i> ENGAGE AI HOLOGRAM HUD
-              </button>
               
               <div class="rank-bar-wrap">
                 <div class="rank-labels">
@@ -2190,6 +2175,14 @@ function showSection(name, clickedBtn) {
   document.querySelectorAll('.portal-nav-link').forEach(b => b.classList.remove('active'));
   document.getElementById('sec-' + name)?.classList.add('active');
   clickedBtn?.classList.add('active');
+  
+  // Pause/resume Cyberpunk Hologram loops depending on active section
+  if (name === 'overview') {
+    if (typeof toggleHologramHUD === 'function') toggleHologramHUD(true);
+  } else {
+    if (typeof toggleHologramHUD === 'function') toggleHologramHUD(false);
+  }
+
   // Lazy-load notifications when tab is opened
   if (name === 'notifications') {
     loadMyNotifications();
@@ -2353,6 +2346,11 @@ async function initPortal() {
       document.getElementById('ov-year').textContent = myCadet.year || '—';
       document.getElementById('ov-enrolled').textContent = myCadet.enrolled_on || '—';
     }
+  }
+
+  // Auto-engage Cyberpunk Hologram HUD v2.5
+  if (typeof toggleHologramHUD === 'function') {
+    toggleHologramHUD(true);
   }
 }
 
@@ -3399,19 +3397,26 @@ function toggleHologramHUD(activate) {
   if (!hud) return;
   
   if (activate) {
-    hud.classList.add('active');
-    // Populate stats in HUD from loaded user object
+    // Populate stats in HUD from loaded user object or live elements
     const u = Auth.getUser() || {};
-    document.getElementById('holo-name').textContent = (u.first_name || '') + ' ' + (u.last_name || u.username || 'CADET');
-    document.getElementById('holo-cadet-number').textContent = 'CAD-' + (u.username || 'PENDING').toUpperCase();
-    document.getElementById('holo-cadet-no').textContent = 'CAD-' + (u.username || 'PENDING').toUpperCase();
-    document.getElementById('holo-wing').textContent = (u.wing || 'ARMY').toUpperCase() + ' WING';
+    const liveName = document.getElementById('portalName')?.textContent;
+    const liveWing = document.getElementById('ps-wing')?.textContent;
+    const liveCadetNo = document.getElementById('ov-cadet-no')?.textContent;
+    
+    document.getElementById('holo-name').textContent = liveName && liveName !== 'Loading...' ? liveName : ((u.first_name || '') + ' ' + (u.last_name || u.username || 'CADET'));
+    
+    const cadetNoStr = liveCadetNo && liveCadetNo !== 'Pending' ? liveCadetNo : (u.username || 'PENDING');
+    const displayCadetNo = cadetNoStr.toUpperCase().startsWith('CAD-') ? cadetNoStr.toUpperCase() : ('CAD-' + cadetNoStr).toUpperCase();
+    document.getElementById('holo-cadet-number').textContent = displayCadetNo;
+    document.getElementById('holo-cadet-no').textContent = displayCadetNo;
+    
+    const wingStr = liveWing && liveWing !== '—' ? liveWing : (u.wing || 'ARMY');
+    document.getElementById('holo-wing').textContent = wingStr.toUpperCase().includes('WING') ? wingStr.toUpperCase() : (wingStr.toUpperCase() + ' WING');
     
     // Start canvas animation Y-axis rotate
     initHologramCanvas();
     startHoloTerminalLogs();
   } else {
-    hud.classList.remove('active');
     if (_holoAnimationId) cancelAnimationFrame(_holoAnimationId);
     if (_terminalTimer) clearInterval(_terminalTimer);
     clearHoloProjection();
