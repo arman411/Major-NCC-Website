@@ -117,7 +117,7 @@ class AttendanceRequest(db.Model):
 
     __table_args__ = (db.UniqueConstraint('cadet_id', 'date', name='unique_request_cadet_date'),)
 
-    cadet = db.relationship('User', backref='attendance_requests')
+    cadet = db.relationship('User', backref=db.backref('attendance_requests', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'<AttendanceRequest cadet={self.cadet_id} date={self.date}>'
@@ -144,7 +144,7 @@ class Attendance(db.Model):
 
     __table_args__ = (db.UniqueConstraint('cadet_id', 'date', name='unique_cadet_date'),)
 
-    cadet = db.relationship('User', backref='attendances')
+    cadet = db.relationship('User', backref=db.backref('attendances', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'<Attendance cadet={self.cadet_id} date={self.date} status={self.status}>'
