@@ -197,7 +197,7 @@ async function loadNotices(reset = false) {
         <div style="margin-bottom:10px;">${n.category ? `<span class="tag ${n.category==='Urgent'?'red':n.category==='Camp'?'sky':''}">${n.category}</span>` : ''}</div>
         <p>${(n.description || '').slice(0, 150)}${n.description && n.description.length > 150 ? '...' : ''}</p>
         <div class="notice-footer">
-          <button class="nc-download" onclick="openNoticeModal('${encodeURIComponent(JSON.stringify(n).replace(/'/g, "\'"))}')" style="background:var(--sky);color:white;border:none;">Read More <i class="fas fa-arrow-right"></i></button>
+          <button class="nc-download" onclick="openNoticeModal('${encodeURIComponent(JSON.stringify(n).replace(/'/g, "'"))}')" style="background:var(--sky);color:white;border:none;">Read More <i class="fas fa-arrow-right"></i></button>
         </div>
       </div>`;
     listEl.appendChild(card);
