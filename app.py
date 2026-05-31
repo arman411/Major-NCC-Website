@@ -475,6 +475,14 @@ def setup_admin():
 # --- Catch-all for /pages/<name>.html links (from static site) ---
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
+    # Normalize path: remove redundant "pages/" or "templates/" segments in relative path resolution
+    parts = filename.split('/')
+    clean_parts = [p for p in parts if p != 'pages' and p != 'templates']
+    clean_filename = '/'.join(clean_parts)
+    
+    if clean_filename != filename:
+        return redirect(f'/pages/{clean_filename}')
+
     template_name = filename if filename.endswith('.html') else filename + '.html'
     if 'admin-dashboard' in template_name.lower():
         return redirect(url_for('dashboard'))
@@ -490,7 +498,12 @@ def serve_page(filename):
         else:
             flash("Please login as a cadet to view your certificate.")
             return redirect('/login')
-    return render_template(template_name)
+    
+    try:
+        return render_template(template_name)
+    except Exception:
+        # Fallback to home if template not found
+        return redirect(url_for('home'))
 
 @app.after_request
 def add_no_cache_headers(response):
