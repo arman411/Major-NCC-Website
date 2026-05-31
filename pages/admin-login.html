@@ -228,8 +228,8 @@
 
   <!-- Footer -->
   <div class="card-footer">
-    <a href="{{ url_for(\'login\') }}"><i class="fas fa-arrow-left"></i> Cadet Login</a>
-    <a href="{{ url_for(\'home\') }}"><i class="fas fa-home"></i> Main Site</a>
+    <a href="{{ url_for('login') }}"><i class="fas fa-arrow-left"></i> Cadet Login</a>
+    <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Main Site</a>
   </div>
 </div>
 
@@ -283,7 +283,7 @@ function showToast(msg,type='info',dur=3500){
 // ── Redirect if already admin ──────────────────────────────────────────────────
 (function(){
   if(MockDB.getAdminSession()||( Auth.isLoggedIn()&&Auth.isAdmin()))
-    window.location.href="{{ url_for(\'dashboard\') }}";
+    window.location.href="{{ url_for('dashboard') }}";
 })();
 
 // ── Lockout Management ─────────────────────────────────────────────────────────
@@ -368,7 +368,7 @@ function grantAccess(){
   if(document.getElementById('adminRemember').checked)
     localStorage.setItem('ncc_admin_remember', Date.now()+7*86400000);
   showToast('Access granted! Loading command center...','success');
-  setTimeout(()=>window.location.href="{{ url_for(\'dashboard\') }}",1100);
+  setTimeout(()=>window.location.href="{{ url_for('dashboard') }}",1100);
 }
 </script>
 </body>

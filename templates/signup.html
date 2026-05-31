@@ -157,7 +157,7 @@
   <!-- Right Panel Form -->
   <div class="split-right">
     <div class="page-wrap">
-      <a href="{{ url_for(\'login\') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+      <a href="{{ url_for('login') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
 
       <div class="logo-row">
         <img src="/images/ncc_badge.png" alt="NCC"/>
@@ -290,10 +290,10 @@
       <div class="success-ring">✓</div>
       <div class="success-title">Account Created! 🎉</div>
       <p class="success-sub">Your NCC cadet account is ready.<br>Now complete your enrollment to join the unit officially.</p>
-      <a href="{{ url_for(\'enrollment\') }}" class="btn-portal"><i class="fas fa-id-card"></i> Complete Enrollment</a>
+      <a href="{{ url_for('enrollment') }}" class="btn-portal"><i class="fas fa-id-card"></i> Complete Enrollment</a>
     </div>
 
-      <div class="auth-switch" id="loginLink" style="margin-top:18px">Already have an account? <a href="{{ url_for(\'login\') }}">Sign in</a></div>
+      <div class="auth-switch" id="loginLink" style="margin-top:18px">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></div>
     </div>
   </div>
 </div>

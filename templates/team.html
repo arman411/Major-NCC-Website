@@ -540,7 +540,7 @@
 <div id="loader">
   <div style="position:relative; display:flex; align-items:center; justify-content:center;">
     <div class="ld-ring"></div>
-    <div class="ld-logo"><img src="{{ url_for(\'static\', filename=\'images/ncc_badge.png\') }}" alt=""/></div>
+    <div class="ld-logo"><img src="{{ url_for('static', filename='images/ncc_badge.png') }}" alt=""/></div>
   </div>
   <p class="ld-text">Loading Team</p>
   <div class="ld-progress"><div class="ld-bar"></div></div>
@@ -548,14 +548,14 @@
 
 <!-- NAV -->
 <nav>
-  <a href="{{ url_for(\'home\') }}" class="nav-brand">
-    <img src="{{ url_for(\'static\', filename=\'images/ncc_badge.png\') }}" alt="NCC"/>
+  <a href="{{ url_for('home') }}" class="nav-brand">
+    <img src="{{ url_for('static', filename='images/ncc_badge.png') }}" alt="NCC"/>
     <div class="nav-brand-t">
       <strong>NCC Unit – GPH Baru</strong>
       <span>Govt. Polytechnic Hamirpur (HP)</span>
     </div>
   </a>
-  <a href="{{ url_for(\'home\') }}" class="nav-back">
+  <a href="{{ url_for('home') }}" class="nav-back">
     <i class="fas fa-arrow-left"></i> Back to Home
   </a>
 </nav>
@@ -572,9 +572,9 @@
     Three students. One mission. A complete digital NCC platform built from <strong>absolute zero</strong> — with passion, precision, and an obsessive love for craft.
   </p>
   <div class="hero-avatars">
-    <img src="{{ url_for(\'static\', filename=\'images/team_arman.jpg\') }}" class="avatar-preview" alt="Arman"/>
-    <img src="{{ url_for(\'static\', filename=\'images/team_prateek.jpg\') }}" class="avatar-preview" alt="Prateek"/>
-    <img src="{{ url_for(\'static\', filename=\'images/team_kanishka.jpg\') }}" class="avatar-preview" alt="Kanishka"/>
+    <img src="{{ url_for('static', filename='images/team_arman.jpg') }}" class="avatar-preview" alt="Arman"/>
+    <img src="{{ url_for('static', filename='images/team_prateek.jpg') }}" class="avatar-preview" alt="Prateek"/>
+    <img src="{{ url_for('static', filename='images/team_kanishka.jpg') }}" class="avatar-preview" alt="Kanishka"/>
     <div class="avatar-count">GPH<br/>BARU</div>
   </div>
   <div class="hero-scroll">
@@ -605,7 +605,7 @@
         <div class="card-3d" id="card3d-1">
           <div class="card-inner">
             <div class="card-photo-area">
-              <img src="{{ url_for(\'static\', filename=\'images/team_arman.jpg\') }}" alt="Arman Rangra"/>
+              <img src="{{ url_for('static', filename='images/team_arman.jpg') }}" alt="Arman Rangra"/>
               <div class="photo-overlay"></div>
               <div class="card-num">01 · Lead</div>
               <div class="card-role-badge">👨‍💻 Full Stack Dev</div>
@@ -639,7 +639,7 @@
         <div class="card-3d" id="card3d-2">
           <div class="card-inner">
             <div class="card-photo-area">
-              <img src="{{ url_for(\'static\', filename=\'images/team_prateek.jpg\') }}" alt="Prateek"/>
+              <img src="{{ url_for('static', filename='images/team_prateek.jpg') }}" alt="Prateek"/>
               <div class="photo-overlay"></div>
               <div class="card-num">02 · QA</div>
               <div class="card-role-badge">📋 Docs & Testing</div>
@@ -672,7 +672,7 @@
         <div class="card-3d" id="card3d-3">
           <div class="card-inner">
             <div class="card-photo-area">
-              <img src="{{ url_for(\'static\', filename=\'images/team_kanishka.jpg\') }}" alt="Kanishka Thakur"/>
+              <img src="{{ url_for('static', filename='images/team_kanishka.jpg') }}" alt="Kanishka Thakur"/>
               <div class="photo-overlay"></div>
               <div class="card-num">03 · Content</div>
               <div class="card-role-badge">📊 Data Lead</div>
@@ -744,7 +744,7 @@
 
       <div class="contrib-card cc1" id="cc1">
         <div class="contrib-num">01</div>
-        <img src="{{ url_for(\'static\', filename=\'images/team_arman.jpg\') }}" class="contrib-avatar" alt="Arman"/>
+        <img src="{{ url_for('static', filename='images/team_arman.jpg') }}" class="contrib-avatar" alt="Arman"/>
         <div class="contrib-name">Arman Rangra</div>
         <div class="contrib-role">Lead Developer & Designer</div>
         <div class="contrib-desc">Complete website architecture, frontend design, Flask backend, database, authentication, admin dashboard, cadet portal, PWA, and all interactive features.</div>
@@ -766,7 +766,7 @@
 
       <div class="contrib-card cc2" id="cc2">
         <div class="contrib-num">02</div>
-        <img src="{{ url_for(\'static\', filename=\'images/team_prateek.jpg\') }}" class="contrib-avatar" alt="Prateek"/>
+        <img src="{{ url_for('static', filename='images/team_prateek.jpg') }}" class="contrib-avatar" alt="Prateek"/>
         <div class="contrib-name">Prateek</div>
         <div class="contrib-role">QA Engineer & Documentation</div>
         <div class="contrib-desc">Systematic testing of all pages and API endpoints, complete project documentation including the Major Project Report, and comprehensive review process.</div>
@@ -788,7 +788,7 @@
 
       <div class="contrib-card cc3" id="cc3">
         <div class="contrib-num">03</div>
-        <img src="{{ url_for(\'static\', filename=\'images/team_kanishka.jpg\') }}" class="contrib-avatar" alt="Kanishka"/>
+        <img src="{{ url_for('static', filename='images/team_kanishka.jpg') }}" class="contrib-avatar" alt="Kanishka"/>
         <div class="contrib-name">Kanishka Thakur</div>
         <div class="contrib-role">Content & Data Specialist</div>
         <div class="contrib-desc">Research, collection, verification, and organization of all website content — NCC syllabus, cadet data, activities information, notices, and multimedia resources.</div>
@@ -821,7 +821,7 @@
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-logos">
-    <img src="{{ url_for(\'static\', filename=\'images/ncc_badge.png\') }}" alt="NCC"/>
+    <img src="{{ url_for('static', filename='images/ncc_badge.png') }}" alt="NCC"/>
     <div class="footer-logos-text">
       <strong>NCC Unit – GPH Baru</strong>
       <span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001, HP</span>

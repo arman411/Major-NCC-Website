@@ -3982,7 +3982,7 @@ function renderAdminCampsList(camps) {
         </button>
       </td>
       <td style="padding:10px 8px;text-align:center;">
-        <button onclick="adminDeleteCamp(${camp.id}, '${camp.title.replace(/'/g, "\\'")}')" 
+        <button onclick="adminDeleteCamp(${camp.id}, '${camp.title.replace(/'/g, "\'")}')" 
           style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:0.9rem;padding:6px;transition:transform 0.2s;"
           onmouseenter="this.style.transform='scale(1.25)'"
           onmouseleave="this.style.transform='scale(1)'"
@@ -4208,7 +4208,7 @@ window.openCampStatusModal = function(appId, status) {
     <div style="margin-bottom:18px;">
       <span style="font-size:0.7rem;font-weight:700;color:var(--text-light);text-transform:uppercase;display:block;margin-bottom:6px;">Quick Remarks:</span>
       <div style="display:flex;flex-wrap:wrap;gap:6px;">
-        ${quickRemarks.map(qr => `<button type="button" class="btn" style="background:#f1f2f6;color:var(--navy);border:1px solid #dfe4ea;font-size:0.72rem;padding:4px 8px;border-radius:6px;cursor:pointer;" onclick="document.getElementById('csm-note').value='${qr.replace(/'/g, "\\'")}'">${qr}</button>`).join('')}
+        ${quickRemarks.map(qr => `<button type="button" class="btn" style="background:#f1f2f6;color:var(--navy);border:1px solid #dfe4ea;font-size:0.72rem;padding:4px 8px;border-radius:6px;cursor:pointer;" onclick="document.getElementById('csm-note').value='${qr.replace(/'/g, "\'")}'">${qr}</button>`).join('')}
       </div>
     </div>
     
@@ -4756,7 +4756,7 @@ async function renderAlertsManager() {
         const alertIds = group.recipients.map(r => r.id).join(',');
         let customActions = actionBtn + ' ' + detailsBtn;
         if (unreadList.length > 0 && group.status !== 'scheduled') {
-          customActions += `<button class="btn" style="background:rgba(231,76,60,0.08);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="resendToUnread('${group.message_title.replace(/'/g, "\\'")}', '${group.category}')" title="Send follow-up nudge to unread"><i class="fa-solid fa-bell"></i> Remind</button>`;
+          customActions += `<button class="btn" style="background:rgba(231,76,60,0.08);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="resendToUnread('${group.message_title.replace(/'/g, "\'")}', '${group.category}')" title="Send follow-up nudge to unread"><i class="fa-solid fa-bell"></i> Remind</button>`;
         }
         customActions += `<button class="btn" style="background:rgba(192,57,43,0.08);color:var(--red);border:1px solid rgba(192,57,43,0.2);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;margin-left:4px;cursor:pointer;transition:all 0.2s;" onclick="deleteGroupNotifications('${alertIds}')" title="Delete notification completely"><i class="fa-solid fa-trash-can"></i> Delete</button>`;
 
@@ -5119,7 +5119,7 @@ window.loadReadReceipts = async function() {
             ` : ''}
             <div style="margin-top:6px;display:flex;gap:4px;justify-content:flex-end;">
               <button onclick="toggleReceiptDetails(${idx})" id="receipt-btn-${idx}" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(52,152,219,0.1);color:var(--sky);border:1px solid rgba(52,152,219,0.2);border-radius:6px;cursor:pointer;">👥 Cadets</button>
-              ${r.unread_count > 0 ? `<button onclick="resendToUnread('${r.title.replace(/'/g, "\\'")}', '${r.category}')" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);border-radius:6px;cursor:pointer;">🔁 Nudge</button>` : ''}
+              ${r.unread_count > 0 ? `<button onclick="resendToUnread('${r.title.replace(/'/g, "\'")}', '${r.category}')" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);border-radius:6px;cursor:pointer;">🔁 Nudge</button>` : ''}
               <button onclick="deleteGroupNotifications('${deleteIds}')" style="padding:3px 8px;font-size:0.65rem;font-weight:700;background:rgba(192,57,43,0.1);color:var(--red);border:1px solid rgba(192,57,43,0.2);border-radius:6px;cursor:pointer;" title="Permanently delete broadcast group history"><i class="fas fa-trash-can"></i> Delete</button>
             </div>
           </div>

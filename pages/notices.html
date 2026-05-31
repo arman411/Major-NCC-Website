@@ -66,25 +66,25 @@
 <div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Notices</p></div>
 
 <nav id="navbar"><div class="navbar-inner">
-  <a href="{{ url_for(\'home\') }}" class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <a href="{{ url_for('home') }}" class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
   <div class="navbar-links">
-    <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a><a href="{{ url_for(\'about\') }}" class="nav-link">About NCC</a><a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a><a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a><a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a><a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a><a href="{{ url_for(\'notices\') }}" class="nav-link active">Notices</a><a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
+    <a href="{{ url_for('home') }}" class="nav-link">Home</a><a href="{{ url_for('about') }}" class="nav-link">About NCC</a><a href="{{ url_for('unit') }}" class="nav-link">Our Unit</a><a href="{{ url_for('activities') }}" class="nav-link">Activities</a><a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a><a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a><a href="{{ url_for('notices') }}" class="nav-link active">Notices</a><a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
   </div>
   <div class="navbar-actions">
     <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
-    <a href="{{ url_for(\'login\') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
-    <a href="{{ url_for(\'signup\') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
+    <a href="{{ url_for('login') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="{{ url_for('signup') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
   </div>
   <button class="hamburger"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-nav">
-  <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a><a href="{{ url_for(\'about\') }}" class="nav-link">About NCC</a><a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a><a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a><a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a><a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a><a href="{{ url_for(\'notices\') }}" class="nav-link active">Notices</a><a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
-  <div class="mobile-nav-actions"><a href="{{ url_for(\'login\') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="{{ url_for(\'signup\') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
+  <a href="{{ url_for('home') }}" class="nav-link">Home</a><a href="{{ url_for('about') }}" class="nav-link">About NCC</a><a href="{{ url_for('unit') }}" class="nav-link">Our Unit</a><a href="{{ url_for('activities') }}" class="nav-link">Activities</a><a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a><a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a><a href="{{ url_for('notices') }}" class="nav-link active">Notices</a><a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+  <div class="mobile-nav-actions"><a href="{{ url_for('login') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="{{ url_for('signup') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
 </div>
 
 <section class="page-hero">
   <div class="container page-hero-content">
-    <div class="breadcrumb"><a href="{{ url_for(\'home\') }}">Home</a><span class="breadcrumb-sep">/</span><span>Notice Board</span></div>
+    <div class="breadcrumb"><a href="{{ url_for('home') }}">Home</a><span class="breadcrumb-sep">/</span><span>Notice Board</span></div>
     <h1 data-aos="fade-up">Notice <span>Board</span></h1>
     <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up" data-aos-delay="100">Stay updated with the latest announcements, camp registrations, and important circulars from the NCC unit.</p>
   </div>
@@ -117,7 +117,7 @@
   </div>
 </section>
 
-<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="{{ url_for(\'home\') }}">Home</a><a href="{{ url_for(\'about\') }}">About NCC</a><a href="{{ url_for(\'unit\') }}">Our Unit</a><a href="{{ url_for(\'activities\') }}">Activities</a><a href="{{ url_for(\'gallery\') }}">Gallery</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="{{ url_for(\'notices\') }}">Notice Board</a><a href="{{ url_for(\'achievements\') }}">Achievements</a><a href="{{ url_for(\'enrollment\') }}">Enroll Now</a><a href="{{ url_for(\'login\') }}">Cadet Login</a><a href="events-calendar.html">Event Calendar</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 247311</span></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p><div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-btn"><i class="fab fa-instagram"></i></a></div></div></div></footer>
+<footer id="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><div class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></div><p class="footer-desc">Building disciplined, patriotic and self-reliant citizens.</p></div><div class="footer-col"><h4>Quick Links</h4><div class="footer-links"><a href="{{ url_for('home') }}">Home</a><a href="{{ url_for('about') }}">About NCC</a><a href="{{ url_for('unit') }}">Our Unit</a><a href="{{ url_for('activities') }}">Activities</a><a href="{{ url_for('gallery') }}">Gallery</a></div></div><div class="footer-col"><h4>Resources</h4><div class="footer-links"><a href="{{ url_for('notices') }}">Notice Board</a><a href="{{ url_for('achievements') }}">Achievements</a><a href="{{ url_for('enrollment') }}">Enroll Now</a><a href="{{ url_for('login') }}">Cadet Login</a><a href="events-calendar.html">Event Calendar</a></div></div><div class="footer-col"><h4>Contact</h4><div class="footer-contact-item"><div class="fc-icon">📍</div><span>Govt. Polytechnic Hamirpur (HP), Hamirpur – 177001</span></div><div class="footer-contact-item"><div class="fc-icon">📞</div><span>+91 1662 247311</span></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2025 NCC Unit – Govt. Polytechnic Hamirpur (HP).</p><div class="footer-social"><a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-btn"><i class="fab fa-instagram"></i></a></div></div></div></footer>
 <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
 
 <!-- Notice Modal -->
@@ -197,7 +197,7 @@ async function loadNotices(reset = false) {
         <div style="margin-bottom:10px;">${n.category ? `<span class="tag ${n.category==='Urgent'?'red':n.category==='Camp'?'sky':''}">${n.category}</span>` : ''}</div>
         <p>${(n.description || '').slice(0, 150)}${n.description && n.description.length > 150 ? '...' : ''}</p>
         <div class="notice-footer">
-          <button class="nc-download" onclick="openNoticeModal('${encodeURIComponent(JSON.stringify(n).replace(/'/g, "\\'"))}')" style="background:var(--sky);color:white;border:none;">Read More <i class="fas fa-arrow-right"></i></button>
+          <button class="nc-download" onclick="openNoticeModal('${encodeURIComponent(JSON.stringify(n).replace(/'/g, "\'"))}')" style="background:var(--sky);color:white;border:none;">Read More <i class="fas fa-arrow-right"></i></button>
         </div>
       </div>`;
     listEl.appendChild(card);

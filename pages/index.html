@@ -25,7 +25,7 @@
   <meta name="description" content="Official NCC unit website of Government Polytechnic Hamirpur (HP). Inspiring cadets since decades through unity, discipline, and service." />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0d2b5e" />
-  <script src="{{ url_for(\'static\', filename=\'js/dark-mode.js\') }}"></script>
+  <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="{{ url_for(\'static\', filename=\'css/style.css\') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <style>
     /* ── Hero ─────────────────────────────────────────── */
     .hero {
@@ -501,27 +501,27 @@
 <!-- Navbar -->
 <nav id="navbar">
   <div class="navbar-inner">
-    <a href="{{ url_for(\'home\') }}" class="navbar-brand">
-      <div class="brand-logo"><img src="{{ url_for(\'static\', filename=\'images/ncc_badge.png\') }}" alt="NCC Logo" /></div>
+    <a href="{{ url_for('home') }}" class="navbar-brand">
+      <div class="brand-logo"><img src="{{ url_for('static', filename='images/ncc_badge.png') }}" alt="NCC Logo" /></div>
       <div class="brand-text">
         <strong>NCC Unit</strong>
         <span>Govt. Polytechnic Hamirpur (HP)</span>
       </div>
     </a>
     <div class="navbar-links">
-      <a href="{{ url_for(\'home\') }}" class="nav-link active">Home</a>
-      <a href="{{ url_for(\'about\') }}" class="nav-link">About NCC</a>
-      <a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a>
-      <a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a>
-      <a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a>
-      <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
-      <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
-      <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
+      <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
+      <a href="{{ url_for('about') }}" class="nav-link">About NCC</a>
+      <a href="{{ url_for('unit') }}" class="nav-link">Our Unit</a>
+      <a href="{{ url_for('activities') }}" class="nav-link">Activities</a>
+      <a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a>
+      <a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a>
+      <a href="{{ url_for('notices') }}" class="nav-link">Notices</a>
+      <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
     </div>
     <div class="navbar-actions">
       <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
-      <a href="{{ url_for(\'login\') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
-      <a href="{{ url_for(\'signup\') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
+      <a href="{{ url_for('login') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <a href="{{ url_for('signup') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
     </div>
     <button class="hamburger" aria-label="Toggle menu">
       <span></span><span></span><span></span>
@@ -531,17 +531,17 @@
 
 <!-- Mobile Nav -->
 <div class="mobile-nav">
-  <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a>
-  <a href="{{ url_for(\'about\') }}" class="nav-link">About NCC</a>
-  <a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a>
-  <a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a>
-  <a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a>
-  <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
-  <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
-  <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
+  <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+  <a href="{{ url_for('about') }}" class="nav-link">About NCC</a>
+  <a href="{{ url_for('unit') }}" class="nav-link">Our Unit</a>
+  <a href="{{ url_for('activities') }}" class="nav-link">Activities</a>
+  <a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a>
+  <a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a>
+  <a href="{{ url_for('notices') }}" class="nav-link">Notices</a>
+  <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
   <div class="mobile-nav-actions">
-    <a href="{{ url_for(\'login\') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
-    <a href="{{ url_for(\'signup\') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a>
+    <a href="{{ url_for('login') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="{{ url_for('signup') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a>
   </div>
 </div>
 
@@ -568,10 +568,10 @@
           Join the NCC unit and be part of India's finest youth organisation.
         </p>
         <div class="hero-actions" id="heroActions">
-          <a href="{{ url_for(\'login\') }}" class="btn btn-danger btn-glow" id="heroLoginBtn">
+          <a href="{{ url_for('login') }}" class="btn btn-danger btn-glow" id="heroLoginBtn">
             <i class="fas fa-sign-in-alt"></i> Login to Portal
           </a>
-          <a href="{{ url_for(\'signup\') }}" class="btn btn-outline" id="heroSignupBtn">
+          <a href="{{ url_for('signup') }}" class="btn btn-outline" id="heroSignupBtn">
             <i class="fas fa-user-plus"></i> Join NCC
           </a>
         </div>
@@ -655,8 +655,8 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-image-stack" data-aos="fade-right">
-        <img src="{{ url_for(\'static\', filename=\'images/new_img1.jpg\') }}" alt="Government Polytechnic Hamirpur (HP) Campus" class="about-img-main parallax" data-speed="0.08" />
-        <img src="{{ url_for(\'static\', filename=\'images/new_img2.jpg\') }}" alt="Academic Block – Govt. Polytechnic Hamirpur (HP)" class="about-img-secondary parallax" data-speed="0.15" />
+        <img src="{{ url_for('static', filename='images/new_img1.jpg') }}" alt="Government Polytechnic Hamirpur (HP) Campus" class="about-img-main parallax" data-speed="0.08" />
+        <img src="{{ url_for('static', filename='images/new_img2.jpg') }}" alt="Academic Block – Govt. Polytechnic Hamirpur (HP)" class="about-img-secondary parallax" data-speed="0.15" />
         <div class="about-badge-chip float-anim">
           <strong>1963</strong>
           Est. Year
@@ -692,7 +692,7 @@
           </div>
         </div>
         <div class="mt-32">
-          <a href="{{ url_for(\'about\') }}" class="btn btn-outline float-anim" style="margin-top:20px;">
+          <a href="{{ url_for('about') }}" class="btn btn-outline float-anim" style="margin-top:20px;">
             Read Full History <i class="fas fa-arrow-right"></i>
           </a>
         </div>
@@ -712,43 +712,43 @@
     <div class="activities-grid">
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="0">
         <div class="activity-img-pro">
-          <img src="{{ url_for(\'static\', filename=\'images/new_img3.jpg\') }}" alt="Republic Day Camp" />
+          <img src="{{ url_for('static', filename='images/new_img3.jpg') }}" alt="Republic Day Camp" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">RDC</span>
           <div class="activity-caption"><p>Selected cadets represent Himachal Pradesh at the prestigious Republic Day Camp in New Delhi.</p></div>
         </div>
         <div class="activity-body-pro">
           <h3>Republic Day Camp</h3>
-          <a href="{{ url_for(\'activities\') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ url_for('activities') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="120">
         <div class="activity-img-pro">
-          <img src="{{ url_for(\'static\', filename=\'images/new_img4.jpg\') }}" alt="Thal Sainik Camp" />
+          <img src="{{ url_for('static', filename='images/new_img4.jpg') }}" alt="Thal Sainik Camp" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">TSC</span>
           <div class="activity-caption"><p>An intensive military-themed camp testing physical endurance, tactical knowledge and team spirit.</p></div>
         </div>
         <div class="activity-body-pro">
           <h3>Thal Sainik Camp</h3>
-          <a href="{{ url_for(\'activities\') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ url_for('activities') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="240">
         <div class="activity-img-pro">
-          <img src="{{ url_for(\'static\', filename=\'images/new_img5.jpg\') }}" alt="Social Service" />
+          <img src="{{ url_for('static', filename='images/new_img5.jpg') }}" alt="Social Service" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">SOCIAL</span>
           <div class="activity-caption"><p>Blood donation drives, cleanliness campaigns, and community outreach at the heart of NCC ethos.</p></div>
         </div>
         <div class="activity-body-pro">
           <h3>Social Service</h3>
-          <a href="{{ url_for(\'activities\') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ url_for('activities') }}" class="activity-link-pro">Explore <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
     <div class="text-center mt-48">
-      <a href="{{ url_for(\'activities\') }}" class="btn btn-outline">
+      <a href="{{ url_for('activities') }}" class="btn btn-outline">
         View All Activities <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -764,7 +764,7 @@
         <p class="section-label">Stay Updated</p>
         <h2 class="section-title">Latest <span>Notices</span></h2>
       </div>
-      <a href="{{ url_for(\'notices\') }}" class="btn btn-outline">All Notices</a>
+      <a href="{{ url_for('notices') }}" class="btn btn-outline">All Notices</a>
     </div>
     <div class="timeline-list" data-aos="fade-up">
       <div class="timeline-item">
@@ -820,10 +820,10 @@
       <h2 class="cta-title">Ready to Become an NCC Cadet?</h2>
       <p class="cta-subtitle">Take the first step towards a life of discipline, honour, and excellence. Join the NCC family today.</p>
       <div class="cta-actions">
-        <a href="{{ url_for(\'enrollment\') }}" class="btn btn-cta-white">
+        <a href="{{ url_for('enrollment') }}" class="btn btn-cta-white">
           <i class="fas fa-user-plus"></i> Enroll Now
         </a>
-        <a href="{{ url_for(\'contact\') }}" class="btn btn-cta-outline">
+        <a href="{{ url_for('contact') }}" class="btn btn-cta-outline">
           <i class="fas fa-phone"></i> Contact ANO
         </a>
       </div>
@@ -837,7 +837,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="navbar-brand">
-          <div class="brand-logo"><img src="{{ url_for(\'static\', filename=\'images/ncc_badge.png\') }}" alt="NCC Logo" /></div>
+          <div class="brand-logo"><img src="{{ url_for('static', filename='images/ncc_badge.png') }}" alt="NCC Logo" /></div>
           <div class="brand-text">
             <strong>NCC Unit</strong>
             <span>Govt. Polytechnic Hamirpur (HP)</span>
@@ -848,21 +848,21 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <div class="footer-links">
-          <a href="{{ url_for(\'home\') }}">Home</a>
-          <a href="{{ url_for(\'about\') }}">About NCC</a>
-          <a href="{{ url_for(\'unit\') }}">Our Unit</a>
-          <a href="{{ url_for(\'activities\') }}">Activities</a>
-          <a href="{{ url_for(\'gallery\') }}">Gallery</a>
-          <a href="{{ url_for(\'contact\') }}">Contact</a>
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('about') }}">About NCC</a>
+          <a href="{{ url_for('unit') }}">Our Unit</a>
+          <a href="{{ url_for('activities') }}">Activities</a>
+          <a href="{{ url_for('gallery') }}">Gallery</a>
+          <a href="{{ url_for('contact') }}">Contact</a>
         </div>
       </div>
       <div class="footer-col">
         <h4>Resources</h4>
         <div class="footer-links">
-          <a href="{{ url_for(\'notices\') }}">Notice Board</a>
-          <a href="{{ url_for(\'achievements\') }}">Achievements</a>
-          <a href="{{ url_for(\'enrollment\') }}">Enroll Now</a>
-          <a href="{{ url_for(\'login\') }}">Cadet Login</a>
+          <a href="{{ url_for('notices') }}">Notice Board</a>
+          <a href="{{ url_for('achievements') }}">Achievements</a>
+          <a href="{{ url_for('enrollment') }}">Enroll Now</a>
+          <a href="{{ url_for('login') }}">Cadet Login</a>
           <a href="pages/admin-login.html">Admin</a>
           <a href="pages/team.html">Meet Our Team</a>
         </div>
@@ -902,10 +902,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
-<script src="{{ url_for(\'static\', filename=\'js/api.js\') }}"></script>
-<script src="{{ url_for(\'static\', filename=\'js/auth.js\') }}"></script>
-<script src="{{ url_for(\'static\', filename=\'js/main.js\') }}"></script>
-<script src="{{ url_for(\'static\', filename=\'js/three-badge.js\') }}"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/three-badge.js') }}"></script>
 <script>
   // GSAP Hero animations
   if (typeof gsap !== 'undefined') {
@@ -1050,8 +1050,8 @@ document.querySelectorAll('.stats-dark-section, .hero-stats-row').forEach(s => c
 </div>
 
 <!-- API Scripts -->
-<script src="{{ url_for(\'static\', filename=\'js/api.js\') }}"></script>
-<script src="{{ url_for(\'static\', filename=\'js/auth.js\') }}"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 <script>
 // ── Update hero buttons based on login state ─────────────────────────────────
 (function updateHeroCTAs() {
@@ -1193,7 +1193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <a href="${targetUrl}" class="btn btn-primary btn-glow" style="background:var(--sky); border-color:var(--sky); color:white;">
           <i class="fas ${targetIcon}"></i> Go to ${targetText}
         </a>
-        <a href="{{ url_for(\'about\') }}" class="btn btn-outline">
+        <a href="{{ url_for('about') }}" class="btn btn-outline">
           <i class="fas fa-play-circle"></i> Learn More
         </a>`;
     }
@@ -1205,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <a href="${targetUrl}" class="btn btn-cta-white">
           <i class="fas ${targetIcon}"></i> Enter ${targetText}
         </a>
-        <a href="{{ url_for(\'contact\') }}" class="btn btn-cta-outline">
+        <a href="{{ url_for('contact') }}" class="btn btn-cta-outline">
           <i class="fas fa-phone"></i> Contact ANO
         </a>`;
     }

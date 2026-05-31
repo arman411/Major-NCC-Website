@@ -119,13 +119,13 @@
 <div id="page-loader"><div class="loader-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.09 8.26L20 7L16.42 12L20 17L13.09 15.74L12 22L10.91 15.74L4 17L7.58 12L4 7L10.91 8.26L12 2Z"/></svg></div><div class="loader-bar"></div><p class="loader-text">Portal</p></div>
 
 <nav id="navbar"><div class="navbar-inner">
-  <a href="{{ url_for(\'home\') }}" class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
+  <a href="{{ url_for('home') }}" class="navbar-brand"><div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div><div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div></a>
   <div class="navbar-links">
-    <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a>
-    <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
+    <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('notices') }}" class="nav-link">Notices</a>
     <a href="events-calendar.html" class="nav-link">Events</a>
-    <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
-    <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
+    <a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a>
+    <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
   </div>
   <div class="navbar-actions">
     <button onclick="window.doLogout()" class="btn-nav-enroll" style="border:none;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -133,11 +133,11 @@
   <button class="hamburger"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-nav">
-  <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a>
-  <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
+  <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+  <a href="{{ url_for('notices') }}" class="nav-link">Notices</a>
   <a href="events-calendar.html" class="nav-link">Events</a>
-  <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
-  <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
+  <a href="{{ url_for('achievements') }}" class="nav-link">Achievements</a>
+  <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
   <div class="mobile-nav-actions">
     <button onclick="window.doLogout()" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;border:none;cursor:pointer;">Logout</button>
   </div>
@@ -238,11 +238,11 @@
 
           <!-- Quick links -->
           <div class="grid-2" style="margin-top:24px;gap:16px;">
-            <a href="{{ url_for(\'enrollment\') }}" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
+            <a href="{{ url_for('enrollment') }}" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
               <div class="card-icon sky"><i class="fas fa-file-alt"></i></div>
               <div><h3 style="margin-bottom:4px;">Submit Enrollment</h3><p style="font-size:0.82rem;color:var(--text-mid);">Fill the full enrollment form</p></div>
             </div></a>
-            <a href="{{ url_for(\'notices\') }}" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
+            <a href="{{ url_for('notices') }}" class="card" style="text-decoration:none;transition:all 0.2s;"><div class="card-body" style="display:flex;align-items:center;gap:16px;">
               <div class="card-icon red"><i class="fas fa-bullhorn"></i></div>
               <div><h3 style="margin-bottom:4px;">View All Notices</h3><p style="font-size:0.82rem;color:var(--text-mid);">Latest announcements &amp; updates</p></div>
             </div></a>
@@ -427,7 +427,7 @@
           <div id="portalNotices">
             <div style="text-align:center;padding:40px 0;"><i class="fas fa-spinner fa-spin" style="color:var(--sky);font-size:2rem;"></i></div>
           </div>
-          <div class="mt-24"><a href="{{ url_for(\'notices\') }}" class="btn btn-outline">View All Notices <i class="fas fa-arrow-right"></i></a></div>
+          <div class="mt-24"><a href="{{ url_for('notices') }}" class="btn btn-outline">View All Notices <i class="fas fa-arrow-right"></i></a></div>
         </div>
 
         <!-- Events -->
@@ -1452,7 +1452,7 @@ const user = Auth.getUser();
     banner.innerHTML = `
       <i class="fas fa-exclamation-triangle"></i>
       &nbsp; You have not completed your enrollment form yet.
-      &nbsp;<a href="{{ url_for(\'enrollment\') }}" style="color:white;text-decoration:underline;font-weight:800;">
+      &nbsp;<a href="{{ url_for('enrollment') }}" style="color:white;text-decoration:underline;font-weight:800;">
         Complete Enrollment Now →
       </a>`;
     document.body.insertBefore(banner, document.querySelector('main'));
@@ -1661,7 +1661,7 @@ async function loadMyNotifications(reset) {
         'border-radius:10px;padding:18px 20px;margin-bottom:14px;cursor:pointer;' +
         'transition:all 0.2s;position:relative;' +
         (isUnread ? 'box-shadow:0 4px 16px rgba(52,152,219,0.12);' : 'opacity:0.82;') +
-        '" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(0,0,0,0.08)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+        '" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='';this.style.boxShadow=''">' +
         unreadDot +
         '<div style="display:flex;align-items:flex-start;gap:16px;">' +
           '<div style="font-size:1.8rem;flex-shrink:0;line-height:1;">' + icon + '</div>' +
@@ -1847,7 +1847,7 @@ async function initPortal() {
             : `<span class="status-badge ${statusLabel}">${statusLabel}</span>`}
         </div>`).join('');
     } else {
-      certList.innerHTML = '<p style="color:var(--text-light);">No certificates found. <a href="{{ url_for(\'enrollment\') }}" style="color:var(--sky);">Complete enrollment first</a>.</p>';
+      certList.innerHTML = '<p style="color:var(--text-light);">No certificates found. <a href="{{ url_for('enrollment') }}" style="color:var(--sky);">Complete enrollment first</a>.</p>';
     }
 
     // Enrollment details
@@ -1860,7 +1860,7 @@ async function initPortal() {
         <div><span style="font-size:0.78rem;color:var(--text-light);font-weight:600;text-transform:uppercase;">Email</span><p style="font-weight:600;color:var(--navy);margin-top:4px;">${user.email || '—'}</p></div>
       </div>
       <div style="margin-top:24px;">
-        <a href="{{ url_for(\'enrollment\') }}" class="btn btn-primary" style="padding:12px 24px;font-size:0.88rem;"><i class="fas fa-edit"></i> ${certs.status === 'approved' ? 'View Enrollment Form' : 'Complete Enrollment Form'}</a>
+        <a href="{{ url_for('enrollment') }}" class="btn btn-primary" style="padding:12px 24px;font-size:0.88rem;"><i class="fas fa-edit"></i> ${certs.status === 'approved' ? 'View Enrollment Form' : 'Complete Enrollment Form'}</a>
       </div>`;
   } else {
     // Graceful error state if API fails or returns error (prevents infinite spinner)
@@ -2029,7 +2029,7 @@ function loadModuleTests() {
 
   // My Results history
   if (myResults.length === 0) {
-    resultsContainer.innerHTML = '<p style="color:var(--text-light);padding:12px 0;">You haven\'t taken any tests yet.</p>';
+    resultsContainer.innerHTML = '<p style="color:var(--text-light);padding:12px 0;">You haven't taken any tests yet.</p>';
   } else {
     resultsContainer.innerHTML = myResults.map(r => {
       const t = MockDB.getTests().find(t => t.id == r.testId);
