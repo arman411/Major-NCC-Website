@@ -169,7 +169,7 @@
     <p>The page you are looking for may have been moved, deleted, or simply doesn't exist.<br>Let's get you back on track, cadet!</p>
 
     <div class="actions">
-      <a href="../index.html" class="btn btn-primary">
+      <a href="{{ url_for(\'home\') }}" class="btn btn-primary">
         <i class="fas fa-home"></i> Go to Homepage
       </a>
       <a href="javascript:history.back()" class="btn btn-outline">
@@ -180,12 +180,12 @@
     <div class="quick-links">
       <p>Quick Navigation</p>
       <div class="link-grid">
-        <a href="about.html"><i class="fas fa-info-circle"></i> About NCC</a>
-        <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
-        <a href="notices.html"><i class="fas fa-bell"></i> Notices</a>
-        <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
-        <a href="enrollment.html"><i class="fas fa-id-card"></i> Enroll</a>
-        <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="{{ url_for(\'about\') }}"><i class="fas fa-info-circle"></i> About NCC</a>
+        <a href="{{ url_for(\'gallery\') }}"><i class="fas fa-images"></i> Gallery</a>
+        <a href="{{ url_for(\'notices\') }}"><i class="fas fa-bell"></i> Notices</a>
+        <a href="{{ url_for(\'login\') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="{{ url_for(\'enrollment\') }}"><i class="fas fa-id-card"></i> Enroll</a>
+        <a href="{{ url_for(\'contact\') }}"><i class="fas fa-envelope"></i> Contact</a>
       </div>
     </div>
   </div>

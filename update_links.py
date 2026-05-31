@@ -1,7 +1,7 @@
 import os
 import re
 
-templates_dir = r"e:\Major NCC Website\templates"
+templates_dir = r"e:\Major NCC Website\Major NCC Website\templates"
 
 for filename in os.listdir(templates_dir):
     if filename.endswith('.html'):

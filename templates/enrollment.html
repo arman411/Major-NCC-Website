@@ -254,30 +254,30 @@
     <p class="loader-text">Enroll</p>
   </div>
   <nav id="navbar">
-    <div class="navbar-inner"><a href="../index.html" class="navbar-brand">
+    <div class="navbar-inner"><a href="{{ url_for(\'home\') }}" class="navbar-brand">
         <div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC" /></div>
         <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
       </a>
-      <div class="navbar-links"><a href="../index.html" class="nav-link">Home</a><a href="about.html"
-          class="nav-link">About NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html"
-          class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html"
-          class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html"
+      <div class="navbar-links"><a href="{{ url_for(\'home\') }}" class="nav-link">Home</a><a href="{{ url_for(\'about\') }}"
+          class="nav-link">About NCC</a><a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a><a href="{{ url_for(\'activities\') }}"
+          class="nav-link">Activities</a><a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a><a href="{{ url_for(\'achievements\') }}"
+          class="nav-link">Achievements</a><a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a><a href="{{ url_for(\'contact\') }}"
           class="nav-link">Contact</a></div>
-      <div class="navbar-actions"><button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button><a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a></div><button
+      <div class="navbar-actions"><button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button><a href="{{ url_for(\'login\') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a><a href="{{ url_for(\'signup\') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a></div><button
         class="hamburger"><span></span><span></span><span></span></button>
     </div>
   </nav>
-  <div class="mobile-nav"><a href="../index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About
-      NCC</a><a href="unit.html" class="nav-link">Our Unit</a><a href="activities.html"
-      class="nav-link">Activities</a><a href="gallery.html" class="nav-link">Gallery</a><a href="achievements.html"
-      class="nav-link">Achievements</a><a href="notices.html" class="nav-link">Notices</a><a href="contact.html"
+  <div class="mobile-nav"><a href="{{ url_for(\'home\') }}" class="nav-link">Home</a><a href="{{ url_for(\'about\') }}" class="nav-link">About
+      NCC</a><a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a><a href="{{ url_for(\'activities\') }}"
+      class="nav-link">Activities</a><a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a><a href="{{ url_for(\'achievements\') }}"
+      class="nav-link">Achievements</a><a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a><a href="{{ url_for(\'contact\') }}"
       class="nav-link">Contact</a>
-    <div class="mobile-nav-actions"><a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="signup.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
+    <div class="mobile-nav-actions"><a href="{{ url_for(\'login\') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a><a href="{{ url_for(\'signup\') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a></div>
   </div>
 
   <section class="page-hero">
     <div class="container page-hero-content">
-      <div class="breadcrumb"><a href="../index.html">Home</a><span
+      <div class="breadcrumb"><a href="{{ url_for(\'home\') }}">Home</a><span
           class="breadcrumb-sep">/</span><span>Enrollment</span></div>
       <h1 data-aos="fade-up">Join the <span>NCC Family</span></h1>
       <p style="max-width:520px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up"
@@ -531,7 +531,7 @@
               <h2 style="color:var(--navy);margin-bottom:12px;">Application Submitted!</h2>
               <p style="color:var(--text-mid);margin-bottom:24px;">Thank you for applying. The ANO office will contact
                 you within 3-5 working days to confirm your enrollment and schedule an orientation.</p>
-              <a href="../index.html" class="btn btn-primary">Return to Home</a>
+              <a href="{{ url_for(\'home\') }}" class="btn btn-primary">Return to Home</a>
             </div>
           </div>
         </div>
@@ -551,14 +551,14 @@
         </div>
         <div class="footer-col">
           <h4>Quick Links</h4>
-          <div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a
-              href="unit.html">Our Unit</a><a href="activities.html">Activities</a></div>
+          <div class="footer-links"><a href="{{ url_for(\'home\') }}">Home</a><a href="{{ url_for(\'about\') }}">About NCC</a><a
+              href="{{ url_for(\'unit\') }}">Our Unit</a><a href="{{ url_for(\'activities\') }}">Activities</a></div>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <div class="footer-links"><a href="notices.html">Notice Board</a><a
-              href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a
-              href="login.html">Cadet Login</a></div>
+          <div class="footer-links"><a href="{{ url_for(\'notices\') }}">Notice Board</a><a
+              href="{{ url_for(\'achievements\') }}">Achievements</a><a href="{{ url_for(\'enrollment\') }}">Enroll Now</a><a
+              href="{{ url_for(\'login\') }}">Cadet Login</a></div>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
@@ -595,7 +595,7 @@
         `;
         banner.innerHTML = `
           <i class="fas fa-info-circle"></i>
-          Already registered? <a href="login.html" style="color:#7ec8e3;font-weight:700;text-decoration:underline;">Login first</a>
+          Already registered? <a href="{{ url_for(\'login\') }}" style="color:#7ec8e3;font-weight:700;text-decoration:underline;">Login first</a>
           to auto-fill your details.
           <a href="javascript:void(0)" onclick="this.parentElement.remove()" style="color:rgba(255,255,255,0.5);font-size:1.2rem;margin-left:8px;">×</a>`;
         document.body.insertBefore(banner, document.body.firstChild);

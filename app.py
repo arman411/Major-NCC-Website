@@ -476,6 +476,8 @@ def setup_admin():
 @app.route('/pages/<path:filename>')
 def serve_page(filename):
     template_name = filename if filename.endswith('.html') else filename + '.html'
+    if 'admin-dashboard' in template_name.lower():
+        return redirect(url_for('dashboard'))
     if 'certificate' in template_name.lower():
         if current_user.is_authenticated and not current_user.is_admin:
             if current_user.cert_a_approved:
@@ -848,6 +850,8 @@ def dashboard():
     if current_user.is_admin:
         total_cadets = User.query.filter_by(is_admin=False).count()
         total_notices = Notice.query.count()
+        total_events = Event.query.count()
+        total_achievements = Achievement.query.count()
         recent_notices = Notice.query.order_by(Notice.created_at.desc()).limit(5).all()
 
         today = date.today()
@@ -859,6 +863,8 @@ def dashboard():
         return render_template('admin-dashboard.html',
                                cadet_count=total_cadets,
                                notice_count=total_notices,
+                               event_count=total_events,
+                               achievement_count=total_achievements,
                                recent_notices=recent_notices,
                                present_today=present_today,
                                attendance_pct=attendance_pct,

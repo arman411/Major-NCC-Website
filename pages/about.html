@@ -209,47 +209,47 @@
 
     <nav id="navbar">
         <div class="navbar-inner">
-            <a href="../index.html" class="navbar-brand">
+            <a href="{{ url_for(\'home\') }}" class="navbar-brand">
                 <div class="brand-logo"><img src="/images/ncc_badge.png" alt="NCC Logo" /></div>
                 <div class="brand-text"><strong>NCC Unit</strong><span>Govt. Polytechnic Hamirpur (HP)</span></div>
             </a>
             <div class="navbar-links">
-                <a href="../index.html" class="nav-link">Home</a>
-                <a href="about.html" class="nav-link active">About NCC</a>
-                <a href="unit.html" class="nav-link">Our Unit</a>
-                <a href="activities.html" class="nav-link">Activities</a>
-                <a href="gallery.html" class="nav-link">Gallery</a>
-                <a href="achievements.html" class="nav-link">Achievements</a>
-                <a href="notices.html" class="nav-link">Notices</a>
-                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a>
+                <a href="{{ url_for(\'about\') }}" class="nav-link active">About NCC</a>
+                <a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a>
+                <a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a>
+                <a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a>
+                <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
+                <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
+                <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
             </div>
             <div class="navbar-actions">
                 <button id="dark-mode-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
-                <a href="login.html" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
-                <a href="signup.html" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
+                <a href="{{ url_for(\'login\') }}" class="btn-nav-login" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="{{ url_for(\'signup\') }}" class="btn-nav-signup" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
             </div>
             <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
         </div>
     </nav>
     <div class="mobile-nav">
-        <a href="../index.html" class="nav-link">Home</a>
-        <a href="about.html" class="nav-link active">About NCC</a>
-        <a href="unit.html" class="nav-link">Our Unit</a>
-        <a href="activities.html" class="nav-link">Activities</a>
-        <a href="gallery.html" class="nav-link">Gallery</a>
-        <a href="achievements.html" class="nav-link">Achievements</a>
-        <a href="notices.html" class="nav-link">Notices</a>
-        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="{{ url_for(\'home\') }}" class="nav-link">Home</a>
+        <a href="{{ url_for(\'about\') }}" class="nav-link active">About NCC</a>
+        <a href="{{ url_for(\'unit\') }}" class="nav-link">Our Unit</a>
+        <a href="{{ url_for(\'activities\') }}" class="nav-link">Activities</a>
+        <a href="{{ url_for(\'gallery\') }}" class="nav-link">Gallery</a>
+        <a href="{{ url_for(\'achievements\') }}" class="nav-link">Achievements</a>
+        <a href="{{ url_for(\'notices\') }}" class="nav-link">Notices</a>
+        <a href="{{ url_for(\'contact\') }}" class="nav-link">Contact</a>
         <div class="mobile-nav-actions">
-            <a href="login.html" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
-            <a href="signup.html" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a>
+            <a href="{{ url_for(\'login\') }}" class="btn btn-outline" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="{{ url_for(\'signup\') }}" class="btn btn-danger" style="padding:10px 20px;font-size:.85rem;"><i class="fas fa-user-plus"></i> Sign Up</a>
         </div>
     </div>
 
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="container page-hero-content">
-            <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">/</span><span>About
+            <div class="breadcrumb"><a href="{{ url_for(\'home\') }}">Home</a><span class="breadcrumb-sep">/</span><span>About
                     NCC</span></div>
             <h1 data-aos="fade-up">About the <span>National Cadet Corps</span></h1>
             <p style="max-width:560px;color:var(--text-mid);margin-top:16px;font-size:1.05rem;" data-aos="fade-up"
@@ -424,15 +424,15 @@
                 </div>
                 <div class="footer-col">
                     <h4>Quick Links</h4>
-                    <div class="footer-links"><a href="../index.html">Home</a><a href="about.html">About NCC</a><a
-                            href="unit.html">Our Unit</a><a href="activities.html">Activities</a><a
-                            href="gallery.html">Gallery</a></div>
+                    <div class="footer-links"><a href="{{ url_for(\'home\') }}">Home</a><a href="{{ url_for(\'about\') }}">About NCC</a><a
+                            href="{{ url_for(\'unit\') }}">Our Unit</a><a href="{{ url_for(\'activities\') }}">Activities</a><a
+                            href="{{ url_for(\'gallery\') }}">Gallery</a></div>
                 </div>
                 <div class="footer-col">
                     <h4>Resources</h4>
-                    <div class="footer-links"><a href="notices.html">Notice Board</a><a
-                            href="achievements.html">Achievements</a><a href="enrollment.html">Enroll Now</a><a
-                            href="login.html">Cadet Login</a><a href="admin-login.html">Admin</a></div>
+                    <div class="footer-links"><a href="{{ url_for(\'notices\') }}">Notice Board</a><a
+                            href="{{ url_for(\'achievements\') }}">Achievements</a><a href="{{ url_for(\'enrollment\') }}">Enroll Now</a><a
+                            href="{{ url_for(\'login\') }}">Cadet Login</a><a href="admin-login.html">Admin</a></div>
                 </div>
                 <div class="footer-col">
                     <h4>Contact</h4>

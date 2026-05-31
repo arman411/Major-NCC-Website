@@ -343,7 +343,7 @@
         <div class="admin-stat-card">
           <div class="asc-icon blue">🎓</div>
           <div class="asc-info">
-            <div class="asc-number" data-count="250" data-suffix="">0</div>
+            <div class="asc-number" data-count="{{ cadet_count|default(250) }}" data-suffix="">0</div>
             <p class="asc-label">Total Cadets</p>
             <span class="asc-trend up"><i class="fas fa-arrow-up"></i> +12 this month</span>
           </div>
@@ -351,7 +351,7 @@
         <div class="admin-stat-card">
           <div class="asc-icon red">⛺</div>
           <div class="asc-info">
-            <div class="asc-number" data-count="48" data-suffix="">0</div>
+            <div class="asc-number" data-count="{{ event_count|default(48) }}" data-suffix="">0</div>
             <p class="asc-label">Total Events</p>
             <span class="asc-trend up"><i class="fas fa-arrow-up"></i> +3 this year</span>
           </div>
@@ -359,7 +359,7 @@
         <div class="admin-stat-card">
           <div class="asc-icon sky">📋</div>
           <div class="asc-info">
-            <div class="asc-number" data-count="6" data-suffix="">0</div>
+            <div class="asc-number" data-count="{{ notice_count|default(6) }}" data-suffix="">0</div>
             <p class="asc-label">Active Notices</p>
             <span class="asc-trend up"><i class="fas fa-arrow-up"></i> +2 this week</span>
           </div>
@@ -367,7 +367,7 @@
         <div class="admin-stat-card">
           <div class="asc-icon green">🏆</div>
           <div class="asc-info">
-            <div class="asc-number" data-count="32" data-suffix="">0</div>
+            <div class="asc-number" data-count="{{ achievement_count|default(32) }}" data-suffix="">0</div>
             <p class="asc-label">Achievements</p>
             <span class="asc-trend up"><i class="fas fa-arrow-up"></i> +5 this year</span>
           </div>
@@ -1872,6 +1872,9 @@ if (toggleBtn) {
 
 /* ── Count-Up Animation ──────────────────────────────────────────────── */
 function animateCount(el){
+  if (el.dataset.animId) {
+    cancelAnimationFrame(parseInt(el.dataset.animId, 10));
+  }
   const target = parseInt(el.dataset.count || el.textContent, 10);
   const suffix = el.dataset.suffix || '';
   const duration = 1200;
@@ -1880,9 +1883,13 @@ function animateCount(el){
     const elapsed = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - elapsed, 3); // ease-out cubic
     el.textContent = Math.round(eased * target) + suffix;
-    if(elapsed < 1) requestAnimationFrame(step);
+    if(elapsed < 1) {
+      el.dataset.animId = requestAnimationFrame(step);
+    } else {
+      delete el.dataset.animId;
+    }
   }
-  requestAnimationFrame(step);
+  el.dataset.animId = requestAnimationFrame(step);
 }
 function runCountUps(){
   document.querySelectorAll('.asc-number[data-count]').forEach(el => animateCount(el));
