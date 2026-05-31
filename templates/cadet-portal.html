@@ -1661,7 +1661,7 @@ async function loadMyNotifications(reset) {
         'border-radius:10px;padding:18px 20px;margin-bottom:14px;cursor:pointer;' +
         'transition:all 0.2s;position:relative;' +
         (isUnread ? 'box-shadow:0 4px 16px rgba(52,152,219,0.12);' : 'opacity:0.82;') +
-        '" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='';this.style.boxShadow=''">' +
+        '" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(0,0,0,0.08)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
         unreadDot +
         '<div style="display:flex;align-items:flex-start;gap:16px;">' +
           '<div style="font-size:1.8rem;flex-shrink:0;line-height:1;">' + icon + '</div>' +
@@ -1847,8 +1847,9 @@ async function initPortal() {
             : `<span class="status-badge ${statusLabel}">${statusLabel}</span>`}
         </div>`).join('');
     } else {
-      certList.innerHTML = '<p style="color:var(--text-light);">No certificates found. <a href="{{ url_for('enrollment') }}" style="color:var(--sky);">Complete enrollment first</a>.</p>';
+      certList.innerHTML = `<p style="color:var(--text-light);">No certificates found. <a href="{{ url_for('enrollment') }}" style="color:var(--sky);">Complete enrollment first</a>.</p>`;
     }
+
 
     // Enrollment details
     document.getElementById('enrollmentDetails').innerHTML = `
@@ -2029,7 +2030,7 @@ function loadModuleTests() {
 
   // My Results history
   if (myResults.length === 0) {
-    resultsContainer.innerHTML = '<p style="color:var(--text-light);padding:12px 0;">You haven't taken any tests yet.</p>';
+    resultsContainer.innerHTML = `<p style="color:var(--text-light);padding:12px 0;">You haven't taken any tests yet.</p>`;
   } else {
     resultsContainer.innerHTML = myResults.map(r => {
       const t = MockDB.getTests().find(t => t.id == r.testId);
