@@ -282,8 +282,12 @@ function showToast(msg,type='info',dur=3500){
 
 // ── Redirect if already admin ──────────────────────────────────────────────────
 (function(){
-  if(MockDB.getAdminSession()||( Auth.isLoggedIn()&&Auth.isAdmin()))
+  const isBackendAuthed = {{ 'true' if current_user.is_authenticated else 'false' }};
+  if(isBackendAuthed && (MockDB.getAdminSession()||( Auth.isLoggedIn()&&Auth.isAdmin()))) {
     window.location.href="{{ url_for('dashboard') }}";
+  } else if (!isBackendAuthed) {
+    Auth.clearTokens();
+  }
 })();
 
 // ── Lockout Management ─────────────────────────────────────────────────────────

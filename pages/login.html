@@ -286,9 +286,12 @@ function showToast(msg, type='info', dur=3500){
       for(let r of regs) { r.unregister(); }
     });
   }
-  if(Auth.isLoggedIn()){
+  const isBackendAuthed = {{ 'true' if current_user.is_authenticated else 'false' }};
+  if(isBackendAuthed && Auth.isLoggedIn()){
     const u=Auth.getUser();
     window.location.href = u&&u.role==='admin'?'admin-dashboard.html?v=' + Date.now():'cadet-portal.html?v=' + Date.now();
+  } else if (!isBackendAuthed) {
+    Auth.clearTokens();
   }
   // Show last login
   const ll=localStorage.getItem('ncc_last_login');
