@@ -515,6 +515,15 @@ def add_no_cache_headers(response):
     return response
 
 
+# --- Root-level .html catch-all (handles bare /admin-dashboard.html, /cadet-portal.html etc.) ---
+@app.route('/<path:filename>.html')
+def serve_root_html(filename):
+    """Redirect bare root-level .html requests to /pages/ equivalent."""
+    name = filename.split('/')[-1]  # strip any accidental sub-paths
+    if 'admin-dashboard' in name.lower():
+        return redirect(url_for('dashboard'))
+    return redirect(f'/pages/{name}.html')
+
 # --- Public Routes ---
 
 @app.route('/')
