@@ -146,8 +146,20 @@
 <div class="split-layout">
   <!-- Left Panel Carousel -->
   <div class="split-left">
-    <div class="carousel-slide active" style="background-image:url('https://images.unsplash.com/photo-1541604193435-22287d32c2c2?auto=format&fit=crop&q=80');"></div>
-    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80');"></div>
+    <div class="carousel-slide active" style="background:linear-gradient(135deg, #0a1f4a 0%, #1a3d7c 40%, #0d2b5e 100%);">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
+        <div style="font-size:4rem;margin-bottom:20px;">🎖️</div>
+        <h2 style="color:white;font-size:1.8rem;font-weight:800;margin-bottom:12px;text-shadow:0 2px 20px rgba(0,0,0,0.3);">Unity & Discipline</h2>
+        <p style="color:rgba(255,255,255,0.7);font-size:0.95rem;max-width:300px;">Join the NCC family at Government Polytechnic Hamirpur</p>
+      </div>
+    </div>
+    <div class="carousel-slide" style="background:linear-gradient(135deg, #1a365d 0%, #2d3748 40%, #0d2b5e 100%);">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
+        <div style="font-size:4rem;margin-bottom:20px;">⭐</div>
+        <h2 style="color:white;font-size:1.8rem;font-weight:800;margin-bottom:12px;text-shadow:0 2px 20px rgba(0,0,0,0.3);">Build Your Future</h2>
+        <p style="color:rgba(255,255,255,0.7);font-size:0.95rem;max-width:300px;">Earn certificates, attend camps, develop leadership skills</p>
+      </div>
+    </div>
     <div class="carousel-overlay">
       <h2>Join the Elite</h2>
       <p>Become a part of the world's largest uniformed youth organization. Develop character, discipline, and leadership.</p>
@@ -412,35 +424,59 @@ function buildReview(){
   }, 5000);
 })();
 
-// ── Confetti ───────────────────────────────────────────────────────────────────
+// ── Premium Confetti ───────────────────────────────────────────────────────────
 function fireConfetti(){
   const canvas = document.getElementById('confetti');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  canvas.style.pointerEvents = 'none';
   const pieces = [];
-  const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
-  for(let i=0; i<100; i++) {
+  const colors = ['#f0b429', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#1abc9c', '#f39c12'];
+  const shapes = ['rect', 'circle', 'triangle'];
+  for(let i = 0; i < 150; i++) {
     pieces.push({
-      x: canvas.width/2, y: canvas.height/2 + 100,
-      vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20 - 5,
-      size: Math.random()*10+5,
-      color: colors[Math.floor(Math.random()*colors.length)],
-      rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*10
+      x: canvas.width * 0.5 + (Math.random() - 0.5) * 200,
+      y: canvas.height * 0.4,
+      vx: (Math.random() - 0.5) * 24,
+      vy: (Math.random() - 1) * 22 - 8,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 12,
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      opacity: 1,
+      gravity: 0.35 + Math.random() * 0.15,
+      friction: 0.99
     });
   }
+  function drawPiece(p) {
+    ctx.save();
+    ctx.globalAlpha = p.opacity;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    if (p.shape === 'rect') {
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.6);
+    } else if (p.shape === 'circle') {
+      ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI * 2); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.moveTo(0, -p.size/2); ctx.lineTo(p.size/2, p.size/2); ctx.lineTo(-p.size/2, p.size/2); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
   function animate() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     let active = false;
     pieces.forEach(p => {
-      p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.rotSpeed;
-      if(p.y < canvas.height) active = true;
-      ctx.save();
-      ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI/180);
-      ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-      ctx.restore();
+      p.x += p.vx; p.y += p.vy;
+      p.vy += p.gravity; p.vx *= p.friction;
+      p.rot += p.rotSpeed;
+      if (p.y > canvas.height * 0.8) p.opacity -= 0.02;
+      if (p.y < canvas.height + 50 && p.opacity > 0) { active = true; drawPiece(p); }
     });
-    if(active) requestAnimationFrame(animate);
+    if (active) requestAnimationFrame(animate);
+    else { ctx.clearRect(0, 0, canvas.width, canvas.height); }
   }
   animate();
 }
@@ -470,15 +506,29 @@ async function doSignup(){
       if(loginRes.access_token) Auth.setTokens(loginRes.access_token,loginRes.refresh_token||null);
       if(loginRes.user) Auth.setUser(loginRes.user);
     }
-    // Show success
-    document.getElementById('step3').style.display='none';
-    document.getElementById('progressBar').style.display='none';
-    document.getElementById('loginLink').style.display='none';
-    document.querySelector('h1').style.display='none';
-    document.querySelector('.sub').style.display='none';
-    document.querySelector('.logo-row').style.display='none';
-    document.getElementById('successScreen').classList.add('show');
-    fireConfetti();
+    // Show success with smooth transition
+    const hideEls = [document.getElementById('step3'), document.getElementById('progressBar'), 
+      document.getElementById('loginLink'), document.querySelector('h1'), 
+      document.querySelector('.sub'), document.querySelector('.logo-row')];
+    hideEls.forEach((el, i) => {
+      if (!el) return;
+      el.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s`;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-10px)';
+    });
+    setTimeout(() => {
+      hideEls.forEach(el => { if (el) el.style.display = 'none'; });
+      const ss = document.getElementById('successScreen');
+      ss.classList.add('show');
+      ss.style.opacity = '0';
+      ss.style.transform = 'scale(0.9)';
+      requestAnimationFrame(() => {
+        ss.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        ss.style.opacity = '1';
+        ss.style.transform = 'scale(1)';
+      });
+      fireConfetti();
+    }, 500);
   } catch(err){
     showToast('Unexpected error. Please try again.','error');
   } finally {

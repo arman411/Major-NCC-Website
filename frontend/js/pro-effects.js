@@ -20,25 +20,8 @@
 })();
 
 /* ══════════════════════════════════════════════════════════
-   2. CUSTOM CURSOR
+   2. CUSTOM CURSOR (Removed — preserving native OS cursor for accessibility)
    ══════════════════════════════════════════════════════════ */
-(function initCursor() {
-  if (window.matchMedia('(pointer:coarse)').matches) return;
-  let dot = document.getElementById('cursor-dot');
-  let ring = document.getElementById('cursor-ring');
-  if (!dot) {
-    dot = document.createElement('div'); dot.id = 'cursor-dot'; document.body.append(dot);
-    ring = document.createElement('div'); ring.id = 'cursor-ring'; document.body.append(ring);
-  }
-  document.addEventListener('mousemove', e => {
-    dot.style.left = ring.style.left = e.clientX + 'px';
-    dot.style.top  = ring.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a,button,.btn,.card,.stat-card,.stat-card-dark,.activity-card-pro,.timeline-card,.obj-card').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-  });
-})();
 
 /* ══════════════════════════════════════════════════════════
    3. COUNTER-UP ANIMATION
@@ -173,17 +156,25 @@ window.Toast = {
 })();
 
 /* ══════════════════════════════════════════════════════════
-   8. MAGNETIC BUTTONS
+   8. MAGNETIC BUTTONS (Subtle, desktop-only)
    ══════════════════════════════════════════════════════════ */
 (function initMagneticBtns() {
-  document.querySelectorAll('.btn,.btn-nav-enroll').forEach(btn => {
+  // Skip on touch devices
+  if (window.matchMedia('(pointer:coarse)').matches) return;
+  // Skip on low-end devices
+  if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) return;
+  document.querySelectorAll('.btn-nav-enroll,.btn-cta-white').forEach(btn => {
     btn.addEventListener('mousemove', e => {
       const rect = btn.getBoundingClientRect();
-      const dx = (e.clientX - rect.left - rect.width/2) * 0.25;
-      const dy = (e.clientY - rect.top  - rect.height/2) * 0.25;
+      const dx = (e.clientX - rect.left - rect.width/2) * 0.12;
+      const dy = (e.clientY - rect.top  - rect.height/2) * 0.12;
       btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      btn.style.transition = 'transform 0.2s ease-out';
     });
-    btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+      btn.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    });
   });
 })();
 

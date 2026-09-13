@@ -76,6 +76,69 @@
     .otp-group{display:none}
     .otp-group.show{display:block}
     .otp-input{text-align:center;letter-spacing:8px;font-size:1.4rem;font-weight:700;padding-left:14px!important}
+    /* ── Modern 6-Box OTP ── */
+    .otp-boxes-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0 16px;
+      align-items: center;
+    }
+    .otp-box {
+      width: 50px;
+      height: 58px;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Poppins', sans-serif;
+      caret-color: var(--sky);
+    }
+    .otp-box:focus {
+      border-color: var(--sky);
+      background: rgba(52,152,219,0.1);
+      box-shadow: 0 0 24px rgba(52,152,219,0.25), 0 0 0 4px rgba(52,152,219,0.08);
+      transform: scale(1.08);
+    }
+    .otp-box.filled {
+      border-color: rgba(46,204,113,0.5);
+      background: rgba(46,204,113,0.08);
+    }
+    .otp-box.error {
+      border-color: rgba(231,76,60,0.6);
+      background: rgba(231,76,60,0.08);
+      animation: otpShake 0.4s ease;
+    }
+    @keyframes otpShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .otp-separator {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.2);
+      margin: 0 2px;
+      user-select: none;
+    }
+    .otp-info-text {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .otp-change-link {
+      cursor: pointer;
+      color: rgba(52,152,219,0.7);
+      transition: color 0.25s;
+    }
+    .otp-change-link:hover { color: var(--sky); }
 
     /* forgot */
     .forgot-row{text-align:right;margin-bottom:20px;margin-top:-6px}
@@ -172,18 +235,7 @@
         <span id="lastLoginText">Last login: —</span>
       </div>
 
-      <!-- Demo hint (click to expand) -->
-      <details class="demo-box" style="cursor:pointer;">
-        <summary style="font-weight:700;color:#7ec8f5;list-style:none;display:flex;align-items:center;gap:6px;">
-          <i class="fas fa-info-circle"></i> Demo / Test Credentials
-        </summary>
-        <div style="margin-top:8px;line-height:1.8;">
-          Admin: <strong>admin</strong> / <strong>ncc@admin123</strong><br/>
-          Cadet: <strong>arjun@ncc.in</strong> / <strong>cadet123</strong>
-          <br/><button class="demo-fill-btn" onclick="fillDemo('admin')"><i class="fas fa-bolt"></i> Fill Admin</button>
-          <button class="demo-fill-btn" onclick="fillDemo('cadet')" style="margin-left:6px"><i class="fas fa-user"></i> Fill Cadet</button>
-        </div>
-      </details>
+
 
       <form id="loginForm" novalidate>
         <!-- Step 1: Credentials -->
@@ -215,16 +267,18 @@
         <!-- Step 2: OTP (hidden until needed) -->
         <div id="step-otp" class="otp-group">
           <div class="step-label"><div class="step-dot"></div> OTP Verification</div>
-          <div class="form-group" id="grp-otp">
-            <div class="input-wrap">
-              <i class="input-icon fas fa-key"></i>
-              <input type="text" class="form-input otp-input" id="otpInput" placeholder="• • • • • •" maxlength="6"/>
-            </div>
-            <div class="form-error-msg">Enter the 6-digit OTP sent to your email.</div>
+          <div class="otp-boxes-wrap">
+            <input type="text" class="otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" aria-label="OTP digit 1" />
+            <input type="text" class="otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 2" />
+            <input type="text" class="otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 3" />
+            <div class="otp-separator">—</div>
+            <input type="text" class="otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 4" />
+            <input type="text" class="otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 5" />
+            <input type="text" class="otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 6" />
           </div>
-          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:16px;text-align:center">
-            OTP sent to <strong id="otpEmailDisplay" style="color:#7ec8f5">—</strong>
-            &nbsp;·&nbsp;<span style="cursor:pointer;color:rgba(52,152,219,.7)" onclick="cancelOtp()">← Change account</span>
+          <p class="otp-info-text">
+            OTP sent to <strong id="otpEmailDisplay">—</strong>
+            &nbsp;·&nbsp;<span class="otp-change-link" onclick="cancelOtp()">← Change account</span>
           </p>
         </div>
 
@@ -302,20 +356,7 @@ function showToast(msg, type='info', dur=3500){
   }
 })();
 
-// ── Demo Fill ──────────────────────────────────────────────────────────────────
-function fillDemo(who){
-  if(who==='admin'){
-    document.getElementById('loginIdentifier').value='admin';
-    document.getElementById('loginPwd').value='ncc@admin123';
-  } else {
-    document.getElementById('loginIdentifier').value='arjun@ncc.in';
-    document.getElementById('loginPwd').value='cadet123';
-  }
-  // trigger float label
-  ['loginIdentifier','loginPwd'].forEach(id=>{
-    const el=document.getElementById(id); el.dispatchEvent(new Event('input'));
-  });
-}
+
 
 // ── Password Strength ─────────────────────────────────────────────────────
 document.getElementById('loginPwd').addEventListener('input', function(){
@@ -378,19 +419,79 @@ document.getElementById('forgotLink').addEventListener('click',function(e){
 let _otpEmail=null;
 function showOtpStep(email){
   _otpEmail=email;
-  document.getElementById('step-creds').style.display='none';
-  document.getElementById('step-otp').classList.add('show');
-  document.getElementById('otpEmailDisplay').textContent=email;
-  document.getElementById('loginBtnText').textContent='Verify OTP';
-  document.getElementById('loginBtn').querySelector('i').className='fas fa-shield-alt';
-  document.getElementById('otpInput').focus();
+  const creds = document.getElementById('step-creds');
+  const otpStep = document.getElementById('step-otp');
+  // Slide out credentials
+  creds.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+  creds.style.opacity = '0';
+  creds.style.transform = 'translateX(-30px)';
+  setTimeout(() => {
+    creds.style.display='none';
+    otpStep.classList.add('show');
+    otpStep.style.opacity = '0';
+    otpStep.style.transform = 'translateX(30px)';
+    requestAnimationFrame(() => {
+      otpStep.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      otpStep.style.opacity = '1';
+      otpStep.style.transform = 'translateX(0)';
+    });
+    document.getElementById('otpEmailDisplay').textContent=email;
+    document.getElementById('loginBtnText').textContent='Verify OTP';
+    document.getElementById('loginBtn').querySelector('i').className='fas fa-shield-alt';
+    // Clear and focus first OTP box
+    document.querySelectorAll('.otp-box').forEach(b => { b.value=''; b.classList.remove('filled','error'); });
+    setTimeout(() => document.querySelectorAll('.otp-box')[0]?.focus(), 100);
+  }, 350);
 }
 function cancelOtp(){
   _otpEmail=null;
-  document.getElementById('step-creds').style.display='block';
-  document.getElementById('step-otp').classList.remove('show');
-  document.getElementById('loginBtnText').textContent='Sign In';
-  document.getElementById('loginBtn').querySelector('i').className='fas fa-sign-in-alt';
+  const creds = document.getElementById('step-creds');
+  const otpStep = document.getElementById('step-otp');
+  otpStep.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  otpStep.style.opacity = '0';
+  otpStep.style.transform = 'translateX(30px)';
+  setTimeout(() => {
+    otpStep.classList.remove('show');
+    creds.style.display='block';
+    creds.style.opacity = '0';
+    creds.style.transform = 'translateX(-30px)';
+    requestAnimationFrame(() => {
+      creds.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      creds.style.opacity = '1';
+      creds.style.transform = 'translateX(0)';
+    });
+    document.getElementById('loginBtnText').textContent='Sign In';
+    document.getElementById('loginBtn').querySelector('i').className='fas fa-sign-in-alt';
+  }, 300);
+}
+
+// ── OTP Box Navigation ────────────────────────────────────────────────────────
+document.querySelectorAll('.otp-box').forEach((box, i, boxes) => {
+  box.addEventListener('input', (e) => {
+    const val = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = val;
+    if (val && i < boxes.length - 1) boxes[i + 1].focus();
+    e.target.classList.toggle('filled', !!val);
+    e.target.classList.remove('error');
+  });
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !e.target.value && i > 0) {
+      boxes[i - 1].focus();
+      boxes[i - 1].value = '';
+      boxes[i - 1].classList.remove('filled');
+    }
+  });
+  box.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const paste = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
+    paste.split('').forEach((char, idx) => {
+      if (boxes[idx]) { boxes[idx].value = char; boxes[idx].classList.add('filled'); }
+    });
+    if (paste.length > 0) boxes[Math.min(paste.length, boxes.length) - 1].focus();
+  });
+});
+function getOtpValue() {
+  return Array.from(document.querySelectorAll('.otp-box')).map(b => b.value).join('');
 }
 
 // ── Form Submit ────────────────────────────────────────────────────────────────
@@ -404,9 +505,9 @@ document.getElementById('loginForm').addEventListener('submit', async(e)=>{
   try {
     // OTP step
     if(_otpEmail){
-      const otp=document.getElementById('otpInput').value.trim();
+      const otp=getOtpValue();
       if(!otp||otp.length<6){
-        document.getElementById('grp-otp').classList.add('invalid');
+        document.querySelectorAll('.otp-box').forEach(b => b.classList.add('error'));
         showToast('Enter the 6-digit OTP.','warning'); return;
       }
       const res=await NccAPI.verifyOtp({email:_otpEmail, otp});
