@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 instance/
 backups/
+images/uploads/
 *.db
 .env
 .DS_Store
+
