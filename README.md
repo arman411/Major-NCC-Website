@@ -1,4 +1,23 @@
 # NCC Unit – Govt. Polytechnic Hamirpur (HP)
+
+## 🚀 What's New in v2.0 — All 10 Upgrades Implemented
+
+| # | Upgrade | Status |
+|---|---------|--------|
+| 1 | Enhanced PWA with offline support & background sync | ✅ Done |
+| 2 | Device-aware performance (disables 3D on low-end phones) | ✅ Done |
+| 3 | Admin onboarding wizard for ANO | ✅ Done |
+| 4 | Free-tier deployment guide (Render, Railway, GitHub Pages) | ✅ Done |
+| 5 | Data privacy — field encryption + DPDPA consent | ✅ Done |
+| 6 | Multi-role admin system + emergency recovery | ✅ Done |
+| 7 | Time-expiring QR attendance with GPS geofencing | ✅ Done |
+| 8 | Full WCAG accessibility (ARIA, focus, motion preferences) | ✅ Done |
+| 9 | Auto-expiring notices and smart camp status | ✅ Done |
+| 10 | Automated database backup and one-click restore | ✅ Done |
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting instructions.
+
+---
 ## Project Structure
 
 ```

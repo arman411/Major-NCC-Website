@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Attendance Scanner — NCC GPH Hamirpur</title>
+  <meta name="description" content="Scan cadet QR codes to mark attendance with GPS verification." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- html5-qrcode library for camera-based scanning -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f0f4ff; min-height: 100vh; margin: 0; }
+    .scanner-page {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .scanner-header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-top: 20px;
+    }
+    .scanner-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0d2b5e;
+      margin-bottom: 6px;
+    }
+    .scanner-header p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .scanner-card {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 4px 24px rgba(13,43,94,0.1);
+      margin-bottom: 24px;
+    }
+    .scanner-card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0d2b5e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #qr-reader {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #e0e8ff;
+    }
+    #qr-reader img { display: none; }
+    .status-area {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: none;
+    }
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-processing {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .gps-card {
+      background: linear-gradient(135deg, #0d2b5e, #1a4a9e);
+      color: white;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .gps-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gps-status {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      margin-bottom: 12px;
+    }
+    .gps-toggle {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .gps-toggle:hover { background: rgba(255,255,255,0.25); }
+    .gps-toggle:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+    .attendance-log {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .log-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.85rem;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    .log-icon.success { background: #d4edda; color: #155724; }
+    .log-icon.error { background: #f8d7da; color: #721c24; }
+    .log-time { color: #999; font-size: 0.75rem; margin-top: 2px; }
+    .scan-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .btn-scan { 
+      flex: 1;
+      background: linear-gradient(135deg, #0d2b5e, #1a4a9e);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      min-height: 44px;
+    }
+    .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13,43,94,0.3); }
+    .btn-stop {
+      flex: 1;
+      background: #f8d7da;
+      color: #721c24;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      min-height: 44px;
+      display: none;
+    }
+    .date-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .date-selector label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
+    }
+    .date-selector input {
+      flex: 1;
+      padding: 8px 14px;
+      border: 1.5px solid #dde4f5;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      color: #0d2b5e;
+      min-height: 44px;
+    }
+    .date-selector input:focus-visible {
+      outline: 3px solid #3498db;
+      border-color: #3498db;
+    }
+    @media (max-width: 480px) {
+      .scanner-page { padding: 12px 8px; }
+      .scanner-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-main">Skip to main content</a>
+
+  <div class="scanner-page" id="main-content" role="main">
+    <header class="scanner-header">
+      <a href="../index.html" style="display:inline-flex;align-items:center;gap:8px;color:#0d2b5e;font-weight:700;font-size:0.9rem;text-decoration:none;margin-bottom:16px;">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Portal
+      </a>
+      <h1><i class="fas fa-qrcode" aria-hidden="true"></i> QR Attendance Scanner</h1>
+      <p>Scan cadet QR codes to mark attendance. GPS verification ensures physical presence.</p>
+    </header>
+
+    <!-- GPS Status Card -->
+    <div class="gps-card" aria-label="GPS verification status">
+      <h3><i class="fas fa-map-marker-alt" aria-hidden="true"></i> GPS Verification</h3>
+      <p class="gps-status" id="gps-status-text" aria-live="polite">Click to enable GPS location verification</p>
+      <button class="gps-toggle" id="gps-toggle-btn" onclick="toggleGPS()" aria-label="Toggle GPS verification">
+        <i class="fas fa-location-arrow" aria-hidden="true"></i> Enable GPS
+      </button>
+    </div>
+
+    <!-- Scanner Section -->
+    <div class="scanner-card">
+      <h2><i class="fas fa-camera" aria-hidden="true"></i> Camera Scanner</h2>
+      
+      <div class="date-selector">
+        <label for="attendance-date">Date:</label>
+        <input type="date" id="attendance-date" aria-label="Attendance date" />
+      </div>
+
+      <div id="qr-reader" role="img" aria-label="QR code scanner viewfinder"></div>
+      
+      <div id="scan-status" class="status-area" aria-live="polite" role="status"></div>
+
+      <div class="scan-controls">
+        <button class="btn-scan" id="start-scan-btn" onclick="startScanner()" aria-label="Start QR scanner">
+          <i class="fas fa-play" aria-hidden="true"></i> Start Scanner
+        </button>
+        <button class="btn-stop" id="stop-scan-btn" onclick="stopScanner()" aria-label="Stop QR scanner">
+          <i class="fas fa-stop" aria-hidden="true"></i> Stop
+        </button>
+      </div>
+    </div>
+
+    <!-- Attendance Log -->
+    <div class="scanner-card">
+      <h2><i class="fas fa-list-check" aria-hidden="true"></i> Today's Attendance Log</h2>
+      <div class="attendance-log" id="attendance-log" aria-label="Attendance records" aria-live="polite">
+        <p style="color:#999;font-size:0.85rem;text-align:center;padding:20px;">No scans yet. Start the scanner to mark attendance.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script>
+    let html5QrCode = null;
+    let gpsEnabled = false;
+    let currentLat = null;
+    let currentLng = null;
+    let scanLog = [];
+
+    // Set today's date as default
+    document.getElementById('attendance-date').value = new Date().toISOString().split('T')[0];
+
+    // ── GPS Management ────────────────────────────────────────────
+    function toggleGPS() {
+      if (gpsEnabled) {
+        gpsEnabled = false;
+        currentLat = currentLng = null;
+        document.getElementById('gps-status-text').textContent = 'GPS disabled — attendance will be marked without location verification';
+        document.getElementById('gps-toggle-btn').innerHTML = '<i class="fas fa-location-arrow"></i> Enable GPS';
+      } else {
+        document.getElementById('gps-status-text').textContent = 'Requesting location...';
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            gpsEnabled = true;
+            currentLat = pos.coords.latitude;
+            currentLng = pos.coords.longitude;
+            const acc = Math.round(pos.coords.accuracy);
+            document.getElementById('gps-status-text').textContent =
+              `✅ GPS active — Accuracy: ±${acc}m | Lat: ${currentLat.toFixed(4)}, Lng: ${currentLng.toFixed(4)}`;
+            document.getElementById('gps-toggle-btn').innerHTML = '<i class="fas fa-times"></i> Disable GPS';
+          },
+          (err) => {
+            document.getElementById('gps-status-text').textContent =
+              '❌ GPS access denied. Attendance will be marked without location verification.';
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      }
+    }
+
+    // ── QR Scanner ────────────────────────────────────────────────
+    function startScanner() {
+      html5QrCode = new Html5Qrcode('qr-reader');
+      Html5Qrcode.getCameras().then(cameras => {
+        if (!cameras || cameras.length === 0) {
+          showStatus('❌ No camera found on this device.', 'error');
+          return;
+        }
+        // Prefer rear camera for scanning
+        const camera = cameras.length > 1 ? cameras[1] : cameras[0];
+        html5QrCode.start(
+          { deviceId: { exact: camera.id } },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decodedText) => processQR(decodedText),
+          (errMsg) => {} // Ignore scan errors (camera still looking)
+        ).then(() => {
+          document.getElementById('start-scan-btn').style.display = 'none';
+          document.getElementById('stop-scan-btn').style.display = 'flex';
+        }).catch(err => showStatus('❌ Camera error: ' + err, 'error'));
+      }).catch(() => showStatus('❌ Camera access denied. Please allow camera permissions.', 'error'));
+    }
+
+    function stopScanner() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+          html5QrCode = null;
+          document.getElementById('start-scan-btn').style.display = 'flex';
+          document.getElementById('stop-scan-btn').style.display = 'none';
+          showStatus('🛑 Scanner stopped.', 'error');
+        });
+      }
+    }
+
+    let lastScanned = '';
+    let lastScanTime = 0;
+
+    async function processQR(token) {
+      // Debounce: ignore same token within 3 seconds
+      const now = Date.now();
+      if (token === lastScanned && now - lastScanTime < 3000) return;
+      lastScanned = token;
+      lastScanTime = now;
+
+      showStatus('⏳ Verifying QR code...', 'processing');
+
+      const attendanceDate = document.getElementById('attendance-date').value;
+      const payload = { token, date: attendanceDate };
+      if (gpsEnabled && currentLat && currentLng) {
+        payload.latitude = currentLat;
+        payload.longitude = currentLng;
+      }
+
+      try {
+        const res = await fetch('/api/qr/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        if (!data.error) {
+          showStatus(`✅ ${data.message}`, 'success');
+          addToLog(data.cadet_name || 'Cadet', true, data.message);
+          // Brief flash feedback
+          document.getElementById('qr-reader').style.border = '3px solid #27ae60';
+          setTimeout(() => {
+            document.getElementById('qr-reader').style.border = '2px solid #e0e8ff';
+          }, 1500);
+        } else {
+          showStatus(`❌ ${data.message}`, 'error');
+          addToLog('Unknown', false, data.message);
+          document.getElementById('qr-reader').style.border = '3px solid #c0392b';
+          setTimeout(() => {
+            document.getElementById('qr-reader').style.border = '2px solid #e0e8ff';
+          }, 1500);
+        }
+      } catch (e) {
+        showStatus('❌ Network error. Please check your connection.', 'error');
+      }
+    }
+
+    function showStatus(message, type) {
+      const el = document.getElementById('scan-status');
+      el.className = `status-area status-${type}`;
+      el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'processing' ? 'spinner fa-spin' : 'exclamation-circle'}" aria-hidden="true"></i><span>${message}</span>`;
+      el.style.display = 'flex';
+    }
+
+    function addToLog(name, success, message) {
+      scanLog.unshift({ name, success, message, time: new Date().toLocaleTimeString() });
+      const log = document.getElementById('attendance-log');
+      log.innerHTML = scanLog.map(item => `
+        <div class="log-item" role="listitem">
+          <div class="log-icon ${item.success ? 'success' : 'error'}" aria-hidden="true">
+            ${item.success ? '✓' : '✗'}
+          </div>
+          <div>
+            <div style="font-weight:600;color:#0d2b5e;">${item.name}</div>
+            <div class="log-time">${item.time} — ${item.message}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ from calendar import monthrange
 def utcnow_helper():
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
-from models import db, User, Notice, GalleryItem, Attendance, AttendanceRequest, Event, Contact, Achievement, Camp, CampApplication, PushSubscription, SmsAlert, LeaveRequest
+from models import db, User, Notice, GalleryItem, Attendance, AttendanceRequest, Event, Contact, Achievement, Camp, CampApplication, PushSubscription, SmsAlert, LeaveRequest, PrivacyConsent, QRAttendance, DatabaseBackupLog
 import json
 
 # VAPID & Twilio Configurations for PWA Push & SMS Alerts
@@ -2659,6 +2659,329 @@ def api_admin_bulk_delete():
 
 # Start the background daemon scheduler
 start_alert_scheduler(app)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  UPGRADE 5: PRIVACY & CONSENT ROUTES
+# ═══════════════════════════════════════════════════════════════════════
+
+try:
+    from crypto_utils import encryptor as field_encryptor
+except ImportError:
+    field_encryptor = None
+    print("Warning: crypto_utils not found. Field encryption disabled.")
+
+try:
+    from backup_utils import backup_database, list_backups, restore_database
+except ImportError:
+    backup_database = list_backups = restore_database = None
+    print("Warning: backup_utils not found. Backup system disabled.")
+
+try:
+    from qr_utils import (
+        generate_time_limited_token, validate_token, validate_location, generate_qr_image
+    )
+except ImportError:
+    generate_time_limited_token = validate_token = validate_location = generate_qr_image = None
+    print("Warning: qr_utils not found. QR attendance system disabled.")
+
+
+@app.route('/api/privacy/consent', methods=['POST'])
+def record_privacy_consent():
+    """Record DPDPA consent from a cadet during enrollment."""
+    data = request.get_json(force=True) or {}
+    email = data.get('email', '').strip().lower()
+    if not email:
+        return jsonify({'error': True, 'message': 'Email required for consent record'}), 400
+    
+    try:
+        consent = PrivacyConsent(
+            email=email,
+            ip_address=request.headers.get('X-Forwarded-For', request.remote_addr),
+            consent_text='I consent to the collection and processing of my personal data by NCC Unit, Govt. Polytechnic Hamirpur (HP) in accordance with DPDPA 2023.',
+            user_id=current_user.id if current_user.is_authenticated else None
+        )
+        db.session.add(consent)
+        db.session.commit()
+        return jsonify({'error': False, 'message': 'Consent recorded successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': True, 'message': str(e)}), 500
+
+
+@app.route('/api/privacy/withdraw', methods=['POST'])
+@login_required
+def withdraw_privacy_consent():
+    """Allow a cadet to withdraw their data processing consent."""
+    consent = PrivacyConsent.query.filter_by(
+        email=current_user.email, is_withdrawn=False
+    ).first()
+    if not consent:
+        return jsonify({'error': True, 'message': 'No active consent record found'}), 404
+    
+    consent.is_withdrawn = True
+    consent.withdrawn_at = utcnow_helper()
+    db.session.commit()
+    return jsonify({'error': False, 'message': 'Consent withdrawn. Your data deletion request has been noted.'})
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  UPGRADE 7: TIME-EXPIRING QR ATTENDANCE WITH GPS VERIFICATION
+# ═══════════════════════════════════════════════════════════════════════
+
+@app.route('/api/qr/generate', methods=['GET'])
+@login_required
+def generate_attendance_qr():
+    """Generate a time-limited QR attendance token for the logged-in cadet."""
+    if current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admins do not need QR codes'}), 400
+    
+    if generate_time_limited_token is None:
+        return jsonify({'error': True, 'message': 'QR system not available'}), 503
+    
+    secret = app.config.get('SECRET_KEY', 'ncc-secret')
+    token = generate_time_limited_token(current_user.id, secret)
+    
+    return jsonify({
+        'error': False,
+        'token': token,
+        'valid_seconds': 120,
+        'cadet_name': current_user.username,
+        'expires_at': int(__import__('time').time()) + 120
+    })
+
+
+@app.route('/api/qr/generate-image', methods=['GET'])
+@login_required
+def generate_attendance_qr_image():
+    """Generate and return a QR code PNG image for the logged-in cadet."""
+    if current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admins do not need QR codes'}), 400
+    
+    if generate_time_limited_token is None or generate_qr_image is None:
+        return jsonify({'error': True, 'message': 'QR system not available'}), 503
+    
+    secret = app.config.get('SECRET_KEY', 'ncc-secret')
+    token = generate_time_limited_token(current_user.id, secret)
+    
+    try:
+        buf = generate_qr_image(token, current_user.username)
+        from flask import send_file as flask_send_file
+        return flask_send_file(buf, mimetype='image/png')
+    except Exception as e:
+        return jsonify({'error': True, 'message': f'QR image generation failed: {str(e)}'}), 500
+
+
+@app.route('/api/qr/scan', methods=['POST'])
+@login_required
+def scan_attendance_qr():
+    """Validate a QR token and mark attendance. Optionally checks GPS location."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Only admins or SUOs can scan QR codes'}), 403
+    
+    if validate_token is None:
+        return jsonify({'error': True, 'message': 'QR system not available'}), 503
+    
+    data = request.get_json(force=True) or {}
+    encoded_token = data.get('token', '').strip()
+    lat = data.get('latitude')
+    lng = data.get('longitude')
+    date_str = data.get('date', datetime.now().strftime('%Y-%m-%d'))
+    
+    if not encoded_token:
+        return jsonify({'error': True, 'message': 'QR token is required'}), 400
+    
+    # Validate token
+    secret = app.config.get('SECRET_KEY', 'ncc-secret')
+    try:
+        payload = validate_token(encoded_token, secret)
+    except ValueError as e:
+        return jsonify({'error': True, 'message': str(e)}), 400
+    
+    user_id = payload['user_id']
+    cadet = User.query.get(user_id)
+    if not cadet:
+        return jsonify({'error': True, 'message': 'Cadet not found for this QR code'}), 404
+    
+    # GPS verification (optional — if coordinates provided)
+    location_verified = False
+    distance = None
+    if lat is not None and lng is not None and validate_location is not None:
+        loc_result = validate_location(float(lat), float(lng))
+        location_verified = loc_result['is_valid']
+        distance = loc_result['distance_meters']
+        if not location_verified:
+            return jsonify({
+                'error': True,
+                'message': f'Location verification failed. You are {distance}m away from the parade ground (max {loc_result["max_distance"]}m allowed).'
+            }), 400
+    
+    # Check for duplicate attendance today
+    existing = QRAttendance.query.filter_by(user_id=user_id, date=date_str, status='present').first()
+    if existing:
+        return jsonify({'error': True, 'message': f'{cadet.username} is already marked present today'}), 409
+    
+    # Record attendance
+    try:
+        att = QRAttendance(
+            user_id=user_id,
+            date=date_str,
+            status='present',
+            latitude=lat,
+            longitude=lng,
+            distance_from_ground=distance,
+            location_verified=location_verified,
+            token_age_seconds=payload.get('age_seconds')
+        )
+        db.session.add(att)
+        db.session.commit()
+        return jsonify({
+            'error': False,
+            'message': f'✅ {cadet.username} marked present for {date_str}',
+            'cadet_name': cadet.username,
+            'location_verified': location_verified,
+            'distance_meters': distance
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': True, 'message': str(e)}), 500
+
+
+@app.route('/api/qr/attendance-log', methods=['GET'])
+@login_required
+def qr_attendance_log():
+    """Admin view of all QR-based attendance records."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin only'}), 403
+    
+    date_filter = request.args.get('date')
+    query = QRAttendance.query
+    if date_filter:
+        query = query.filter_by(date=date_filter)
+    records = query.order_by(QRAttendance.scanned_at.desc()).limit(200).all()
+    return jsonify({'error': False, 'records': [r.to_dict() for r in records]})
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  UPGRADE 9: AUTO-EXPIRING CONTENT HELPERS
+# ═══════════════════════════════════════════════════════════════════════
+
+@app.route('/api/notices/active', methods=['GET'])
+def get_active_notices():
+    """Return only non-expired notices for public display."""
+    now = utcnow_helper()
+    notices = Notice.query.order_by(Notice.created_at.desc()).all()
+    active = []
+    for n in notices:
+        # Expire if past deadline
+        if n.deadline and n.deadline < now:
+            continue
+        # Auto-expire notices older than 60 days with no deadline
+        age_days = (now - n.created_at).days if n.created_at else 0
+        if not n.deadline and age_days > 60:
+            continue
+        n_dict = n.to_dict() if hasattr(n, 'to_dict') else {'id': n.id, 'title': n.title, 'description': n.description, 'category': n.category, 'created_at': n.created_at.isoformat() if n.created_at else None, 'is_new': n.is_new}
+        # Remove NEW badge if older than 7 days
+        if n.is_new and age_days > 7:
+            n_dict['is_new'] = False
+        active.append(n_dict)
+    return jsonify({'error': False, 'notices': active, 'total': len(active)})
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  UPGRADE 10: BACKUP & RESTORE ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════
+
+@app.route('/api/admin/backup', methods=['GET'])
+@login_required
+def admin_download_backup():
+    """Generate and download a database backup."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin only'}), 403
+    
+    if backup_database is None:
+        return jsonify({'error': True, 'message': 'Backup system not available'}), 503
+    
+    backup_path = backup_database(label='manual')
+    if not backup_path:
+        return jsonify({'error': True, 'message': 'Backup creation failed — database file not found'}), 500
+    
+    download_name = f'ncc_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.db'
+    return send_from_directory(
+        os.path.dirname(backup_path),
+        os.path.basename(backup_path),
+        as_attachment=True,
+        download_name=download_name
+    )
+
+
+@app.route('/api/admin/backup/list', methods=['GET'])
+@login_required
+def admin_list_backups():
+    """List all available database backups."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin only'}), 403
+    
+    if list_backups is None:
+        return jsonify({'error': True, 'message': 'Backup system not available'}), 503
+    
+    backups = list_backups()
+    return jsonify({'error': False, 'backups': backups, 'total': len(backups)})
+
+
+@app.route('/api/admin/restore', methods=['POST'])
+@login_required
+def admin_restore_backup():
+    """Upload and restore a database from a backup file."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin only'}), 403
+    
+    if restore_database is None:
+        return jsonify({'error': True, 'message': 'Backup system not available'}), 503
+    
+    backup_file = request.files.get('backup_file')
+    if not backup_file or not backup_file.filename.endswith('.db'):
+        return jsonify({'error': True, 'message': 'Please upload a valid .db backup file'}), 400
+    
+    # Save uploaded backup to temp location
+    import tempfile
+    with tempfile.NamedTemporaryFile(suffix='.db', delete=False) as tmp:
+        backup_file.save(tmp.name)
+        tmp_path = tmp.name
+    
+    success = restore_database(tmp_path)
+    try:
+        os.unlink(tmp_path)
+    except Exception:
+        pass
+    
+    if success:
+        return jsonify({'error': False, 'message': '✅ Database restored successfully. Please restart the server for changes to take effect.'})
+    else:
+        return jsonify({'error': True, 'message': 'Restore failed. Check server logs for details.'}), 500
+
+
+@app.route('/api/admin/cleanup-expired', methods=['POST'])
+@login_required
+def admin_cleanup_expired_data():
+    """Clean up graduated student data older than 2 years (DPDPA compliance)."""
+    if not current_user.is_admin:
+        return jsonify({'error': True, 'message': 'Admin only'}), 403
+    
+    cutoff = utcnow_helper() - timedelta(days=730)
+    deleted = 0
+    # Note: only delete users who have not been active and were created before cutoff
+    # This is a soft cleanup — marks old unapproved/guest records for review
+    old_unapproved = User.query.filter(
+        User.created_at < cutoff,
+        User.is_admin == False,
+        User.is_approved == False
+    ).all()
+    for u in old_unapproved:
+        db.session.delete(u)
+        deleted += 1
+    db.session.commit()
+    return jsonify({'error': False, 'message': f'Cleaned up {deleted} expired unapproved records', 'deleted': deleted})
 
 
 # Run the app

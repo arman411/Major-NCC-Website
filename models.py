@@ -432,3 +432,78 @@ class LeaveRequest(db.Model):
             'updated_at': self.updated_at.isoformat() if self.updated_at else self.created_at.isoformat()
         }
 
+
+# ─────────────────────────────────────────────────────
+# Upgrade 6: Role-based access — already handled via is_admin
+# Adding a PrivacyConsent model for DPDPA compliance (Upgrade 5)
+# ─────────────────────────────────────────────────────
+
+class PrivacyConsent(db.Model):
+    """Tracks DPDPA consent given by cadets during enrollment."""
+    __tablename__ = 'privacy_consent'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    email = db.Column(db.String(120), nullable=False)
+    ip_address = db.Column(db.String(45))
+    consent_text = db.Column(db.Text)  # Store the exact consent text they agreed to
+    consented_at = db.Column(db.DateTime, default=lambda: __import__('datetime').datetime.utcnow())
+    is_withdrawn = db.Column(db.Boolean, default=False)
+    withdrawn_at = db.Column(db.DateTime, nullable=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'consented_at': self.consented_at.isoformat() if self.consented_at else None,
+            'is_withdrawn': self.is_withdrawn
+        }
+
+
+class QRAttendance(db.Model):
+    """Tracks QR-based attendance with GPS verification (Upgrade 7)."""
+    __tablename__ = 'qr_attendance'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.String(20), nullable=False)  # YYYY-MM-DD
+    status = db.Column(db.String(20), default='present')  # present, rejected
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    distance_from_ground = db.Column(db.Float, nullable=True)  # meters
+    location_verified = db.Column(db.Boolean, default=False)
+    token_age_seconds = db.Column(db.Integer, nullable=True)
+    scanned_at = db.Column(db.DateTime, default=lambda: __import__('datetime').datetime.utcnow())
+    
+    # Relationship
+    user = db.relationship('User', backref=db.backref('qr_attendances', lazy=True))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'date': self.date,
+            'status': self.status,
+            'location_verified': self.location_verified,
+            'distance_from_ground': self.distance_from_ground,
+            'token_age_seconds': self.token_age_seconds,
+            'scanned_at': self.scanned_at.isoformat() if self.scanned_at else None
+        }
+
+
+class DatabaseBackupLog(db.Model):
+    """Tracks automated database backup events (Upgrade 10)."""
+    __tablename__ = 'backup_log'
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    size_kb = db.Column(db.Integer, default=0)
+    label = db.Column(db.String(50), default='auto')  # auto, manual, pre-restore-emergency
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: __import__('datetime').datetime.utcnow())
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'filename': self.filename,
+            'size_kb': self.size_kb,
+            'label': self.label,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }

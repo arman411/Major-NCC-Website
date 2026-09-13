@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You are Offline — NCC GPH Hamirpur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0d2b5e 0%, #1a4a9e 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .offline-card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 60px 48px;
+      max-width: 480px;
+      width: 100%;
+    }
+    .offline-icon {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+    p { font-size: 1rem; opacity: 0.8; line-height: 1.7; margin-bottom: 32px; }
+    .retry-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      color: #0d2b5e;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 14px 32px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .retry-btn:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+    .cached-links {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .cached-links p { font-size: 0.85rem; margin-bottom: 12px; }
+    .cached-links a {
+      display: inline-block;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      margin: 4px 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .cached-links a:hover { color: white; }
+  </style>
+</head>
+<body>
+  <main class="offline-card" role="main">
+    <span class="offline-icon" aria-hidden="true">📶</span>
+    <h1>You Are Offline</h1>
+    <p>
+      It looks like you've lost your internet connection.<br />
+      Don't worry — some pages are still available from your cache.
+      Your form data will be saved and synced when you reconnect.
+    </p>
+    <button class="retry-btn" onclick="window.location.reload()" aria-label="Try reconnecting">
+      🔄 Try Again
+    </button>
+    <nav class="cached-links" aria-label="Cached pages">
+      <p>Cached pages you can still visit:</p>
+      <a href="/">Home</a>
+      <a href="/pages/notices.html">Notices</a>
+      <a href="/pages/about.html">About</a>
+      <a href="/pages/gallery.html">Gallery</a>
+    </nav>
+  </main>
+  <script>
+    // Auto-reload when connection restored
+    window.addEventListener('online', () => {
+      window.location.href = document.referrer || '/';
+    });
+  </script>
+</body>
+</html>

@@ -1,3 +1,67 @@
+/**
+ * Device Capability Detection — Upgrade 2
+ * Disables heavy animations on low-end devices to prevent lag/crashes
+ */
+(function () {
+  'use strict';
+
+  function isLowEndDevice() {
+    const memory = navigator.deviceMemory || 4; // GB RAM (undefined = assume 4)
+    const cores = navigator.hardwareConcurrency || 4;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const isSaveData = conn && conn.saveData;
+    const isSlowNetwork = conn && ['2g', 'slow-2g'].includes(conn.effectiveType);
+    const isSmallScreen = window.innerWidth < 480;
+    return memory <= 2 || cores <= 2 || isSaveData || isSlowNetwork || isSmallScreen;
+  }
+
+  // Store as global flag for other scripts to use
+  window.NCC_LOW_END = isLowEndDevice();
+
+  if (window.NCC_LOW_END) {
+    console.log('[NCC] Low-end device detected — disabling heavy animations.');
+    
+    // Replace 3D canvas badge with static image
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('badge-canvas');
+      if (canvas) {
+        const wrapper = canvas.closest('.badge-wrapper') || canvas.parentElement;
+        if (wrapper) {
+          const img = document.createElement('img');
+          img.src = '../images/ncc_badge.png';
+          img.alt = 'NCC Badge';
+          img.style.cssText = 'width:220px;height:220px;object-fit:contain;filter:drop-shadow(0 8px 24px rgba(13,43,94,0.3))';
+          canvas.replaceWith(img);
+        }
+      }
+
+      // Remove particle canvas
+      const particle = document.getElementById('particle-canvas');
+      if (particle) particle.remove();
+
+      // Instantly reveal all AOS elements without animation
+      document.querySelectorAll('[data-aos]').forEach(el => {
+        el.removeAttribute('data-aos');
+        el.removeAttribute('data-aos-delay');
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+
+      // Add lazy loading to all images
+      document.querySelectorAll('img:not([loading])').forEach(img => {
+        img.setAttribute('loading', 'lazy');
+      });
+    });
+  } else {
+    // Add lazy loading to non-critical images even on high-end devices
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.activity-img img, .about-img-main, .about-img-secondary').forEach(img => {
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+      });
+    });
+  }
+})();
+
 // animations-3d.js
 (function() {
     function loadScript(src) {

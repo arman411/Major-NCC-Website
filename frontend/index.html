@@ -461,6 +461,9 @@
 </head>
 <body>
 
+<!-- Skip to main content for keyboard users (Accessibility) -->
+<a href="#main-content" class="skip-to-main">Skip to main content</a>
+
 <!-- Scroll Progress Bar -->
 <div id="scroll-progress"></div>
 <!-- Custom Cursor -->
@@ -477,7 +480,7 @@
 </div>
 
 <!-- Navbar -->
-<nav id="navbar">
+<nav id="navbar" role="navigation" aria-label="Main navigation">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-brand">
       <div class="brand-logo"><img src="images/ncc_badge.png" alt="NCC Logo" /></div>
@@ -500,14 +503,14 @@
       <a href="pages/login.html" class="btn-nav-login">Login</a>
       <a href="pages/enrollment.html" class="btn-nav-enroll">Enroll Now</a>
     </div>
-    <button class="hamburger" aria-label="Toggle menu">
+    <button class="hamburger" aria-expanded="false" aria-controls="mobile-nav" aria-label="Toggle navigation menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
 <!-- Mobile Nav -->
-<div class="mobile-nav">
+<div class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Mobile navigation">
   <a href="index.html" class="nav-link">Home</a>
   <a href="pages/about.html" class="nav-link">About NCC</a>
   <a href="pages/unit.html" class="nav-link">Our Unit</a>
@@ -523,7 +526,7 @@
 </div>
 
 <!-- ── HERO SECTION ─────────────────────────────────── -->
-<section class="hero">
+<section class="hero" id="main-content">
   <canvas id="particle-canvas"></canvas>
 <div class="hero-bg-shape hero-shape-1"></div>
   <div class="hero-bg-shape hero-shape-2"></div>
@@ -1030,6 +1033,7 @@ document.querySelectorAll('.stats-dark-section').forEach(s => counterObserver.ob
 </script>
 
 <script src="js/pro-effects.js"></script>
+<script src="js/offline-sync.js"></script>
 </body>
 </html>
 
