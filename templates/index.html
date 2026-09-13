@@ -23,6 +23,7 @@
   </script>
   <title>NCC Unit – Government Polytechnic Hamirpur (HP) | Unity &amp; Discipline</title>
   <meta name="description" content="Official NCC unit website of Government Polytechnic Hamirpur (HP). Inspiring cadets since decades through unity, discipline, and service." />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/ncc_badge.png') }}" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0d2b5e" />
   <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
@@ -655,8 +656,8 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-image-stack" data-aos="fade-right">
-        <img src="{{ url_for('static', filename='images/new_img1.jpg') }}" alt="Government Polytechnic Hamirpur (HP) Campus" class="about-img-main parallax" data-speed="0.08" />
-        <img src="{{ url_for('static', filename='images/new_img2.jpg') }}" alt="Academic Block – Govt. Polytechnic Hamirpur (HP)" class="about-img-secondary parallax" data-speed="0.15" />
+        <img src="{{ url_for('static', filename='images/new_img1.jpg') }}" alt="Government Polytechnic Hamirpur (HP) Campus" class="about-img-main parallax" data-speed="0.08" loading="lazy" />
+        <img src="{{ url_for('static', filename='images/new_img2.jpg') }}" alt="Academic Block – Govt. Polytechnic Hamirpur (HP)" class="about-img-secondary parallax" data-speed="0.15" loading="lazy" />
         <div class="about-badge-chip float-anim">
           <strong>1963</strong>
           Est. Year
@@ -712,7 +713,7 @@
     <div class="activities-grid">
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="0">
         <div class="activity-img-pro">
-          <img src="{{ url_for('static', filename='images/new_img3.jpg') }}" alt="Republic Day Camp" />
+          <img src="{{ url_for('static', filename='images/new_img3.jpg') }}" alt="Republic Day Camp" loading="lazy" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">RDC</span>
           <div class="activity-caption"><p>Selected cadets represent Himachal Pradesh at the prestigious Republic Day Camp in New Delhi.</p></div>
@@ -724,7 +725,7 @@
       </div>
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="120">
         <div class="activity-img-pro">
-          <img src="{{ url_for('static', filename='images/new_img4.jpg') }}" alt="Thal Sainik Camp" />
+          <img src="{{ url_for('static', filename='images/new_img4.jpg') }}" alt="Thal Sainik Camp" loading="lazy" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">TSC</span>
           <div class="activity-caption"><p>An intensive military-themed camp testing physical endurance, tactical knowledge and team spirit.</p></div>
@@ -736,7 +737,7 @@
       </div>
       <div class="activity-card-pro hover-shine" data-aos="fade-up" data-aos-delay="240">
         <div class="activity-img-pro">
-          <img src="{{ url_for('static', filename='images/new_img5.jpg') }}" alt="Social Service" />
+          <img src="{{ url_for('static', filename='images/new_img5.jpg') }}" alt="Social Service" loading="lazy" />
           <div class="activity-img-overlay-2"></div>
           <span class="activity-tag-2">SOCIAL</span>
           <div class="activity-caption"><p>Blood donation drives, cleanliness campaigns, and community outreach at the heart of NCC ethos.</p></div>

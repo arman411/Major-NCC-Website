@@ -2984,7 +2984,16 @@ def admin_cleanup_expired_data():
     return jsonify({'error': False, 'message': f'Cleaned up {deleted} expired unapproved records', 'deleted': deleted})
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    """Custom 404 error page handler."""
+    if request.path.startswith('/api/'):
+        return jsonify({'error': True, 'message': 'Endpoint not found', 'status': 404}), 404
+    return render_template('404.html'), 404
+
+
 # Run the app
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     app.run(debug=True, port=5000)
+

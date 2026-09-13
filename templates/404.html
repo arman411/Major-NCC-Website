@@ -3,189 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 – Page Not Found | NCC Govt. Polytechnic Hamirpur (HP)</title>
-  <meta name="robots" content="noindex" />
+  <title>404 Page Not Found – NCC Govt. Polytechnic Hamirpur (HP)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      min-height: 100vh;
+    .error-container {
+      min-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0d2b5e 0%, #1a4080 50%, #0a1f44 100%);
-      color: white;
       text-align: center;
-      padding: 24px;
-      overflow: hidden;
-      position: relative;
+      padding: 60px 20px;
     }
-
-    /* Floating decorative circles */
-    body::before {
-      content: '';
-      position: absolute;
-      top: -100px; right: -100px;
-      width: 400px; height: 400px;
-      border-radius: 50%;
-      background: rgba(52, 152, 219, 0.08);
-      pointer-events: none;
+    .error-card {
+      max-width: 540px;
+      padding: 48px 36px;
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--mid-gray);
     }
-    body::after {
-      content: '';
-      position: absolute;
-      bottom: -120px; left: -80px;
-      width: 350px; height: 350px;
-      border-radius: 50%;
-      background: rgba(192, 57, 43, 0.06);
-      pointer-events: none;
-    }
-
-    .container {
-      max-width: 580px;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-    }
-
-    .ncc-badge {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 32px;
-      font-size: 2.2rem;
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-12px); }
-    }
-
     .error-code {
-      font-size: clamp(6rem, 20vw, 10rem);
-      font-weight: 800;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--navy);
       line-height: 1;
-      background: linear-gradient(135deg, #ffffff, #3498db);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 16px;
-      letter-spacing: -4px;
+      margin-bottom: 12px;
+      letter-spacing: -2px;
     }
-
-    h1 {
-      font-size: clamp(1.2rem, 4vw, 1.6rem);
+    .error-code span { color: var(--red); }
+    .error-title {
+      font-size: 1.4rem;
       font-weight: 700;
-      color: rgba(255,255,255,0.95);
-      margin-bottom: 16px;
+      color: var(--navy);
+      margin-bottom: 12px;
     }
-
-    p {
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.6);
-      line-height: 1.8;
-      margin-bottom: 40px;
+    .error-desc {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 32px;
     }
-
-    .actions {
+    .error-actions {
       display: flex;
       gap: 16px;
       justify-content: center;
       flex-wrap: wrap;
     }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 50px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: all 0.25s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #3498db, #2980b9);
-      color: white;
-      box-shadow: 0 4px 20px rgba(52,152,219,0.4);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(52,152,219,0.5); }
-
-    .btn-outline {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.25);
-      backdrop-filter: blur(6px);
-    }
-    .btn-outline:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
-
-    .quick-links {
-      margin-top: 48px;
-      padding-top: 32px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    .quick-links p {
-      font-size: 0.82rem;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.4);
-    }
-    .link-grid {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .link-grid a {
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.65);
-      text-decoration: none;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.12);
-      transition: all 0.2s;
-    }
-    .link-grid a:hover { color: white; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.08); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="ncc-badge">🎖️</div>
-
-    <div class="error-code">404</div>
-
-    <h1>Page Not Found</h1>
-    <p>The page you are looking for may have been moved, deleted, or simply doesn't exist.<br>Let's get you back on track, cadet!</p>
-
-    <div class="actions">
-      <a href="{{ url_for('home') }}" class="btn btn-primary">
-        <i class="fas fa-home"></i> Go to Homepage
-      </a>
-      <a href="javascript:history.back()" class="btn btn-outline">
-        <i class="fas fa-arrow-left"></i> Go Back
-      </a>
-    </div>
-
-    <div class="quick-links">
-      <p>Quick Navigation</p>
-      <div class="link-grid">
-        <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About NCC</a>
-        <a href="{{ url_for('gallery') }}"><i class="fas fa-images"></i> Gallery</a>
-        <a href="{{ url_for('notices') }}"><i class="fas fa-bell"></i> Notices</a>
-        <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
-        <a href="{{ url_for('enrollment') }}"><i class="fas fa-id-card"></i> Enroll</a>
-        <a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a>
+  <div class="error-container">
+    <div class="error-card">
+      <div class="error-code">4<span>0</span>4</div>
+      <h1 class="error-title">Page Not Found</h1>
+      <p class="error-desc">The page or resource you are looking for might have been moved, removed, or is temporarily unavailable.</p>
+      <div class="error-actions">
+        <a href="{{ url_for('home') }}" class="btn btn-danger">
+          <i class="fas fa-home"></i> Back to Homepage
+        </a>
+        <a href="{{ url_for('contact') }}" class="btn btn-outline">
+          <i class="fas fa-envelope"></i> Contact Support
+        </a>
       </div>
     </div>
   </div>
