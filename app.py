@@ -269,6 +269,17 @@ def add_security_headers(response):
 # Initialize DB
 db.init_app(app)
 
+# Auto-create required runtime directories and SQLite database tables on startup (Crucial for Render & WSGI servers)
+os.makedirs(os.path.join(os.path.dirname(__file__), 'instance'), exist_ok=True)
+os.makedirs(os.path.join(os.path.dirname(__file__), 'backups'), exist_ok=True)
+os.makedirs(os.path.join(os.path.dirname(__file__), 'images', 'uploads'), exist_ok=True)
+
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Database initialization warning: {e}")
+
 # Setup Login Manager
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -2994,6 +3005,7 @@ def page_not_found(e):
 
 # Run the app
 if __name__ == '__main__':
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+
 
